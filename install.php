@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.3
 * @package		PagesAndItems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
