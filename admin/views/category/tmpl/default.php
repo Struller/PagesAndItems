@@ -670,11 +670,14 @@ $html = '';
 
 													<li><?php echo $this->form->getLabel('alias'); ?>
 													<?php echo $this->form->getInput('alias'); ?></li>
-
+													
+													
+													
 													<li><?php echo $this->form->getLabel('extension'); ?>
 													<?php //$this->form->setValue('extension',null,'com_content'); ?>
 													<?php echo $this->form->getInput('extension'); ?></li>
-
+													<?php //need for J2.5 ?>
+													<?php $this->form->setFieldAttribute('parent_id','extension',(strpos($this->categoryExtension,'com_') !== false) ? strtolower($this->categoryExtension) : 'com_'.strtolower($this->categoryExtension)); ?>
 													<li><?php echo $this->form->getLabel('parent_id'); ?>
 													<?php echo $this->form->getInput('parent_id'); ?></li>
 

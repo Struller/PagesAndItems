@@ -9,7 +9,8 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.event.dispatcher');
+//jimport('joomla.event.dispatcher');
+jimport('joomla.html.editor');
 
 /**
  * Indicator class to handle WYSIWYG indicators
@@ -39,7 +40,7 @@ jimport('joomla.event.dispatcher');
 		return Indicator::getInstance($indicator);
 	}
  */
-class Indicator extends JObservable
+class Indicator extends JEditor //JObservable
 {
 	/**
 	 * Indicator Plugin object

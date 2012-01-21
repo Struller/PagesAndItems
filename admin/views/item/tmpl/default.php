@@ -1514,6 +1514,9 @@ if($frontend)
 									<?php echo $this->form->getInput('alias'); ?></li>
 
 									<li <?php echo !PagesAndItemsHelper::check_display('item_props_category') ? $display_none : ''; //if(!$this->helper->check_display('item_props_category'))){echo $display_none;} ?>>
+									
+									<?php //need for J2.5 ?>
+									<?php $this->form->setFieldAttribute('catid','extension','com_content'); ?>
 									<?php echo $this->form->getLabel('catid'); ?>
 									<?php echo $this->form->getInput('catid'); ?></li>
 
