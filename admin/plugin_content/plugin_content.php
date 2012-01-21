@@ -247,6 +247,53 @@ class plgContentPagesanditems extends JPlugin
 			//if customitemtype
 			if(strpos($item_type, 'ustom_'))
 			{
+				//load modal stuff when a fieldtype image gallery is on the page
+				/*
+				if(strpos($article->text, 'pi_image_gallery_fieldtype')){
+					JHTML::_('behavior.modal');
+					$document =& JFactory::getDocument();	
+					$document->addStyleSheet('administrator/components/com_pagesanditems/extensions/fieldtypes/image_gallery/image_gallery.css');
+				}
+				*/
+				/*
+				first get the fieldtypes from the itemtype
+				*/
+				$pos = strpos($item_type, 'ustom_');
+				$type_id = substr($item_type, $pos+6, strlen($item_type));
+				$item_id = $id;
+				//$database;
+				//get fields and values
+				$database->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id "
+				. "\n FROM #__pi_custom_fields_values AS v "
+				. "\n LEFT JOIN #__pi_custom_fields AS f "
+				. "\n ON f.id=v.field_id "
+				. "\n WHERE f.type_id='$type_id' "
+				. "\n AND v.item_id='$item_id' "
+				. "\n ORDER BY f.ordering ASC "
+				);
+				$fields = $database->loadObjectList();
+				//we do not check for the templates
+
+				//get fields plugin
+				$database->setQuery( "SELECT DISTINCT plugin "
+				. "\nFROM #__pi_custom_fields "
+				. "\nWHERE type_id='$type_id' "
+				. "\nORDER BY ordering ASC"
+				);
+				$fieldPlugins = $database->loadResultArray();
+				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'helpers'.DS.'pagesanditems.php');
+				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
+				$fieldtypes = ExtensionFieldtypeHelper::importExtension(null, $fieldPlugins,true,null,true);
+				$dispatcher = &JDispatcher::getInstance();
+				
+				foreach($fields as $field)
+				{
+					$dispatcher->trigger('onFieldtypeFrontend', array (&$article,$field, $item_id,$type_id));
+				}
+				/*
+				*/
+				
+				
 				//get option and view
 				$view = JRequest::getVar('view', '');
 				$option = JRequest::getVar('option', '');
@@ -343,12 +390,7 @@ class plgContentPagesanditems extends JPlugin
 			*/
 			//$article->text = $article->id;
 			
-			//load modal stuff when a fieldtype image gallery is on the page
-			if(strpos($article->text, 'pi_image_gallery_fieldtype')){
-				JHTML::_('behavior.modal');
-				$document =& JFactory::getDocument();	
-				$document->addStyleSheet('administrator/components/com_pagesanditems/extensions/fieldtypes/image_gallery/image_gallery.css');
-			}
+			
 
 		}
 
