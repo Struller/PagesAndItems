@@ -10,6 +10,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 jimport( 'joomla.application.component.controller' );
+jimport( 'joomla.database.table');
 
 /**
 jimport( 'joomla.application.component.controllerform' );
@@ -45,6 +46,7 @@ class PagesAndItemsControllerPage extends PagesAndItemsController //JControllerF
 
 		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'pagesanditems.php');
 		$this->helper = new PagesAndItemsHelper();
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'tables');
 	}
 
 	function edit()
