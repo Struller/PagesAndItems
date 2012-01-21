@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -312,13 +312,13 @@ from view/page/view.html.php
 
 					$parent_id = JRequest::getVar('pageId', '');
 					$app->setUserState('com_menus.edit.item.parent_id',	$parent_id);
-
-					$modelMenu = &new MenusModelItem();
+					
+					
+					//to set the correct type we need to tell the model ignore_request
+					$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
 					JRequest::setVar( 'id', 0 );
 					$modelMenu->setState('item.type',$pageTypeType->type);
 					$modelMenu->setState('item.menutype',$menutype);
-
-
 
 					// Check if the link is in the form of index.php?...
 
@@ -356,9 +356,12 @@ from view/page/view.html.php
 					$modelMenu->setState('item.link', $link); //MenusHelper::getLinkKey($url));
 					$modelMenu->setState('item.id',0);
 					$item = $modelMenu->getItem();
+					/*
+					$app->setUserState( $option.'.page.type',null);
+					$app->setUserState( $option.'.page.pageType', null);
+					$app->setUserState( $option.'.page.pageTypeType', null);
 					
-					
-					
+					*/
 					/*
 					$this->form		= $modelMenu->getForm();
 					$this->item		= $item;

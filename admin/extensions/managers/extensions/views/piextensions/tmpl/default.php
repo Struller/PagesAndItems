@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -26,6 +26,48 @@ if(PagesAndItemsHelper::getIsJoomlaVersion('>=','1.6'))
 {
 ?>
 <script language="javascript" type="text/javascript">
+	
+	// needed for Table Column ordering
+	/**
+	 * USED IN: libraries/joomla/html/html/grid.php
+	 *
+	 * @deprecated	12.1 This function will be removed in a future version. Use Joomla.tableOrdering() instead.
+	 */
+	Joomla.tableOrdering = function(order, dir, task, form) 
+	{
+		tableOrdering(order, dir, task);
+	}
+	
+	function tableOrdering(order, dir, task) {
+		var form = document.adminForm;
+
+		form.filter_order.value = order;
+		form.filter_order_Dir.value = dir;
+		document.getElementById('extensionTask').value = task;
+		Joomla.submitform( 'extension.doExecute', document.getElementById('adminForm' ));
+	}
+	
+	function checkAll_button(n, task) {
+	if (!task) {
+		task = 'saveorder';
+	}
+
+	for (var j = 0; j <= n; j++) {
+		var box = document.adminForm['cb'+j];
+		if (box) {
+			if (box.checked == false) {
+				box.checked = true;
+			}
+		} else {
+			alert("You cannot change the order of items, as an item in the list is `Checked Out`");
+			return;
+		}
+	}
+	document.getElementById('extensionTask').value = task;
+	Joomla.submitform( 'extension.doExecute', document.getElementById('adminForm' ));
+	return;
+	}
+	
 	Joomla.submitbutton = function(pressbutton)
 	{
 		//alert(pressbutton);

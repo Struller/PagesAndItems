@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2008-2012 Engelweb. All rights reserved.</copyright>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
-	<version>2.1.1</version>
+	<version>2.1.2</version>
 	<description>Pages-and-Items = menu-manager + content-manager</description>
 	
 	<installfile>install.php</installfile>

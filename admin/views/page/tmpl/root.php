@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -103,7 +103,16 @@ JHtml::_('behavior.formvalidation');
 							?>
 							//submitform(pressbutton);
 						}
-						
+						if (pressbutton == 'menutype.root_cancel')
+						{
+							//document.getElementById('subsub_task').value = 'cancel';
+							document.getElementById('task').value = pressbutton;
+							document.adminForm.submit();
+							<?php
+							//	echo $joomlaSubmit;
+							?>
+							//submitform(pressbutton);
+						}
 						if(document.formvalidator.isValid(document.id('adminForm')))
 						{
 							var check = true;
@@ -151,16 +160,7 @@ JHtml::_('behavior.formvalidation');
 							return false
 						}
 						
-						if (pressbutton == 'menutype.root_cancel')
-						{
-							//document.getElementById('subsub_task').value = 'cancel';
-							document.getElementById('task').value = pressbutton;
-							document.adminForm.submit();
-							<?php
-							//	echo $joomlaSubmit;
-							?>
-							//submitform(pressbutton);
-						}
+						
 
 						<?php
 						/*

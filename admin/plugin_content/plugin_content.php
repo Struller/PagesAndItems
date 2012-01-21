@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -111,7 +111,7 @@ class plgContentPagesanditems extends JPlugin
 			}
 			//$item_type = '';
 			//only if item has been made with PI
-			if($item_type != '' ) //&& $item_type != 'text')
+			if($item_type != '' && $item_type != 'text')
 			{
 				JForm::addFieldPath(dirname(__FILE__).'/../models/fields');
 				//$form->setFieldAttribute('articletext', 'type', 'textarea');
@@ -138,7 +138,6 @@ class plgContentPagesanditems extends JPlugin
 				$form->setFieldAttribute('featured','disabled','true');
 		
 				$form->setFieldAttribute('language','readonly','true');
-				//FB::dump($form);
 				/*
 				TODO
 				
@@ -187,7 +186,6 @@ class plgContentPagesanditems extends JPlugin
 				<?php echo $form->etInput('rules'); ?>
 				$data
 				*/
-				//FB::dump($data);
 				
 			}
 		}

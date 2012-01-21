@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -447,7 +447,7 @@ class plgSystemPagesanditems extends JPlugin
 
 				$script_remove = '';
 				//delete save and apply Button ?
-				if($hidde_button)
+				if($hidde_button && $item_type!='text')
 				{
 					if($joomlaVersion < '1.6')
 					{
@@ -470,6 +470,8 @@ class plgSystemPagesanditems extends JPlugin
 				$script_disable = '';
 
 				//ms: at this moment this will not work
+				//but in onContentPrepareForm
+				/*
 				if($this->params->get('disable_content', 0))
 				{
 					if($joomlaVersion < '1.6')
@@ -546,8 +548,9 @@ class plgSystemPagesanditems extends JPlugin
 
 
 					}
+				
 				}
-
+					*/
 					$script = $nl. '<!-- system plugin Pages and items -->' .$nl.$style.
 					'<script type="text/javascript">' .$nl.
 					'// <!--' .$nl.
@@ -555,7 +558,7 @@ class plgSystemPagesanditems extends JPlugin
 					'{' .$nl.
 						$script_add.
 						$script_remove.
-						$script_disable.
+						//$script_disable.
 					'});' .$nl.
 
 					'window.addEvent(\'load\', function()' .$nl.

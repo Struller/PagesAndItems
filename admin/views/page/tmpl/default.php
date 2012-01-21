@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -97,15 +97,6 @@ $pageType = JRequest::getVar('pageType', '');
 						else
 						{
 						?>
-
-						if(document.formvalidator.isValid(document.id('adminForm')))
-						{
-							var check = true;
-						}
-						<?php
-						}
-						?>
-						//alert(check);
 						if (pressbutton == 'page.cancel')
 						{
 							document.getElementById('sub_task').value = 'edit';
@@ -117,6 +108,15 @@ $pageType = JRequest::getVar('pageType', '');
 							//submitform( pressbutton );
 							return;
 						}
+						if(document.formvalidator.isValid(document.id('adminForm')))
+						{
+							var check = true;
+						}
+						<?php
+						}
+						?>
+						//alert(check);
+						
 						
 						if (pressbutton == 'page_move_select')
 						{

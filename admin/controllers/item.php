@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -104,7 +104,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		//JRequest::setVar('checkin', true);
 		//JRequest::setVar('useCheckin', 1);
 		//$this->category_save();
-		dump(JRequest::get());
 		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		$pageId = JRequest::getVar('pageId', 0 );
 		
@@ -764,8 +763,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		
 
 		
-		//dump($url);
-		//dump('cancel');
 		//$model->redirect_to_url($url, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
 		$this->setRedirect(JRoute::_($url, false), JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
 		/*
@@ -927,6 +924,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		
 		//$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		//$subTask = $useCheckedOut ? '' : '&sub_task=edit';
+		$sub_task = JRequest::getVar('sub_task', '');
 		$sub_task = $sub_task ? '&sub_task='.$sub_task : '';
 		if($categoryId)
 		{

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.1
+* @version		2.1.2
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -68,6 +68,10 @@ class PagesAndItemsExtensionHtmlPage_childsAlias extends PagesAndItemsExtensionH
 		$onclick .='document.getElementById(\'type\').value = \'alias\'; ';
 		//$onclick .='document.getElementById(\'sub_task\').value = \'new\'; ';
 		$onclick .= 'document.getElementById(\'pageTypeType\').value = \''.base64_encode(json_encode(array('id' => null, 'title' => $JTextAlias, 'request' => array(), 'type'=>'alias'))).'\';';
+		if(PagesAndItemsHelper::getIsJoomlaVersion('>=','1.6'))
+		{
+			$onclick .='Joomla.';
+		}
 		$onclick .='submitbutton(\'newMenuItem\'); ';
 		$htmlelementVars->onclick = $onclick;
 
