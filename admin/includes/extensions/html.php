@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -45,33 +45,33 @@ abstract class PagesAndItemsExtensionHtml extends PagesAndItemsExtension
 		parent::__construct($subject, $config);
 
 	}
-	
+
 
 	/*
-	 * @param 	string 	$htmlelement		
+	 * @param 	string 	$htmlelement
 	 * @param 	object	$htmlelementVars	The htmlelement vars
 	 * @param 	string	$name 		optional
 	*/
 	function onGetButton(&$htmlelement,$htmlelementVars,$name)
 	{
-		require_once(realpath(dirname(__FILE__).'/../buttonmaker.php'));
+		require_once(realpath(dirname(__FILE__).DS.'..'.DS.'html'.DS.'buttonmaker.php'));
 		$newButton = new ButtonMaker();
 		foreach($htmlelementVars as $key => $value)
 		{
 			$newButton->$key = $value;
 		}
-		
-		
+
+
 		$htmlelement->html = $newButton->makeButton();
 		//$htmlelement = $newButton->makeButton();
 
 		return $htmlelement->html;
-		
+
 		//return $button;
 		//return $this->makeButton();
 		//$button = $this->makeButton();
 
 		//return true;
-		
+
 	}
 }

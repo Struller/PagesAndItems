@@ -1,14 +1,14 @@
-<?php 
+<?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
 
 // no direct access
-	defined( '_JEXEC' ) or die( 'Restricted access' ); 
+	defined( '_JEXEC' ) or die( 'Restricted access' );
 	//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_installer'.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_message.php');
 
 	$state			= &$this->get('State');
@@ -18,13 +18,13 @@
 	$subtype = $state->get('subtype');
 	$name = $state->get('name');
 	$result = $state->get('result');
-	
+
 	if($msg)
 	{
 		$app = &JFactory::getApplication();
 		if($subtype)
 		{
-			
+
 			$type = JText::_($subtype);
 		}
 		else
@@ -33,11 +33,11 @@
 		}
 		if($result)
 		{
-			
+
 			$msg = JText::sprintf('COM_PAGESANDITEMS_INSTALLEXT', $type, JText::_('COM_PAGESANDITEMS_INSTALLEXT_SUCCESS'));
 			//	$msg = JText::_('Error');
 				//JText::_($package['type']), JText::_('Error'));
-			
+
 			$app->enqueueMessage($msg, 'message' );
 		}
 		else
@@ -47,15 +47,15 @@
 		}
 	}
 */
-	$message1		= $state->get('message');
-	$message2		= $state->get('extension.message');
+	$message1		= trim($state->get('message'));
+	$message2		= trim($state->get('extension_message'));
 ?>
-		<?php if($message1) : ?>
+		<?php if($message1 && $message1 != '') : ?>
 		<fieldset class="uploadform">
 			<?php echo JText::_($message1) ?>
 		</fieldset>
 		<?php endif; ?>
-		<?php if($message2) : ?>
+		<?php if($message2 && $message2 != '') : ?>
 		<fieldset class="uploadform">
 			<?php echo $message2; ?>
 		</fieldset>

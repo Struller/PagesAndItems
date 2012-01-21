@@ -8,9 +8,7 @@
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		pagetype ContentArchive (Pages and Items)
-	</description>
+	<description>ContentArchive (pagetype for the Pages-and-Items framework)</description>
 	<files>
 		<filename pagetype="content_archive">content_archive.php</filename>
 		<filename >index.html</filename>

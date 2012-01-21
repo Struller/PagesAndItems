@@ -1,0 +1,138 @@
+#form_content .fieldName
+{
+	padding-top: 5px;
+	font-weight: bold;
+}
+
+#form_content .fieldSlider
+{
+	/*padding-top: 0px;
+	float:none;
+	*/
+}
+
+#form_content span.star
+{
+	background: none;
+	padding-left: 0px;
+	vertical-align:middle;
+	font-size: 1em;
+
+}
+
+#target_content .fieldEditIcon
+{
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+	height: auto;
+	margin-left: 0px;
+	margin-top: 5px;
+	padding-left: 30px;
+	padding-top: 4px;
+	border-top: 1px solid #CCCCCC;
+}
+
+#target_content .top.fieldEditIcon
+{
+	border: none;
+	background-position: 5px 0;
+	padding-top: 0px;
+	/*margin-top: 0px;*/
+}
+
+
+#target_content .fieldEdit
+{
+	height: auto;
+	margin-left: 0px;
+	margin-top: 5px;
+	padding-left: 5px;
+	padding-top: 4px;
+	border-top: 1px solid #CCCCCC;
+}
+
+#target_content .top.fieldEdit
+{
+	border: none;
+	background-position: 5px 0;
+	padding-top: 0px;
+	/*margin-top: 0px;*/
+}
+
+#custom_sliders .customfieldsslider .fieldEdit {
+	border-top: none;
+}
+
+
+#target_content .top .fieldtype, #target_content .fieldEditIcon .fieldtype , #target_content .fieldEdit .fieldtype
+{
+	border: none;
+	/*position:relative;*/
+}
+
+#custom_sliders .fieldtype .pi_form_wrapper, #target_content .fieldEditIcon .fieldtype .pi_form_wrapper
+{
+	margin-top:0;
+}
+
+#custom_sliders .content .content .fieldtype
+{
+	padding-top: 5px;
+
+}
+
+#custom_sliders .fieldtype, #target_content .content .fieldtype
+{
+	border: none;
+/*	position:relative;*/
+}
+
+#target_content .content .fieldtype
+{
+	margin:5px;
+	/*margin-right:5px;*/
+}
+
+#target_content .content .fieldtype .pi_form_wrapper
+{
+	margin:0px;
+	/*margin-right:5px;*/
+}
+
+
+#custom_sliders
+{
+	margin:0;
+	padding:0;
+}
+
+#custom_sliders .pane-sliders
+{
+	margin: 2px 2px 0;
+	padding: 0;
+	/*padding-left: 3px;*/
+	
+}
+
+#custom_sliders .content .content
+{
+	/*margin: 2px 2px 0;*/
+	padding-left: 5px;
+	padding-right: 5px;
+	/*padding-left: 3px;*/
+	
+}
+
+#custom_sliders .content h3 img, #target_content h3 img
+{
+	float: none;
+	margin : 0;
+	vertical-align: top; /*text-top;*/
+	margin-right: 4px;
+}
+
+#pi_content_pane.customItemtypeSlider
+{
+	border:none;
+	padding: 0;
+}

@@ -1,11 +1,10 @@
 <?php
 /**
-* @package PI!Fish
- translating custom itemtype field from Pages and Items using Joom!Fish
-* @version 1.6.2.2
-* @copyright Copyright (C) 2009-2010 Michael Struller. All rights reserved.
-* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
-* @author http://gecko.struller.de
+* @version		2.1.0
+* @package		PagesAndItems
+* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
  */
 
 defined('JPATH_BASE') or die;
@@ -34,21 +33,21 @@ class JFormFieldSizes extends JFormField //JElementSpacerjtext extends JElement
 		$attr .= $this->element['class'] ? ' class="'.(string) $this->element['class'].'"' : '';
 		$attr .= ((string) $this->element['disabled'] == 'true') ? ' disabled="disabled"' : '';
 		$attr .= $this->element['size'] ? ' size="'.(int) $this->element['size'].'"' : '';
-		
-		
+
+
 		$sizes = array ();
 		$sizes = json_decode(str_replace('\'','"',$this->value));
 		$value = str_replace('"','\'',json_encode($sizes));
-		
-		
+
+
 		//return JHtml::_('access.level', $this->name, $this->value, $attr, $options, $this->id);
 		return $this->sizesHtml($sizes,$this->name, $this->id,$this->value);
-		
-		
-		
+
+
+
 		return implode($html);
 	}
-	
+
 
 	function sizesHtml($sizes,$name, $id, $value)
 	{
@@ -64,11 +63,11 @@ class JFormFieldSizes extends JFormField //JElementSpacerjtext extends JElement
 						$html .= '<td id="pagesheader_column_1">';
 							$html .= '<strong>'.JText::_('visible').'</strong>';
 						$html .= '</td>';
-						
+
 						$html .= '<td id="pagesheader_column_2">';
 							$html .= '<strong>'.JText::_('Name').'</strong>';
 						$html .= '</td>';
-						
+
 						$html .= '<td colspan="21" id="pagesheader_column_3">';
 							$html .= '<strong>'.JText::_('Ordering').'</strong>';
 						$html .= '</td>';
@@ -116,7 +115,7 @@ class JFormFieldSizes extends JFormField //JElementSpacerjtext extends JElement
 								$html .= '<img src="images/downarrow.png" alt="move down" border="0">';
 							$html .= '</a>';
 						}
-						
+
 						$html .= '</td>';
 						$html .= '<td width="8">';
 							$html .= '&nbsp;';
@@ -126,16 +125,16 @@ class JFormFieldSizes extends JFormField //JElementSpacerjtext extends JElement
 				}
 				$html .= '</tbody>';
 			$html .= '</table>';
-			
+
 			//2 hidden fields which are usefull for updating the ordering when submitted
 			$html .= '<input name="pages_are_reordered" id="pages_are_reordered" type="hidden" value="false" />';
 			$html .= '<input name="pages_total" id="pages_total" type="hidden" value="'.$counter.'" />';
-		
+
 			$html .= '<div id="target_pages"></div>';
 			//ok here we need another path
 			$html .= '<script src="ordering.js" language="JavaScript" type="text/javascript"></script>';
 			$html .= '<script language="JavaScript"  type="text/javascript">';
-			$html .= "<!--\n";	
+			$html .= "<!--\n";
 			//$html .= "var pages_total = ".$counter.";\n";
 			$html .= "var namePrefix = '".$name."';\n";
 			$html .= "var controlNamePrefix = '".$id."';\n";

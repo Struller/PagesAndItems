@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -53,10 +53,7 @@ class PagesAndItemsModelInstall extends JModel
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
-		
-		//dump($app->getUserState($this->_context.'.message'),'X');
-		
-		//dump($app->getUserState('com_pagesanditems'));
+
 		$this->setState('message',$app->getUserState('com_pagesanditems.installer.message'));
 		$this->setState('extension_message',$app->getUserState('com_pagesanditems.installer.extension_message'));
 
@@ -66,13 +63,11 @@ class PagesAndItemsModelInstall extends JModel
 		// Recall the 'Install from Directory' path.
 		$path = $app->getUserStateFromRequest($this->_context.'.install_directory', 'install_directory', $app->getCfg('tmp_path'));
 		$this->setState('install.directory', $path);
-		//dump($this->getState('message'));
-		
+
 		parent::populateState();
-		//print_r($this->getState());
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Install an extension from either folder, url or upload.
 	 *
@@ -83,15 +78,16 @@ class PagesAndItemsModelInstall extends JModel
 	{
 		$extension = 'com_installer';
 		$lang = &JFactory::getLanguage();
-		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
-	
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+
 		require_once( dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'includes'.DS.'installer'.DS.'installerhelper.php' );
 		require_once( dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'includes'.DS.'installer'.DS.'installer.php');
 		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'installer.php');
-		
+
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 			//joomla 1.5.x
@@ -100,7 +96,7 @@ class PagesAndItemsModelInstall extends JModel
 			*/
 			//TODO replace $mainframe with app?
 			//global $mainframe;
-			
+
 			$this->setState('action', 'install');
 			switch(JRequest::getWord('installtype'))
 			{
@@ -128,12 +124,12 @@ class PagesAndItemsModelInstall extends JModel
 			/*
 			make an own installer ?
 			*/
-			
-			
+
+
 			$installer = PagesAndItemsInstaller::getInstance();
 			// Get an installer instance
 			//$installer =& JInstaller::getInstance();
-			
+
 			/*
 			we need the files from adapter
 			JPATH_COMPONENT_ADNMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'adapters'.DS
@@ -144,11 +140,11 @@ class PagesAndItemsModelInstall extends JModel
 			$files = JFolder::files(JPATH_LIBRARIES.DS.'joomla'.DS.'installer'.DS.'adapters','.php');
 			foreach($files as $file)
 			{
-				$name = JFile::getName($file); 
+				$name = JFile::getName($file);
 				$name = JFile::stripExt($file);
 				require_once(JPATH_LIBRARIES.DS.'joomla'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php')); //.'.php');
 				$class = 'JInstaller'.ucfirst($name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
 					$adapter = new stdClass();
 					$installer->setAdapter($name, $adapter);
@@ -156,19 +152,19 @@ class PagesAndItemsModelInstall extends JModel
 			}
 			*/
 			//jimport('joomla.filesystem.file');
-			
+
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
-			
+
 			/*
 			$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters','.php$');
 			foreach($files as $file)
 			{
-				$name = JFile::getName($file); 
+				$name = JFile::getName($file);
 				$name = JFile::stripExt($file);
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php')); //.'.php');
-				
+
 				$class = 'PiInstaller'.ucfirst($name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
 					$adapter = new $class($installer);
 					$adapter->parent =& $installer;
@@ -176,28 +172,28 @@ class PagesAndItemsModelInstall extends JModel
 				}
 			}
 			*/
-			
+
 			/*
-			TODO check the type 
+			TODO check the type
 			if($package['type'] != ?)
 			{
 				message...
 			}
 			*/
-			
+
 			defined('COM_PAGESANDITEMS_INSTALLER_PATH') or define('COM_PAGESANDITEMS_INSTALLER_PATH', JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions');
 			// Install the package
-			
-			
-			
-			
-			if (!$installer->install($package['dir'])) 
+
+
+
+
+			if (!$installer->install($package['dir']))
 			{
 				// There was an error installing the package
 				//$msg = JText::sprintf('INSTALLEXT', JText::_('Error'));
 				$msg = JText::_('COM_PAGESANDITEMS_INSTALLEXT_FAILED'); //JText::_('Error');
 				//JText::_($package['type']), JText::_('Error'));
-				
+
 				$result = false;
 			}
 			else
@@ -209,7 +205,7 @@ class PagesAndItemsModelInstall extends JModel
 				//JText::_($package['type']), JText::_('Success'));
 				$result = true;
 			}
-			
+
 			// Set some model state values
 			//$mainframe->enqueueMessage($msg);
 			$this->setState('msg', $msg);
@@ -218,14 +214,14 @@ class PagesAndItemsModelInstall extends JModel
 			$this->setState('name', $installer->get('name'));
 			$this->setState('result', $result);
 			$this->setState('message', $installer->message);
-			$this->setState('extension.message', $installer->get('extension.message'));
+			$this->setState('extension_message', $installer->get('extension.message'));
 			// Cleanup the install files
 			if (!is_file($package['packagefile'])) {
 				$config =& JFactory::getConfig();
 				$package['packagefile'] = $config->getValue('config.tmp_path').DS.$package['packagefile'];
 			}
 			JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
-	
+
 			return $result;
 		}
 		else
@@ -258,54 +254,51 @@ class PagesAndItemsModelInstall extends JModel
 					break;
 			}
 			// Was the package unpacked?
-			if (!$package) 
+			if (!$package)
 			{
 				//$app->setUserState('com_installer.message', JText::_('COM_INSTALLER_UNABLE_TO_FIND_INSTALL_PACKAGE'));
 				$app->setUserState('com_pagesanditems.installer.message', JText::_('COM_INSTALLER_UNABLE_TO_FIND_INSTALL_PACKAGE'));
 				return false;
 			}
-			
-			
-			
+
+
+
 			/*
 			make an own installer ?
 			only for J1.5? so we can use tag extension
 			*/
 			$installer = PagesAndItemsInstaller::getInstance();
 
-			
+
 			// Get an installer instance
 			//$installer = JInstaller::getInstance();
-			
-			
+
+
 			jimport('joomla.filesystem.folder');
-			
+
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 			/*
 			ms: new method to load the adapter so this we need not here
-			
+
 			$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters','.php$');
 			foreach($files as $file)
 			{
-				$name = JFile::getName($file); 
+				$name = JFile::getName($file);
 				$name = JFile::stripExt($file);
-				//dump($name);
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php'));
-				
+
 				$class = 'PiInstaller'.ucfirst($name);
-				//dump($class,$name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
-					
+
 					$adapter = new $class($installer);
-					//dump($adapter);
 					//$adapter->parent =& $installer;
 					$installer->setAdapter($name, $adapter);
 				}
 			}
 			*/
 			defined('COM_PAGESANDITEMS_INSTALLER_PATH') or define('COM_PAGESANDITEMS_INSTALLER_PATH', JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions');
-			
+
 			// Install the package
 			if (!$installer->install($package['dir'])) {
 				// There was an error installing the package
@@ -322,29 +315,29 @@ class PagesAndItemsModelInstall extends JModel
 			// Set some model state values
 			$app= JFactory::getApplication();
 			$app->enqueueMessage($msg);
-			
+
 			$this->setState('name', $installer->get('name'));
 			$this->setState('result', $result);
-			
+
 			/*
 			$this->setState('message', $installer->message);
 			$this->setState('extension_message', $installer->get('extension_message'));
 			$this->setState('redirect_url', $installer->get('redirect_url'));
 			*/
-			
+
 			$app->setUserState('com_pagesanditems.installer.message', $installer->message);
-			$app->setUserState('com_pagesanditems.installer.extension_message', $installer->get('extension_message'));
+			$app->setUserState('com_pagesanditems.installer.extension_message', $installer->get('extension.message'));
 			$app->setUserState('com_pagesanditems.installer.redirect_url', $installer->get('redirect_url'));
-			
+
+			//$app->setUserState('com_pagesanditems.installer.redirect_url', $installer->get('redirect_url'));
+
 			/*
 			$app->setUserState($this->_context.'.message', $installer->message);
-			//dump($installer->message);
 			$app->setUserState($this->_context.'.extension_message', $installer->get('extension_message'));
-			//dump($installer->get('extension_message'));
 			$app->setUserState($this->_context.'.redirect_url', $installer->get('redirect_url'));
 			*/
 			// Cleanup the install files
-			if (!is_file($package['packagefile'])) 
+			if (!is_file($package['packagefile']))
 			{
 				$config = JFactory::getConfig();
 				$package['packagefile'] = $config->get('tmp_path').DS.$package['packagefile'];
@@ -357,7 +350,7 @@ class PagesAndItemsModelInstall extends JModel
 		*/
 		}
 	}
-	
+
 	/**
 	 * Works out an installation package from a HTTP upload
 	 *
@@ -367,7 +360,7 @@ class PagesAndItemsModelInstall extends JModel
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 		// Get the uploaded file information
@@ -414,7 +407,7 @@ class PagesAndItemsModelInstall extends JModel
 		}
 		else
 		{
-		
+
 		// Get the uploaded file information
 		$userfile = JRequest::getVar('install_package', null, 'files', 'array');
 
@@ -474,7 +467,7 @@ class PagesAndItemsModelInstall extends JModel
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 		// Get the path to the package to install
@@ -505,7 +498,7 @@ class PagesAndItemsModelInstall extends JModel
 		}
 		else
 		{
-		
+
 		// Get the path to the package to install
 		$p_dir = JRequest::getString('install_directory');
 		$p_dir = JPath::clean($p_dir);
@@ -532,7 +525,7 @@ class PagesAndItemsModelInstall extends JModel
 
 		return $package;
 		}
-		
+
 		/*
 		else
 		{
@@ -551,7 +544,7 @@ class PagesAndItemsModelInstall extends JModel
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 		// Get a database connector
@@ -585,7 +578,7 @@ class PagesAndItemsModelInstall extends JModel
 		}
 		else
 		{
-		
+
 		// Get a database connector
 		$db = JFactory::getDbo();
 
@@ -621,6 +614,6 @@ class PagesAndItemsModelInstall extends JModel
 			return parent::_getPackageFromUrl();
 		}
 		*/
-	}	
+	}
 
 }

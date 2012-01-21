@@ -2,15 +2,13 @@
 <extension version="1.5" type="fieldtype" method="upgrade">
 	<name>Textarea (Pages and Items fieldtype)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		fieldtype Textarea (Pages and Items)
-	</description>
+	<description>Textarea (fieldtype for custom itemtypes in the Pages-and-Items framework)</description>
 	<files>
 		<filename fieldtype="textarea">textarea.php</filename>
 		<filename >index.html</filename>
@@ -28,9 +26,13 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" >
+				<field name="showFieldName" type="radio" default="1" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+					<option value="-1">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="no_lines_to_breaks" type="radio" default="0" label="COM_PAGESANDITEMS_NO_LINES_TO_BREAKS">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 				<field name="limit_characters" type="text" default="0" label="COM_PAGESANDITEMS_LIMIT_CHARACTERS" description="COM_PAGESANDITEMS_LIMIT_CHARACTERS2">
 				</field>

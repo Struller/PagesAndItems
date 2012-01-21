@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,13 +13,16 @@ if(!defined('_JEXEC')){
 }
 
 ?>
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <link href="components/com_pagesanditems/css/popup.css" rel="stylesheet" type="text/css" />
 <?php
 
 $pageId = JRequest::getVar('itemsPageId');
 $selectedPageId = JRequest::getVar('selectedPageId');
 //get link from menuitems
-$menuitems = $this->model->getMenutypeMenuitems();
+$menuitems = PagesAndItemsHelper::getMenutypeMenuitems();
+
 //foreach($this->controller->menuitems as $row){
 foreach($menuitems as $row){
 	if($row->id==$pageId){
@@ -40,17 +43,20 @@ function selectUrl(selectUrl, menuid){
 	window.parent.document.getElementById('title').value = '';
 }
 </script>
-<?php 
-echo "<link href=\"components/com_pagesanditems/css/pagesanditems.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+<?php
+// TODO CHECK 
+echo "<link href=\"components/com_pagesanditems/css/pagesanditems2.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+// TODO CHECK 
 echo "<link href=\"components/com_pagesanditems/css/dtree.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+// TODO CHECK 
 echo "<script src=\"components/com_pagesanditems/javascript/dtree.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
-echo "<script src=\"../includes/js/overlib_mini.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
+//echo "<script src=\"../includes/js/overlib_mini.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
 //give headers in Joomla 1.5 a bit more spunk
 //$this->controller->spunk_up_headers_1_5(); //is in css
-	
+
 //see how many loops we need
 //$loops = count($this->controller->menutypes);
-$menutypes = $this->model->getMenutypes();
+$menutypes = PagesAndItemsHelper::getMenutypes();
 $loops = count($menutypes);
 //loop menutypes
 for($m = 0; $m < $loops; $m++){
@@ -63,35 +69,16 @@ for($m = 0; $m < $loops; $m++){
 	echo "var d".$m."_array = new Array('d".$m."_array');\n";
 	echo "d$m = new dTree('d$m');\n";
 	echo PagesAndItemsHelper::getdTreeIcons("d".$m);
-	/*
-			$script = "d$m.icon = {";
-			$script .= "root		: '".PagesAndItemsHelper::getDirIcons()."icon-16-menu.png',
-			folder	: '".PagesAndItemsHelper::getDirIcons()."folder.gif',
-			folderOpen	: '".PagesAndItemsHelper::getDirIcons()."folderopen.gif',
-			node		: '".PagesAndItemsHelper::getDirIcons()."page.gif',
-			empty		: '".PagesAndItemsHelper::getDirIcons()."empty.gif',
-			line		: '".PagesAndItemsHelper::getDirIcons()."line.gif',
-			join		: '".PagesAndItemsHelper::getDirIcons()."join.gif',
-			joinBottom	: '".PagesAndItemsHelper::getDirIcons()."joinbottom.gif',
-			plus		: '".PagesAndItemsHelper::getDirIcons()."plus.gif',
-			plusBottom	: '".PagesAndItemsHelper::getDirIcons()."plusbottom.gif',
-			minus		: '".PagesAndItemsHelper::getDirIcons()."minus.gif',
-			minusBottom	: '".PagesAndItemsHelper::getDirIcons()."minusbottom.gif',
-			nlPlus	: '".PagesAndItemsHelper::getDirIcons()."nolines_plus.gif',
-			nlMinus	: '".PagesAndItemsHelper::getDirIcons()."nolines_minus.gif'
-			};\n";
-	echo $script;
-	*/
 			/*
 				COMMENT
-				in Joomla 1.6 
+				in Joomla 1.6
 				we have one parent_id=0 in table #__menus
 				but more parent_id=1 in table #__menus
-				
+
 				parent_id=1 in table #__menus = menutype:'', title:Menu_Item_Root, alias:root
-				
+
 			*/
-			if ($this->joomlaVersion < '1.6')
+			if (PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 				echo "d$m.add(0,-1,'";
 			}
@@ -99,19 +86,19 @@ for($m = 0; $m < $loops; $m++){
 			{
 				echo "d$m.add(1,-1,'";
 			}
-	
-	
-	//echo $this->controller->get_menutype_title($this->controller->menutypes[$m]);
-	echo $this->model->get_menutype_title($menutypes[$m]);
+
+
+	echo PagesAndItemsHelper::getMenutypeTitle($menutypes[$m]);
 	echo "','','','','','',true);\n";
 	//make javascript-array from main-menu-items
 	//foreach($this->controller->menuitems as $row){
-	$menuitems = $this->model->getMenuitems();
+	$menuitems = PagesAndItemsHelper::getMenuitems();
 	foreach($menuitems as $row){
 		//if($row->menutype==$this->controller->menutypes[$m]){
 		if($row->menutype==$menutypes[$m]){
 			echo "d$m.add(".$row->id.",".$row->parent.",'".(addslashes($row->name))."','";
 			if($row->id!=$pageId){
+				//?? Itemid not itemId ?
 				if(strpos($row->link, "&Itemid=")){
 					$stringItemId = "";
 				}else{
@@ -128,9 +115,9 @@ for($m = 0; $m < $loops; $m++){
 			echo "d".$m."_array.push($row->id);\n";
 		}
 	}
-   
+
 	echo "document.write(d$m);\n";
-	
+
 	//if a page was already selected, make tree-menu-button selected
 	//foreach($this->controller->menuitems as $row){
 		foreach($menuitems as $row){
@@ -144,11 +131,13 @@ for($m = 0; $m < $loops; $m++){
 	//close javascript
 	echo "//-->\n";
 	echo "</script>\n";
-	
+
 	echo '</div>';
-	
+
 }//end loop menutypes
 ?>
 </td>
 </tr>
-</table> 	
+</table> 
+<!-- end id="form_content" need for css-->
+</div>

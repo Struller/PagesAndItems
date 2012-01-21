@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -28,14 +28,7 @@ else
 /**
 
  */
- 
 
- 
-class PagesAndItemsModelMenutypeXs extends JModel //PagesAndItemsModelPiMenutype
-{
-
-}
- 
 class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 {
 
@@ -55,7 +48,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 	 */
 	function buildPageType($link)
 	{
-		if (empty($link)) 
+		if (empty($link))
 		{
 			return false;
 		}
@@ -63,7 +56,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		if (is_string($link))
 		{
 			$args = array();
-			if (strpos($link, 'index.php') === 0) 
+			if (strpos($link, 'index.php') === 0)
 			{
 				parse_str(parse_url(htmlspecialchars_decode($link), PHP_URL_QUERY), $args);
 			}
@@ -86,12 +79,12 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 				$link[$name] = str_replace('com_','',$link[$name]);
 			}
 		}
-		
+
 		return implode('_',$link);
 		//ksort($request);
 
 		//return 'index.php?'.http_build_query($request,'','&');
-	
+
 	}
 
 	public static function getLinkKey($request)
@@ -127,10 +120,10 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 
 		return 'index.php?'.http_build_query($request,'','&');
 	}
-	
+
 	function getId($link)
 	{
-		if (empty($link)) 
+		if (empty($link))
 		{
 			return false;
 		}
@@ -138,7 +131,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		if (is_string($link))
 		{
 			$args = array();
-			if (strpos($link, 'index.php') === 0) 
+			if (strpos($link, 'index.php') === 0)
 			{
 				parse_str(parse_url(htmlspecialchars_decode($link), PHP_URL_QUERY), $args);
 			}
@@ -164,21 +157,21 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 				//$link[$name] = str_replace('com_','',$link[$name]);
 			}
 		}
-		
+
 		return null; //implode('_',$link);
 		//ksort($request);
 
 		//return 'index.php?'.http_build_query($request,'','&');
-	
+
 	}
-	
-	
+
+
 	/*
 	use from extensions/htmls/page_underlayingpages/menuitemtypeselect.php
 	*/
 	function getTypeListItem($recordId = null,$link)
 	{
-		
+
 		// Initialise variables.
 		$html		= array();
 		$types	= $this->_getTypeOptions();
@@ -186,25 +179,25 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		$joomlaVersion = $version->getShortVersion();
 		/*
 		TODO get the right type
-		
-		split $link 
-		
+
+		split $link
+
 		foreach ($types as $name => $list)
 		{
 			foreach ($list as $item)
 			{
 				$item->request;
-			
+
 			}
 		}
-		
-		
-		
+
+
+
 		*/
 		/*
 		$recordId	= (int) $this->form->getValue('id');
 		*/
-		
+
 		$html[] = '<h2 class="modal-title">'.JText::_('COM_MENUS_TYPE_CHOOSE').'</h2>';
 		$html[] = '<ul class="menu_types">';
 
@@ -218,7 +211,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 			foreach ($list as $item)
 			{
 				$html[] = '			<li>';
-				
+
 				$link = '				<a class="choose_type" href="#" onclick="javascript:';
 				if($joomlaVersion >= '1.6')
 				{
@@ -290,7 +283,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 
 
 	/*
-	
+
 	use from extensions/htmls/page_underlayingpages/menuitemtypeselect.php
 	*/
 	function getTypeListItems($recordId = null, $pageId = null, $current_menutype = null)
@@ -305,7 +298,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		/*
 		$recordId	= (int) $this->form->getValue('id');
 		*/
-		
+
 	//	$html[] = '<h2 class="modal-title">'.JText::_('COM_MENUS_TYPE_CHOOSE').'</h2>';
 		$html[] = '<ul class="menu_types">';
 
@@ -321,9 +314,8 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 				$html[] = '			<li>';
 				$html[] = '				<a class="choose_type" href="#" ';
 								$request = $item->request;
-								//dump($request);
 								//$request = $this->getLinkKey($request);
-								
+
 								$request['option'] = str_replace('com_','',$request['option']);
 								$pageType = implode('_',$request);
 								$html[] = 'onclick="';
@@ -348,14 +340,14 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 								$html[] ='window.parent.document.getElementById(\'pageType\').value = \''.$pageType.'\'; ';
 								//$html[] ='window.parent.document.getElementById(\'pageId\').value = \'\'; ';
 								$html[] ='window.parent.document.getElementById(\'type\').value = \'component\'; ';
-								
+
 								//$html[] ='window.parent.document.getElementById(\'pageId\').value = \''.$this->_pageId.'\'; ';
 								//$html[] ='window.parent.document.getElementById(\'menutype\').value = \''.$this->menutype.'\'; ';
 
 								//$html[] ='window.parent.document.getElementById(\'sub_task\').value = \'new\'; ';
 								//$html[] ='window.parent.document.getElementById(\'view\').value = \'page\'; ';
-								
-								
+
+
 								$html[] = 'window.parent.document.getElementById(\'pageTypeType\').value = \''.
 											base64_encode(json_encode(array('id' => $recordId, 'title' => $item->title, 'request' => $item->request, 'type'=>'component'))).'\';';
 								if($joomlaVersion >= '1.6')
@@ -367,10 +359,10 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 									$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
 								}
 								//$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
-								
+
 								$html[] ='window.parent.document.getElementById(\'sbox-window\').close();" ';
 								$html[] = ' title="'.JText::_($item->description).'"' ;
-								
+
 								$html[] = '>';
 								$html[] = JText::_($item->title);
 								$html[] = '</a>';
@@ -382,7 +374,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 			$html[] = '</dl>';
 			$html[] = '</li>';
 		}
-		
+
 		/*
 		$html[] = '<li>';
 		$html[] = '<dl class="menu_type">';
@@ -437,12 +429,11 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		$path = realpath(dirname(__FILE__).DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'pagetypehelper.php');
 		$pagetypes = ExtensionPagetypeHelper::importExtension(null, null,true,null,true);
-		
 		$dispatcher = &JDispatcher::getInstance();
-		
+
 		$components = array();
-		
-		
+
+
 		//$model = new PagesAndItemsModelBase();
 		/*
 		*************
@@ -456,7 +447,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		$icons = null;
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$this->controller->dirIcons,null));
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$model->getDirIcons(),null));
-		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,COM_PAGESANDITEMS_DIR_ICONS,null));
+		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,PagesAndItemsHelper::getDirIcons(),null));
 		//
 		$name->icons = $icons;
 		$components[$pageType] = $name;
@@ -479,14 +470,14 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		{
 			$pageType = 'alias';
 		}
-		
+
 		$name = null;
 		$name->pageType = $pageType;
 		$results = null;
 		$icons = null;
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$this->controller->dirIcons,null));
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$model->getDirIcons(),null));
-		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,COM_PAGESANDITEMS_DIR_ICONS,null));
+		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,PagesAndItemsHelper::getDirIcons(),null));
 		$name->icons = $icons;
 		$components[$pageType] = $name;
 		//$components->$pageType = $name;
@@ -503,7 +494,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		$icons = null;
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$this->controller->dirIcons,null));
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$model->getDirIcons(),null));
-		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,COM_PAGESANDITEMS_DIR_ICONS,null));
+		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,PagesAndItemsHelper::getDirIcons(),null));
 		$name->icons = $icons;
 		$components[$pageType] = $name;
 		//$components->$pageType = $name;
@@ -520,13 +511,10 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 		$icons = null;
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',$this->controller->dirIcons,null));
 		//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',$model->getDirIcons(),null));
-		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',COM_PAGESANDITEMS_DIR_ICONS,null));
+		$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',PagesAndItemsHelper::getDirIcons(),null));
 		$name->icons = $icons;
 		$components[$pageType] = $name;
 		//$components->$pageType = $name;
-		
-		//var_dump($types);
-		//dump($types);
 		foreach ($types as $name => $list)
 		{
 			foreach ($list as $item)
@@ -534,6 +522,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 
 				$component = array();
 				$option = null;
+				$section = null;
 				//$id = null;
 				foreach($item->request as $key => $value)
 				{
@@ -541,6 +530,11 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 					{
 						$option = $value;
 						$value = str_replace('com_','',$value);
+					}
+					if($key == 'view')
+					{
+						$section = $value;
+
 					}
 					/*
 					if($key == 'id')
@@ -550,39 +544,39 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 					*/
 					$component[] = $value;
 				}
+				$option = $section ? $option.'.'.$section : $option;
 				$pageType = null; //object();
 				$pageType = implode('_',$component);
 				/*
 				and if id
 				only if pageType content_article
 				add the itemRequest?
-				
+
 				ore id?
-				
+
 				if($id &&  $pageType == 'content_article')
 				{
-					
+
 				}
-				
+
 				*/
 				$name = null;
 				$icons = null;
 				//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$this->controller->dirIcons,$option));
 				//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,$model->getDirIcons(),$option));
-				
-				
+
+
 				//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,COM_PAGESANDITEMS_DIR_ICONS,null));
-				$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,COM_PAGESANDITEMS_DIR_ICONS,$option));
+				$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,$pageType,PagesAndItemsHelper::getDirIcons(),$option));
 				if(!$results || !in_array(true,$results))
 				{
 					//we have no pagetype with this event we will load pagetype component
 					//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',$this->controller->dirIcons,$option));
 					//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',$model->getDirIcons(),$option));
-					
+
 					//$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',COM_PAGESANDITEMS_DIR_ICONS,null));
-					$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',COM_PAGESANDITEMS_DIR_ICONS,$option));
+					$results = $dispatcher->trigger('onGetPageTypeIcons', array(&$icons,'component',PagesAndItemsHelper::getDirIcons(),$option)); //
 				}
-				
 				//$return->components->$name->icons = $icons;
 				//$return->$name->icons = $icons;
 				//$name['icons'] = $icons;
@@ -590,7 +584,7 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 				$name->icons = $icons;
 				$name->pageType = $pageType;
 				//$name->id = $id;
-				
+
 				$components[$pageType] = $name;
 				//$components->$pageType = $name;
 				//$components[] = $name;

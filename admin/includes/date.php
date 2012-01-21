@@ -1,11 +1,11 @@
 <?php
 /**
- * @version		1.6.2.2$Id: date.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Framework
- * @subpackage	Utilities
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- */
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
+*/
 
 // No direct access
 defined('JPATH_BASE') or die;
@@ -20,7 +20,7 @@ $joomlaVersion = $version->getShortVersion();
 if($joomlaVersion < '1.6')
 {
 	require_once(dirname(__FILE__).DS.'date15.php');
-	
+
 }
 else
 {
@@ -28,7 +28,7 @@ else
 	jimport( 'joomla.utilities.date' );
 	class PagesAndItemsDate extends JDate
 	{
-	
+
 	}
 }
 

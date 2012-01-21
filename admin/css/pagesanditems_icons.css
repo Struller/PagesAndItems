@@ -1,41 +1,136 @@
-.jgrid span.publish 
+/*
+.checkedout {
+    background-image: url("../images/admin/checked_out.png");
+}
+*/
+.icon-32-checkin {
+	background-image: url("../media/images/icons/base/icon-32-unlock.png") !important;
+}
+
+.icon-32-checkout {
+	background-image: url("../media/images/icons/base/icon-32-lock.png") !important;
+}
+
+
+.icon-32-apply_order {
+	background-image: url("../media/images/icons/base/icon-32-apply_order.png") !important;
+}
+
+.icon-32-save_order {
+	background-image: url("../media/images/icons/base/icon-32-save_order.png") !important;
+}
+
+
+
+#form_content a.countItems span.countItemsIcon
 {
-	background-image: url("../media/images/icons/base/icon-16-tick.png") !important;
+	background-image: url("../media/images/icons/base/icon-16-numbers.png");
+}
+
+#form_content a.saveReorder span.saveReorderIcon
+{
+/*, .jgrid span.publish*/
+	background-image: url("../media/images/icons/base/icon-16-sort_save.png"); /* !important;*/
 	/*background-image: url("../media/images/icons/base/icon-16-switch_tick.png") !important;*/
 }
 
-.jgrid span.unpublish 
+#form_content a.reorder span.reorderIcon
 {
-	background-image: url("../media/images/icons/base/icon-16-cross.png") !important;
+/*, .jgrid span.publish*/
+	background-image: url("../media/images/icons/base/icon-16-sort_number.png"); /* !important;*/
+	/*background-image: url("../media/images/icons/base/icon-16-switch_tick.png") !important;*/
+}
+
+#form_content a.saveReorder:hover
+{
+	cursor: pointer;
+}
+
+#form_content th .div_reorder_rows_arrows_th_icon, #form_content th .th_icon
+{
+	width:16px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#form_content .jgrid span.publish
+{
+/*, .jgrid span.publish*/
+	background-image: url("../media/images/icons/base/icon-16-tick.png"); /* !important;*/
+	/*background-image: url("../media/images/icons/base/icon-16-switch_tick.png") !important;*/
+}
+
+#form_content .jgrid span.unpublish, .jgrid span.archive
+{
+	background-image: url("../media/images/icons/base/icon-16-cross.png"); /* !important;*/
 	/*background-image: url("../media/images/icons/base/icon-16-switch_cross.png") !important;*/
 }
 
-.jgrid span.trash
+#form_content .jgrid span.trash, .jgrid span.archive
 {
-	background-image: url("../media/images/icons/base/icon-16-trash.png") !important;
+	background-image: url("../media/images/icons/base/icon-16-trash.png"); /* !important;*/
 	/*background-image: url("../media/images/icons/base/icon-16-switch_cross.png") !important;*/
 }
 
-.jgrid span.archive
+#form_content .jgrid span.archive, .jgrid span.archive
 {
-	background-image: url("../media/images/icons/base/icon-16-archive.png") !important;
+	background-image: url("../media/images/icons/base/icon-16-archive.png"); /* !important;*/
 	/*background-image: url("../media/images/icons/base/icon-16-switch_cross.png") !important;*/
 }
+
+
+/**
+input_button
+*/
+#form_content .input_button.state_publish, .input_button.state_publish
+{
+	background-image: url("../media/images/icons/base/icon-16-tick_switch.png");
+}
+
+#form_content .input_button.state_unpublish, .input_button.state_unpublish
+{
+	background-image: url("../media/images/icons/base/icon-16-cross_switch.png");
+}
+
+#form_content .input_button.state_archive, .input_button.state_archive
+{
+	background-image: url("../media/images/icons/base/icon-16-archive_switch.png");
+}
+
+#form_content .input_button.state_delete, .input_button.state_delete
+{
+	background-image: url("../media/images/icons/base/icon-16-trash_delete.png");
+}
+
+#form_content .input_button.state_trash, .input_button.state_trash
+{
+	background-image: url("../media/images/icons/base/icon-16-trash_switch.png");
+}
+
+#form_content .content_category_blog
+{
+	background-image: url("../media/images/icons/components/content/category/blog/icon-16-category-blog.png");
+}
+
 
 .icon-32-publish
 {
+	/*
 	background-image: url("../media/images/icons/base/icon-16-tick.png") !important;
 	background-image: url("../media/images/icons/base/icon-32-24-tick.png") !important;
 	background-image: url("../media/images/icons/base/icon-32-switch_tick.png") !important;
+	*/
 	background-image: url("../media/images/icons/base/icon-32-tick_switch.png") !important;
 }
 
 .icon-32-unpublish
 {
 	/*background-image: url("../media/images/icons/base/icon-16-cross.png") !important;*/
+	/*
 	background-image: url("../media/images/icons/base/icon-32-24-cross.png") !important;
 	background-image: url("../media/images/icons/base/icon-32-cross.png") !important;
 	background-image: url("../media/images/icons/base/icon-32-switch_cross.png") !important;
+	*/
 	background-image: url("../media/images/icons/base/icon-32-cross_switch.png") !important;
 }
 
@@ -53,6 +148,16 @@
 .icon-32-delete
 {
 	background-image: url("../media/images/icons/base/icon-32-trash_delete.png") !important;
+}
+
+.icon-32-pi 
+{
+/*	background-repeat: no-repeat;
+	margin-left: 10px;
+	padding-left: 42px;
+*/
+	background-image: url("../media/images/icons/icon-32-pi.png");
+/*	min-height: 32px;*/
 }
 /*
 ?????

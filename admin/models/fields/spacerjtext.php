@@ -1,15 +1,10 @@
 <?php
 /**
-* @version		1.6.2.2$Id: spacer.php 14401 2010-01-26 14:10:00Z louis $
-* @package		Joomla.Framework
-* @subpackage	Parameter
-* @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
+* @version		2.1.0
+* @package		PagesAndItems
+* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
 */
 
 // Check to ensure this file is within the rest of the framework
@@ -56,11 +51,11 @@ class JFormFieldSpacerjtext extends JFormField //JElementSpacerjtext extends JEl
 			$value = implode(' ',$values);
 			$html[] = '<h4>'.$value.'</h4>';
 		}
-		else 
+		else
 		{
 			$html[] = '<hr />';
 		}
-		
+
 		//$html[] = '</fieldset>';
 
 		return implode($html);
@@ -87,11 +82,11 @@ class JFormFieldSpacerjtext extends JFormField //JElementSpacerjtext extends JEl
 			$value = implode(' ',$values);
 			//$html[] = '<h4>'.$value.'</h4>';
 		}
-		else 
+		else
 		{
 			$html[] = '<hr />';
 		}
-		
+
 		//$html[] = '</fieldset>';
 
 		return implode($html);

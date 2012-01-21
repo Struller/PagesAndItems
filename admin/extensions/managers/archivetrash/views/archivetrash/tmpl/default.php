@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		1.6.0
-* @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -11,34 +11,33 @@
 defined('_JEXEC') or die('Restricted access');?>
 <?php
 $table = $this->tables[$this->table_id];
-//dump('X');
 ?>
 <script language="JavaScript" type="text/javascript">
 
 <?php
 
 
-if($this->model->joomlaVersion < '1.6')
+if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 {
 ?>
-function submitbutton(pressbutton) 
+function submitbutton(pressbutton)
 {
 	//alert(pressbutton);
-	if (pressbutton == 'delete') 
+	if (pressbutton == 'delete')
 	{
-		document.getElementById('extension_task').value = 'delete';
+		document.getElementById('extensionTask').value = 'delete';
 		document.adminForm.submit();
 		//submitform();
 		return;
 	}
-	if (pressbutton == 'restore') 
+	if (pressbutton == 'restore')
 	{
-		document.getElementById('extension_task').value = 'restore';
+		document.getElementById('extensionTask').value = 'restore';
 		document.adminForm.submit();
 		//submitform();
 		return;
 	}
-	if (pressbutton == 'managers.cancel') 
+	if (pressbutton == 'managers.cancel')
 	{
 		document.getElementById('task').value = pressbutton;
 		document.adminForm.submit();
@@ -51,43 +50,43 @@ return;
 }
 else
 {
-//TODO 
+//TODO
 /*
 if (pressbutton == 'page.page_delete')
 						{
-							
-							are_you_sure = '<?php 
-							$confirm_delete = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE2')).'?'.'\n\n'; 
-							$confirm_delete .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE1')).':\n'; 
-							$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n'; 
+
+							are_you_sure = '<?php
+							$confirm_delete = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE2')).'?'.'\n\n';
+							$confirm_delete .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE1')).':\n';
+							$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n';
 							if($this->helper->config['page_delete_cat']){
-								$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n'; 
+								$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n';
 							}
 							if($this->helper->config['page_delete_items']){
-								$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n'; 
+								$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n';
 							}
-							echo $confirm_delete;						
+							echo $confirm_delete;
 							?>';
 							if(confirm(are_you_sure)){
-								
+
 								document.getElementById('task').value = pressbutton;
 								document.adminForm.submit();
 							}
 						}
 						if (pressbutton == 'page.page_trash'){
-							are_you_sure = '<?php 
-							$confirm_trash = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH2')).'?'.'\n\n'; 
-							$confirm_trash .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH3')).':\n'; 
-							$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n'; 
+							are_you_sure = '<?php
+							$confirm_trash = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH2')).'?'.'\n\n';
+							$confirm_trash .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH3')).':\n';
+							$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n';
 							if($this->helper->config['page_trash_cat']){
-								$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n'; 
+								$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n';
 							}
 							if($this->helper->config['page_trash_items']){
-								$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n'; 
+								$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n';
 							}
-							echo $confirm_trash;						
+							echo $confirm_trash;
 							?>';
-							if(confirm(are_you_sure)){	
+							if(confirm(are_you_sure)){
 								document.getElementById('task').value = pressbutton;
 								document.adminForm.submit();
 							}
@@ -101,27 +100,27 @@ Joomla.submitbutton = function(pressbutton)
 
 
 
-	
-	if (pressbutton == 'trash') 
+
+	if (pressbutton == 'trash')
 	{
 		<?php
 		if($table->tableName == 'menu')
 		{
 		?>
-			are_you_sure = '<?php 
-			$confirm_trash = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH2')).'?'.'\n\n'; 
-			$confirm_trash .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH3')).':\n'; 
-			$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n'; 
+			are_you_sure = '<?php
+			$confirm_trash = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH2')).'?'.'\n\n';
+			$confirm_trash .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH3')).':\n';
+			$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n';
 			if($this->config['page_trash_cat']){
-				$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n'; 
+				$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n';
 			}
 			if($this->config['page_trash_items']){
-				$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n'; 
+				$confirm_trash .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n';
 			}
 			echo $confirm_trash;
 			?>';
 			if(confirm(are_you_sure)){
-				document.getElementById('extension_task').value = 'trash';
+				document.getElementById('extensionTask').value = 'trash';
 				document.adminForm.submit();
 			}
 		<?php
@@ -130,8 +129,8 @@ Joomla.submitbutton = function(pressbutton)
 		{
 		?>
 			are_you_sure = '<?php echo addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_ITEMS_TRASH')).'.'; ?>';
-			if(confirm(are_you_sure)){	
-				document.getElementById('extension_task').value = 'trash';
+			if(confirm(are_you_sure)){
+				document.getElementById('extensionTask').value = 'trash';
 				document.adminForm.submit();
 			}
 		<?php
@@ -139,33 +138,33 @@ Joomla.submitbutton = function(pressbutton)
 		else
 		{
 		?>
-		document.getElementById('extension_task').value = 'trash';
+		document.getElementById('extensionTask').value = 'trash';
 		document.adminForm.submit();
 		<?php
 		}
 		?>
 		return;
 	}
-	if (pressbutton == 'delete') 
+	if (pressbutton == 'delete')
 	{
 		<?php
 		if($table->tableName == 'menu')
 		{
 		?>
-			are_you_sure = '<?php 
-			$confirm_delete = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE2')).'?'.'\n\n'; 
-			$confirm_delete .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE1')).':\n'; 
-			$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n'; 
+			are_you_sure = '<?php
+			$confirm_delete = addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE2')).'?'.'\n\n';
+			$confirm_delete .= addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_DELETE1')).':\n';
+			$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH4')).'\n';
 			if($this->config['page_delete_cat']){
-				$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n'; 
+				$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH5')).'\n';
 			}
 			if($this->config['page_delete_items']){
-				$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n'; 
+				$confirm_delete .= '- '.addslashes(JText::_('COM_PAGESANDITEMS_IF_PAGE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_PAGE_TRASH6')).'\n';
 			}
 				echo $confirm_delete;
 			?>';
 			if(confirm(are_you_sure)){
-				document.getElementById('extension_task').value = 'delete';
+				document.getElementById('extensionTask').value = 'delete';
 				document.adminForm.submit();
 			}
 		<?php
@@ -175,7 +174,7 @@ Joomla.submitbutton = function(pressbutton)
 		?>
 			are_you_sure = '<?php echo addslashes(JText::_('COM_PAGESANDITEMS_CONFIRM_ITEMS_DELETE')).'.'; ?>';
 			if(confirm(are_you_sure)){
-				document.getElementById('extension_task').value = 'delete';
+				document.getElementById('extensionTask').value = 'delete';
 				document.adminForm.submit();
 			}
 		<?php
@@ -183,38 +182,38 @@ Joomla.submitbutton = function(pressbutton)
 		else
 		{
 		?>
-			document.getElementById('extension_task').value = 'delete';
+			document.getElementById('extensionTask').value = 'delete';
 			document.adminForm.submit();
 		<?php
 		}
 		?>
 		return;
 	}
-	if (pressbutton == 'restore') 
+	if (pressbutton == 'restore')
 	{
-		document.getElementById('extension_task').value = 'restore';
+		document.getElementById('extensionTask').value = 'restore';
 		document.adminForm.submit();
 		return;
 	}
-	if (pressbutton == 'archive') 
+	if (pressbutton == 'archive')
 	{
-		document.getElementById('extension_task').value = 'archive';
+		document.getElementById('extensionTask').value = 'archive';
 		document.adminForm.submit();
 		return;
 	}
-	if (pressbutton == 'publish') 
+	if (pressbutton == 'publish')
 	{
-		document.getElementById('extension_task').value = 'publish';
+		document.getElementById('extensionTask').value = 'publish';
 		document.adminForm.submit();
 		return;
 	}
-	if (pressbutton == 'unpublish') 
+	if (pressbutton == 'unpublish')
 	{
-		document.getElementById('extension_task').value = 'unpublish';
+		document.getElementById('extensionTask').value = 'unpublish';
 		document.adminForm.submit();
 		return;
 	}
-	if (pressbutton == 'managers.cancel') 
+	if (pressbutton == 'managers.cancel')
 	{
 		Joomla.submitform( pressbutton, document.getElementById('adminForm' ));
 		return;
@@ -227,9 +226,9 @@ Joomla.submitbutton = function(pressbutton)
 ?>
 
 <!-- if we change the state over the state button in the tree we need to set the cid[] but we must set all other to 0 -->
-function setCid(id) 
+function setCid(id)
 {
-	if (id) 
+	if (id)
 	{
 		//alert(id);
 		var form = document.id('adminForm');
@@ -239,14 +238,14 @@ function setCid(id)
 			el.removeProperty('checked');
 			el.checked = false;
 
-		}); 
-		
+		});
+
 		form.getElements('span[class*=mif-tree-node-checked]').each(function(el) {
 			el.removeClass('mif-tree-node-checked');
 			el.addClass('mif-tree-node-unchecked');
 		});
-		
-		
+
+
 		var input = new Element('input', {
 			'type': 'hidden',
 			'name': 'cid[]',
@@ -258,7 +257,7 @@ function setCid(id)
 }
 </script>
 
-
+<div id="form_content">
 <form action="index.php" method="post" name="adminForm" id="adminForm">
 
 	<fieldset id="filter-bar">
@@ -271,7 +270,7 @@ function setCid(id)
 				}
 			?>
 		</div>
-		
+
 		<div class="filter-select fltrt">
 			<?php
 			//echo JText::_('JSTATUS').' ';
@@ -287,13 +286,13 @@ function setCid(id)
 			?>
 		</div>
 	</fieldset>
-				
-				
+
+
 <?php
 /*
 				<table class="adminform">
 					<tbody>
-			
+
 						<tr>
 							<th>
 							<div class="paddingList">
@@ -317,7 +316,7 @@ function setCid(id)
 							</th>
 						</tr>
 						<?php
-						
+
 						?>
 					</tbody>
 				</table>
@@ -325,7 +324,7 @@ function setCid(id)
 ?>
 					<!-- 	<tr>
 							<td> -->
-	<?php 
+	<?php
 	if($table->tableName == 'menu')
 	{
 		//here we set the tree(s) all content over javascript
@@ -337,9 +336,9 @@ function setCid(id)
 
 		if(count($this->rows))
 		{
-	
+
 			echo '<table class="adminlist">';
-			
+
 			echo '<thead>';
 				echo '<tr>';
 					echo '<th width="20">';
@@ -377,10 +376,10 @@ function setCid(id)
 				$k = 0;
 				$i = 0;
 				$k = 0;
-				for ($i=0, $n=count( $this->rows ); $i < $n; $i++) 
+				for ($i=0, $n=count( $this->rows ); $i < $n; $i++)
 				{
 					$row 	= $this->rows[$i];
-				
+
 				//foreach($this->rows as $row)
 				//{
 					//echo '<tr>';
@@ -397,8 +396,8 @@ function setCid(id)
 						<?php echo $this->pagination->getRowOffset( $i ); ?>
 					</td>
 					<?php
-					
-					
+
+
 					echo '<td>';
 						$id = $table->referenceId;
 						//echo '<input type="checkbox" id="cb'.($i-1).'" name="cid[]" value="'.$row->$id.'" onclick="isChecked(this.checked);" />';
@@ -416,7 +415,7 @@ function setCid(id)
 						$stateName = $table->state->name;
 					}
 					$state = $row->$stateName;
-					
+
 					switch($state)
 					{
 						case '1':
@@ -432,14 +431,14 @@ function setCid(id)
 							$title = 'title="'.JText::_('JLIB_HTML_PUBLISH_ITEM').'"';
 							$onclick = 'onclick="setCid(\''.$row->$id.'\');Joomla.submitbutton(\'restore\');"';
 						break;
-					
+
 						case '2':
 							//$state = 'archive';
 							$state = '<span class="state archive"></span>';
 							$title = 'title="'.JText::_('JLIB_HTML_PUBLISH_ITEM').'"';
 							$onclick = 'onclick="setCid(\''.$row->$id.'\');Joomla.submitbutton(\'restore\');"';
 						break;
-		
+
 						case '-1':
 							//$state = 'archive';
 							$state = '<span class="state archive"></span>';
@@ -474,21 +473,21 @@ function setCid(id)
 		/*
 		in the model we have load all extensions and here we trigger on all extensions
 		but only one can output here
-		so the extension must check 
-		$table->extension 
+		so the extension must check
+		$table->extension
 		$table->extensionType
 		$table->extensionFolder
 		or we detach all extensions and load the single here
-		*/		
-		
+		*/
+		$db = JFactory::getDBO();
 		$query = "SELECT *"
 			. " FROM #__pi_extensions"
 			. " WHERE type <> 'language' "
 			. " GROUP BY type"
 			. " ORDER BY type"
 			;
-		$this->db->setQuery( $query );
-		$types = $this->db->loadObjectList();
+		$db->setQuery( $query );
+		$types = $db->loadObjectList();
 		$dispatcher = &JDispatcher::getInstance();
 		foreach($types as $type)
 		{
@@ -502,8 +501,20 @@ function setCid(id)
 				$table->extensionFolder = '';
 			}
 			require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-			$typeName::importExtension($table->extensionFolder, $table->extension,true,null,true);
+			//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+			//$typeName::importExtension($table->extensionFolder, $table->extension,true,null,true);
+			switch(strtolower($table->extensionType))
+			{
+				case 'manager':
+					ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+				break;
+				
+				case 'itemtype':
+					ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+				break;
+			}
+			
+			
 			$dispatcher->trigger('onArchiveTrashOutput', array ( &$output,$table,$this->lists));
 			echo $output;
 		}
@@ -517,20 +528,20 @@ function setCid(id)
 	<input type="hidden" id="filter_order_Dir" name="filter_order_Dir" value="asc" >
 	<input type="hidden" name="option" value="com_pagesanditems" />
 	<input type="hidden" id="task" name="task" value="extension.doExecute" />
-	<input type="hidden" id="extension_task" name="extension_task" value="" />
-	<input type="hidden" id="extension" name="extension" value="archivetrash" />
+	<input type="hidden" id="extensionTask" name="extensionTask" value="" />
+	<input type="hidden" id="extensionName" name="extensionName" value="archivetrash" />
 	<input type="hidden" id="extensionType" name="extensionType" value="manager" />
 	<input type="hidden" id="extensionFolder" name="extensionFolder" value="" />
-	
-	
+
+
 	<input type="hidden" id="view" name="view" value="archivetrash" />
 	<input type="hidden" id="table_id" name="table_id" value="<?php echo $this->table_id;?>" />
 	<input type="hidden" id="table_name" name="table_name" value="<?php echo $table->tableName;?>" />
-	
-	
+
+
 	<?php
 	/*
-	<input type="hidden" id="extension_sub_task" name="extension_sub_task" value="display" />
+	<input type="hidden" id="extensionSubTask" name="extensionSubTask" value="display" />
 	<input type="hidden" id="filter_state" name="filter_state" value="<?php echo $this->filter_state;?>" />
 	<input type="hidden" id="table_id" name="table_id" value="<?php echo $this->table;?>" />
 	<input type="hidden" id="table_table" name="table[table]" value="<?php echo $table->tableName;?>" />
@@ -545,10 +556,11 @@ function setCid(id)
 	<input type="hidden" name="filter_client" value="<?php echo $this->client;?>" />
 	*/
 	?>
-	
+
 	<?php echo JHTML::_( 'form.token' ); ?>
-	
+
 </form>
+</div>
 <?php
 	//echo PagesAndItemsHelper::loadIconsCss();
 	require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');

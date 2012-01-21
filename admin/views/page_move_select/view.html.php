@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,7 +13,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.application.component.view');
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'view.html.php');
 /**
- * HTML View class for the 
+ * HTML View class for the
  *
 
  */
@@ -23,21 +23,35 @@ class PagesAndItemsViewPage_move_select extends PagesAndItemsViewDefault
 {
 	function display( $tpl = null )
 	{
-		if ($model = &$this->getModel('Page')) 
+		if(PagesAndItemsHelper::getIsAdmin())
 		{
-			if($model->isAdmin)
-			{
-			
-				$pageTree = $model->getPages();
-				$this->assignRef( 'pageTree',$pageTree);
-
-				$menuItemsTypes = $model->menuItemsTypes;
-				$this->assignRef( 'menuItemsTypes',$menuItemsTypes);
-			
-			}
-			$this->assignRef( 'model',$model);
+			$menuItemsTypes = PagesAndItemsHelper::getMenuItemsTypes();
+			$this->assignRef( 'menuItemsTypes',$menuItemsTypes);
+			//$pageTree = $model->getPages();
+			//$this->assignRef( 'pageTree',$pageTree);
+			$tree = PagesAndItemsHelper::getTree();
+			$this->pageTree = $tree->getTree();
+			//$menuItemsTypes = $model->menuItemsTypes;
 		}
+		/*
+		if ($model = &$this->getModel('Page'))
+		{
+			//if($model->isAdmin)
+			//{
+			//	
+			//	$menuItemsTypes = PagesAndItemsHelper::getMenuItemsTypes();
+			//	$this->assignRef( 'menuItemsTypes',$menuItemsTypes);
+				//$pageTree = $model->getPages();
+				//$this->assignRef( 'pageTree',$pageTree);
+			//	$tree = PagesAndItemsHelper::getTree();
+			//	$this->pageTree = $tree->getTree();
+				//$menuItemsTypes = $model->menuItemsTypes;
+				
 
+			}
+			//$this->assignRef( 'model',$model);
+		}
+		*/
 		//JHTML::script('dtree.js', 'administrator/components/com_pagesanditems/javascript/',false);
 		JHTML::script('dtree.js','administrator/components/com_pagesanditems/javascript/',false);
 		//JHTML::script('overlib_mini.js', 'includes/js/',false);

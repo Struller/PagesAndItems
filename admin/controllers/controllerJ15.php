@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,7 +22,7 @@ class controllerJ15 extends JController
 	{
 		parent::__construct($config);
 	}
-	
+
 	/*
 	here we make the function from Joomla 1.6
 	*/
@@ -37,22 +37,20 @@ class controllerJ15 extends JController
 	function getInstance($prefix, $config = array())
 	{
 		static $instance;
-		if (!empty($instance)) 
+		if (!empty($instance))
 		{
 			return $instance;
 		}
 		// Get the environment configuration.
-		//echo JPATH_COMPONENT_ADMINISTRATOR;
-		$basePath	= array_key_exists('base_path', $config) ? $config['base_path'] : JPATH_COMPONENT_ADMINISTRATOR; //JPATH_COMPONENT;
-		//echo $basePath;
+		$basePath	= array_key_exists('base_path', $config) ? $config['base_path'] : JPATH_COMPONENT_ADMINISTRATOR;
 		$protocol	= JRequest::getWord('protocol');
 		$command	= JRequest::getCmd('task', 'display');
 		// Check for a controller.task command.
-		if (strpos($command, '.') !== false) 
+		if (strpos($command, '.') !== false)
 		{
 			// Explode the controller.task command.
 			list($type, $task) = explode('.', $command);
-				// Define the controller filename and path.
+			// Define the controller filename and path.
 			$file	= controllerJ15::createFileName('controller', array('name' => $type, 'protocol' => $protocol));
 			$path	= $basePath.DS.'controllers'.DS.$file;
 
@@ -63,8 +61,6 @@ class controllerJ15 extends JController
 		{
 			// Base controller.
 			$type	= null;
-			// ?? $type = JRequest::getCmd('type', null);
-			//$type = JRequest::getCmd('controller', null);
 			$task	= $command;
 
 			// Define the controller filename and path.
@@ -74,14 +70,14 @@ class controllerJ15 extends JController
 		// Get the controller class name.
 		$class = ucfirst($prefix).'Controller'.ucfirst($type);
 		// Include the class if not present.
-		if (!class_exists($class)) 
+		if (!class_exists($class))
 		{
 			// If the controller file path exists, include it.
-			if (file_exists($path)) 
+			if (file_exists($path))
 			{
 				require_once $path;
-			} 
-			else 
+			}
+			else
 			{
 				//throw new JException(JText::sprintf('INVALID CONTROLLER', $type), 500, E_ERROR, $type, true);
 				JError::raiseError(500, 'Invalid Controller: '.$type);
@@ -89,11 +85,11 @@ class controllerJ15 extends JController
 		}
 
 		// Instantiate the class.
-		if (class_exists($class)) 
+		if (class_exists($class))
 		{
 			$instance = new $class($config);
-		} 
-		else 
+		}
+		else
 		{
 			//throw new JException(JText::sprintf('INVALID CONTROLLER CLASS', $class), 500, E_ERROR, $class, true);
 			JError::raiseError(500, 'Invalid Controller CLASS: '.$class);
@@ -116,7 +112,7 @@ class controllerJ15 extends JController
 		switch ($type)
 		{
 			case 'controller':
-				if (!empty($parts['protocol'])) 
+				if (!empty($parts['protocol']))
 				{
 					$parts['protocol'] = '.'.$parts['protocol'];
 				}
@@ -125,7 +121,7 @@ class controllerJ15 extends JController
 				break;
 
 			case 'view':
-				if (!empty($parts['type'])) 
+				if (!empty($parts['type']))
 				{
 					$parts['type'] = '.'.$parts['type'];
 				}

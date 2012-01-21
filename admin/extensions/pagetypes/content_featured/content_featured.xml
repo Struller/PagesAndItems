@@ -8,9 +8,7 @@
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		pagetype ContentFeatured (Pages and Items)
-	</description>
+	<description>ContentFeatured (pagetype for the Pages-and-Items framework)</description>
 	<files>
 		<filename pagetype="content_featured">content_featured.php</filename>
 		<filename >index.html</filename>

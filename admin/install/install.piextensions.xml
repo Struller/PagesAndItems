@@ -313,7 +313,40 @@
 		<name>delete</name>
 		<folder>page_actions</folder>
 		<type>html</type>
-	</extension>		
+	</extension>
+
+
+	<!-- 
+		folder category_actions 
+		display in view categorie in  Item(s) on this categorie
+	-->
+	<extension>
+		<name>publish</name>
+		<folder>category_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>unpublish</name>
+		<folder>category_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>archive</name>
+		<folder>category_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>trash</name>
+		<folder>category_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>delete</name>
+		<folder>category_actions</folder>
+		<type>html</type>
+	</extension>
+
+
 	
 	<!-- itemtypes -->
 	<!-- ms: must check if we remove -->

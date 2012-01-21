@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		1.6.0
-* @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -28,7 +28,7 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 		parent::__construct($config);
 		//$this->registerTask( 'select', 'display' );
 	}
-	
+
 	/**
 	 * Display the view
 	 */
@@ -37,7 +37,7 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 		//$modelBase = &$this->getModel('Base','PagesAndItemsModel');
 		$modelName = array();
 		$vName = strtolower(JRequest::getCmd('view', 'piextensions'));
-		
+
 		switch ($vName)
 		{
 			case 'manage':
@@ -73,7 +73,7 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 				$modelName[] = 'piextension';
 				//$modelName[] = 'ExtensionManageExtensionsextension';
 			break;
-			
+
 			case 'install':
 				$vLayout = 'default';
 				jimport( 'joomla.application.component.model' );
@@ -85,12 +85,12 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 		}
 		$document = &JFactory::getDocument();
 		$vType = $document->getType();
-		
+
 		$this->addViewPath(realpath(dirname(__FILE__).'/views'));
-		
+
 		// Get/Create the view
 		$view = &$this->getView( $vName, $vType);
-		
+
 		$view->addTemplatePath(realpath(dirname(__FILE__).'/views'.DS.$vName.DS.'tmpl'));
 		// Set the layout
 		$view->setLayout($vLayout);
@@ -101,7 +101,7 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 			{
 				//if($model[$mn] = &$this->getModel($modelName[$mn],'PagesAndItemsModel'))
 				//if($model[$mn] = &$this->getModel($modelName[$mn],'PagesAndItemsModelExtensionManageExtensions'))
-				
+
 				//if($model[$mn] = &$this->getModel($modelName[$mn],'PagesAndItemsModel'))
 				//if($model[$mn] = &$this->getModel($modelName[$mn],'PagesAndItemsModelExtensionManageExtensions'))
 				//if($model[$mn] = &$this->getModel($modelName[$mn],'PagesAndItemsModel'))
@@ -110,10 +110,9 @@ class PagesAndItemsControllerExtensionManagerExtensions extends PagesAndItemsCon
 					// Push the model into the view (as default)
 					$view->setModel($model[$mn], true);
 				}
-				
+
 			}
 		}
-		//dump($view);
 		parent::display($tpl);
 		//$view->display();
 	}

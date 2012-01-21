@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -17,30 +17,25 @@ defined('_JEXEC') or die('Restricted access');
 <div id="imageFormDiv" name="imageFormDiv" >
 	<form action="index.php" id="xtdForm" name="xtdForm" method="post" enctype="multipart/form-data">
 	<fieldset id="fieldset_top">
+		<?php echo PagesAndItemsHelper::getHeaderImageTitle(PagesAndItemsHelper::getDirIcons().'icon-32-pi.png',JText::_( 'COM_PAGESANDITEMS').' :: <small><small> '.JText::_('COM_PAGESANDITEMS_SELECT_MENU_ITEM_TYPE').'</small></small>'); ?>
+		<?php
+		/*
 		<div >
-			<?php
-			/*
-			<img src="<?php echo JURI::root().$this->model->dirComponentAdmin; ?>/media/images/icons/icon-32-pi.png" alt="..." class="pi_icon" />
-			<?php echo
-				JText::_( 'Pages and Items').' <small><small> MenuItemTypeSelect
-			*/
-			?>
 			<h1 class="pi_h1" >
 			<img src="<?php echo PagesAndItemsHelper::getDirIcons(); ?>icon-32-pi.png" alt="..." class="pi_icon" />
 			<?php echo
 				JText::_( 'COM_PAGESANDITEMS').' :: <small><small> '.JText::_('COM_PAGESANDITEMS_SELECT_MENU_ITEM_TYPE').'</small></small>';
 			?>
 			</h1>
-			<?php 
-				//echo
-				//$this->title;
-			?>
+
 		</div>
+		*/
+		?>
 	</fieldset>
 	<fieldset id="fieldset_content">
 		<div id="contentcontainer" name="contentcontainer" class="contentcontainer" >
-			
-			<?php 
+
+			<?php
 			/*
 			<div id="tree_container" class="tree_container" style="float: left;height: 100%;overflow: auto;width: 100%;">
 			</div>
@@ -48,29 +43,29 @@ defined('_JEXEC') or die('Restricted access');
 			//echo '<div>';
 				echo $this->menutypes;
 			//echo '</div>';
-			
+
 				//echo $this->getMenuItemTypes();
 			?>
-			
+
 		</div>
 	</fieldset>
-	
+
 	<fieldset class="bottom" id="fieldset_bottom" style="float:none" >
-	
+
 			<div id="li_tag" class="div_left_bottom_path" >
 
 			</div>
-			
+
 			<div class="clr_right">
-			</div>			
+			</div>
 			<?php
 			$button = PagesAndItemsHelper::getButtonMaker('close');
 			$button->onclick = 'window.parent.document.getElementById(\'sbox-window\').close();';
 			$button->style = 'float:right;';
 			$htmlButton = $button->makeButton();
 			//echo $htmlButton;
-			
-			
+
+
 			$button = PagesAndItemsHelper::getButtonMaker('cancel');
 			$button->onclick = 'window.parent.document.getElementById(\'sbox-window\').close();';
 			$button->style = 'float:right;';
@@ -82,10 +77,10 @@ defined('_JEXEC') or die('Restricted access');
 			<div class="div_button" style="float:right">
 					<button class="button_action" name="close-button" id="button_close" type="button" onclick="window.parent.document.getElementById('sbox-window').close();"><?php echo JText::_('Cancel') ?>
 			</button>
-			
+
 								<button class="button_action" name="close-button" id="button_close" type="button" onclick="
-					<?php if($this->model->joomlaVersion >= '1.6'){ echo 'window.parent.SqueezeBox.close();';}else{echo'window.parent.document.getElementById(\'sbox-window\').close();';} ?>"><?php echo JText::_('Cancel') ?>
-			
+					<?php if(PagesAndItemsHelper::getIsJoomlaVersion('>=','1.6')){ echo 'window.parent.SqueezeBox.close();';}else{echo'window.parent.document.getElementById(\'sbox-window\').close();';} ?>"><?php echo JText::_('Cancel') ?>
+
 			<button name="ok-button" class="button_action" id="button_ok" type="button" onclick="onok();//alert('test');//XtdManager.onok();"><?php echo JText::_('Ok') ?>
 			*/
 			?>
@@ -100,14 +95,16 @@ defined('_JEXEC') or die('Restricted access');
 	<input type="hidden" name="controller" value="indicators" />
 	<input type="hidden" name="tmpl" value="component" />
 */
-	
+	/*
 	$path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).'/../../../../../../../')));
 	//add css over JHTML::stylesheet ?
-	//JHTML::stylesheet('pagesanditems.css',$path.'/css/');
+	//JHTML::stylesheet('pagesanditems2.css',$path.'/css/');
 	//here we add the stylesheet in the document not in the head
 	//
-	echo "<link href=\"".JURI::root(true).'/'.$path."/css/pagesanditems.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
-
+	echo "<link href=\"".JURI::root(true).'/'.$path."/css/pagesanditems2.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+	*/
+	$path = PagesAndItemsHelper::getDirCSS(); //here no juri JHTML make the juri
+	JHtml::stylesheet($path.'/pagesanditems2.css');
 ?>
 	</form>
 

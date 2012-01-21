@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -28,10 +28,10 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 		parent::__construct($config);
 		//$this->registerTask( 'select', 'display' );
 	}
-	
+
 	function addToArchive()
 	{
-		
+
 		$modelBase = &$this->getModel('Base','PagesAndItemsModel');
 		$app = JFactory::getApplication();
 		$itemCid = JRequest::getVar('itemCid',array());
@@ -46,18 +46,19 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 			$row->load( (int) $itemCid[$i] );
 			$app->enqueueMessage('TEST if work as task addToArchive Item Title: '.$row->title);//.' ;-)');
 			//$message[] = 'TEST if work as task addToArchive ;-): '.$row->title;
-		
+
 		}
 		$sub_task = JRequest::getVar('sub_task', null, 'edit', 'cmd');
 		$menutype = JRequest::getVar('menutype', '');
 		$pageType = JRequest::getVar('pageType', '');
 		$pageId = JRequest::getVar('pageId', '');
+		//$url = PagesanditemsHelper::toogleViewPageCategories('index.php?option=com_pagesanditems&view=page&sub_task='.$sub_task.'&pageId='.$pageId.'&menutype='.$menutype);
 		$url = 'index.php?option=com_pagesanditems&view=page&sub_task='.$sub_task.'&pageId='.$pageId.'&menutype='.$menutype;
-		
+
 		$message = '';; //(count($message) ? ''.implode(', ', $message) : '');
 		$modelBase->redirect_to_url($url, $message);
 	}
-	
+
 	/**
 	 * Display the view
 	 */
@@ -72,7 +73,7 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'menutypes.php');
 				$modelName[] = 'Page';
-				
+
 				if($modelBase->joomlaVersion < '1.6')
 				{
 					$helperName[] = 'helper';
@@ -82,18 +83,18 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 					$helperName[] = 'menus';
 				}
 				$helperPath[] = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers';
-				
+
 				$this->addModelPath( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models' );
 			break;
 		}
 		$document = &JFactory::getDocument();
 		$vType = $document->getType();
-		
+
 		$this->addViewPath(dirname(__FILE__).'/views');
-		
+
 		// Get/Create the view
 		$view = &$this->getView( $vName, $vType);
-		
+
 		// Get/Create the model
 		if ($model = &$this->getModel($mName))
 		{
@@ -106,8 +107,8 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 		$view->setLayout($vLayout);
 		// Display the view
 		$view->assignRef('controller', $this);
-		
-		
+
+
 		if(is_array($modelName))
 		{
 			for($n = 0; $n < count($modelName); $n++)
@@ -119,13 +120,13 @@ class PagesAndItemsControllerExtensionHtmlPage_itemsArchive extends PagesAndItem
 				}
 			}
 		}
-		
+
 		if ($model = &$this->getModel('PagesAndItems','PagesAndItemsModel'))
 		{
 			// Push the model into the view (as default)
 			$view->setModel($model, true);
 		}
-		
+
 		parent::display($tpl);
 		//$view->display();
 	}

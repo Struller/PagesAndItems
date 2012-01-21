@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		1.6.0
-* @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -24,8 +24,8 @@ class PagesAndItemsExtensionManagerExtensions extends PagesAndItemsExtensionMana
 {
 
 	/**
-	@param $name string 
-	@param $type string 
+	@param $name string
+	@param $type string
 	*/
 	function XonToolbarButton($name,$type)
 	{
@@ -33,15 +33,15 @@ class PagesAndItemsExtensionManagerExtensions extends PagesAndItemsExtensionMana
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	function onGetManager(&$managers)
 	{
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=extensions'; //the name
+		$link .= '&extensionName=extensions'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
 		$link .= '&extensionTask=display';
@@ -55,14 +55,14 @@ class PagesAndItemsExtensionManagerExtensions extends PagesAndItemsExtensionMana
 		$manager->image = $path.'/media/images/icon-48-extension_install.png';
 		$managers[] = $manager;
 		$manager = null;
-		
+
 		/*
-		
+
 		*/
 
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=extensions'; //the name
+		$link .= '&extensionName=extensions'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
 		$link .= '&extensionTask=display';
@@ -77,10 +77,10 @@ class PagesAndItemsExtensionManagerExtensions extends PagesAndItemsExtensionMana
 		$managers[] = $manager;
 		/*
 		$manager = null;
-		
+
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=extensions'; //the name
+		$link .= '&extensionName=extensions'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
 		$link .= '&extensionTask=display';
@@ -95,18 +95,18 @@ class PagesAndItemsExtensionManagerExtensions extends PagesAndItemsExtensionMana
 		*/
 		return true;
 	}
-	
-	function XonDisplayContent(&$content,$extension,$sub_task,$model)
+
+	function XonDisplayContent(&$content,$extension,$sub_task) //,$model)
 	{
 		//here we set also Toolbar?
-		
+
 		$content->text = 'extensions';
 		return true;
 	}
-	
+
 	function XonGetModelName(&$models)
 	{
-		
+
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
 		JModel::addIncludePath($path);

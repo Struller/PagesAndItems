@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,6 +13,8 @@ if(!defined('_JEXEC')){
 }
 
 ?>
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <link href="components/com_pagesanditems/css/popup.css" rel="stylesheet" type="text/css" />
 <?php
 
@@ -22,7 +24,7 @@ $pageId = JRequest::getVar('itemsPageId');
 $selectedPageId = JRequest::getVar('selectedPageId');
 
 //get link from menuitems
-$menuitems = $this->model->getMenutypeMenuitems();
+$menuitems = PagesAndItemsHelper::getMenutypeMenuitems();
 foreach($menuitems as $row){
 	if($row->id==$pageId){
 		$link = $row->link;
@@ -51,7 +53,7 @@ function selectUrl(selectUrl, menuid){
 <?php
 }else{
 //pagebrowser used in pop-up link-to-page-page
-$link = urldecode($_GET['url']); 
+$link = urldecode($_GET['url']);
 ?>
 <script language="JavaScript" type="text/javascript">
 var url = '';
@@ -69,34 +71,41 @@ function parseUrl(){
 }//end if = page-level-link
 ?>
 
-<?php 
-echo "<link href=\"components/com_pagesanditems/css/pagesanditems.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+<?php
+// TODO CHECK 
+echo "<link href=\"components/com_pagesanditems/css/pagesanditems2.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+// TODO CHECK 
 echo "<link href=\"components/com_pagesanditems/css/dtree.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+// TODO CHECK 
 echo "<script src=\"components/com_pagesanditems/javascript/dtree.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
-echo "<script src=\"../includes/js/overlib_mini.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
+//echo "<script src=\"../includes/js/overlib_mini.js\" language=\"JavaScript\" type=\"text/javascript\"></script>\n";
 //give headers in Joomla 1.5 a bit more spunk
 //$this->controller->spunk_up_headers_1_5(); //is in css
-		
+
 if(!JRequest::getVar('itemsPageId')){
 //pagebrowser used in link-pop-up on item level
 ?>
-		<table class="adminform">
-						<tr>
-							<th><?php echo JText::_('COM_PAGESANDITEMS_SELECTPAGE'); ?></th>
-						</tr>
-						<tr>
-						
-    <td ><div align="right">
-	 <input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_OK'); ?>" onclick="parseUrl();" />&nbsp;&nbsp;<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_CANCEL'); ?>" onclick="window.close();" /></div>
-	</td></tr>
-	<tr>
-	<td> 
-	
+		<table class="piadminform xadminform">
+			<thead class="piheader">
+				<tr>
+					<th><!-- class="piheader">--><?php echo JText::_('COM_PAGESANDITEMS_SELECTPAGE'); ?>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td ><div align="right">
+						<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_OK'); ?>" onclick="parseUrl();" />&nbsp;&nbsp;<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_CANCEL'); ?>" onclick="window.close();" /></div>
+					</td>
+				</tr>
+			<tr>
+				<td>
+
 <?php
 }//end if link-pop-up on item-level
 //see how many loops we need
 //$loops = count($this->controller->menutypes);
-$menutypes = $this->model->getMenutypes();
+$menutypes = PagesAndItemsHelper::getMenutypes();
 $loops = count($menutypes);
 
 //loop menutypes
@@ -110,35 +119,17 @@ for($m = 0; $m < $loops; $m++){
 	echo "var d".$m."_array = new Array('d".$m."_array');\n";
 	echo "d$m = new dTree('d$m');\n";
 	echo PagesAndItemsHelper::getdTreeIcons("d".$m);
-	/*
-			$script = "d$m.icon = {";
-			$script .= "root		: '".PagesAndItemsHelper::getDirIcons()."icon-16-menu.png',
-			folder	: '".PagesAndItemsHelper::getDirIcons()."folder.gif',
-			folderOpen	: '".PagesAndItemsHelper::getDirIcons()."folderopen.gif',
-			node		: '".PagesAndItemsHelper::getDirIcons()."page.gif',
-			empty		: '".PagesAndItemsHelper::getDirIcons()."empty.gif',
-			line		: '".PagesAndItemsHelper::getDirIcons()."line.gif',
-			join		: '".PagesAndItemsHelper::getDirIcons()."join.gif',
-			joinBottom	: '".PagesAndItemsHelper::getDirIcons()."joinbottom.gif',
-			plus		: '".PagesAndItemsHelper::getDirIcons()."plus.gif',
-			plusBottom	: '".PagesAndItemsHelper::getDirIcons()."plusbottom.gif',
-			minus		: '".PagesAndItemsHelper::getDirIcons()."minus.gif',
-			minusBottom	: '".PagesAndItemsHelper::getDirIcons()."minusbottom.gif',
-			nlPlus	: '".PagesAndItemsHelper::getDirIcons()."nolines_plus.gif',
-			nlMinus	: '".PagesAndItemsHelper::getDirIcons()."nolines_minus.gif'
-			};\n";
-	echo $script;
-	*/
+
 			/*
 				COMMENT
-				in Joomla 1.6 
+				in Joomla 1.6
 				we have one parent_id=0 in table #__menus
 				but more parent_id=1 in table #__menus
-				
+
 				parent_id=1 in table #__menus = menutype:'', title:Menu_Item_Root, alias:root
-				
+
 			*/
-			if ($this->joomlaVersion < '1.6')
+			if (PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 				echo "d$m.add(0,-1,'";
 			}
@@ -146,18 +137,18 @@ for($m = 0; $m < $loops; $m++){
 			{
 				echo "d$m.add(1,-1,'";
 			}
-	
-	
-	//echo $this->controller->get_menutype_title($this->controller->menutypes[$m]);
-	echo $this->model->get_menutype_title($menutypes[$m]);
+
+
+	echo PagesAndItemsHelper::getMenutypeTitle($menutypes[$m]);
 	echo "','','','','','',true);\n";
 	//make javascript-array from main-menu-items
 	//foreach($this->controller->menuitems as $row){
-	$menuitems = $this->model->getMenuitems();
+	$menuitems = PagesAndItemsHelper::getMenuitems();
 	foreach($menuitems as $row){
 		//if($row->menutype==$this->controller->menutypes[$m]){
 		if($row->menutype==$menutypes[$m]){
 			echo "d$m.add(".$row->id.",".$row->parent.",'".(addslashes($row->name))."','";
+			//?? Itemid not itemId ?
 			if($row->id!=$pageId){
 				if(strpos($row->link, "&Itemid=")){
 					$stringItemId = "";
@@ -175,9 +166,9 @@ for($m = 0; $m < $loops; $m++){
 			echo "d".$m."_array.push($row->id);\n";
 		}
 	}
-   
+
 	echo "document.write(d$m);\n";
-	
+
 	//if a page was already selected, make tree-menu-button selected
 	if(JRequest::getVar('itemsPageId', '' )){
 		//pagebrowser used in link-pop-up on item level
@@ -191,12 +182,13 @@ for($m = 0; $m < $loops; $m++){
 			}
 		}
 	}else{
-	
+
 		echo "if(window.opener){\n";
 		echo "option = window.opener.document.getElementById('option').value;\n";
 		echo "if(option=='com_pagesanditems'){\n";
 		//if($option=='com_pagesanditems'){
 			echo "url = window.opener.document.getElementById('link').value;\n";
+			//?? Itemid not itemId ?
 			echo "posItemId = url.indexOf('&Itemid=');\n";
 			echo "if(posItemId!=-1){\n";
 				//get the id of the link-page to select
@@ -208,25 +200,30 @@ for($m = 0; $m < $loops; $m++){
 						echo "d".$m.".openTo(selectedPageId, true);\n";
 						//echo "alert('in=".$m." page='+selectedPageId+' array='+d".$m."_array);\n";
 						echo "break;\n";
-					echo "}\n"; 
+					echo "}\n";
 				echo "}\n";
 			echo "}\n";
 		//}
 		echo "}\n";
 		echo "}\n";
-        
+
 	}
 	//close javascript
 	echo "//-->\n";
 	echo "</script>\n";
-	
+
 	echo '</div>';
-	
+
 }//end loop menutypes
 if(!JRequest::getVar('itemsPageId', '' )){
 	//pagebrowser used in link-pop-up on item level
 	?>
-	</td></tr></table> 
+				</td>
+			</tr>
+		</tbody>
+	</table>
 	<?php
 }
 ?>
+<!-- end id="form_content" need for css-->
+</div>

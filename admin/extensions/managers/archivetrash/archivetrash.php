@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		1.6.0
-* @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -24,8 +24,8 @@ class PagesAndItemsExtensionManagerArchiveTrash extends PagesAndItemsExtensionMa
 {
 
 	/**
-	@param $name string 
-	@param $type string 
+	@param $name string
+	@param $type string
 	*/
 	function onToolbarButton($name,$type)
 	{
@@ -36,18 +36,18 @@ class PagesAndItemsExtensionManagerArchiveTrash extends PagesAndItemsExtensionMa
 
 		return true;
 	}
-	
+
 	function onGetManager(&$managers)
 	{
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_sub_task=display';
+		$link .= '&extensionSubTask=display';
 		$link .= '&view=archivetrash'; //
 
-		
+
 		$manager->link = $link;
 		$manager->tooltip = JText::_('PI_EXTENSION_MANAGER_ARCHIVETRASH_NAME');
 		$manager->text = JText::_('PI_EXTENSION_MANAGER_ARCHIVETRASH_NAME');
@@ -56,32 +56,33 @@ class PagesAndItemsExtensionManagerArchiveTrash extends PagesAndItemsExtensionMa
 		//$path = str_replace(DS,'/',str_replace(JPATH_BASE.DS,'',realpath(dirname(__FILE__).DS)));
 		$path = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS)));
 		$manager->image = $path.'/media/images/icon-48-archivetrash.png';
-		//$lang = 
+		//$lang =
 		$managers[] = $manager;
 		return true;
 	}
-	
-	function onDisplayContent(&$content,$extension,$sub_task,$model)
+
+	function onDisplayContent(&$content,$extension,$sub_task) //,$model)
 	{
 		//here we set also Toolbar?
-		
+
 		$content->text = 'archivetrash';
 		return true;
 	}
-	
+
+	//????
 	function onGetModelName(&$models)
 	{
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
 		JModel::addIncludePath($path);
-		$models[] = 'managerarchivetrash';
+		$models[] = 'archivetrash';
 		return true;
 	}
 	/*
 	jimport( 'joomla.application.component.model' );
 		JModel::addIncludePath($path);
 	*/
-	
+
 }
 
 ?>

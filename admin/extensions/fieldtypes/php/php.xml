@@ -2,15 +2,13 @@
 <extension version="1.5" type="fieldtype" method="upgrade">
 	<name>Php (Pages and Items fieldtype)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		fieldtype Php (Pages and Items)
-	</description>
+	<description>Php (fieldtype for custom itemtypes in the Pages-and-Items framework)</description>
 	<files>
 		<filename fieldtype="php">php.php</filename>
 		<filename >index.html</filename>
@@ -36,17 +34,21 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" >
+				<field name="showFieldName" type="radio" default="1" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+					<option value="-1">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="render" type="radio" default="on_save" label="COM_PAGESANDITEMS_RENDER_OPTIONS">
-			<option value="on_save">COM_PAGESANDITEMS_RENDER_WHEN_SAVE</option>
-			<option value="on_the_fly">COM_PAGESANDITEMS_RENDER_ON_THE_FLY</option>
+					<option value="on_save">COM_PAGESANDITEMS_RENDER_WHEN_SAVE</option>
+					<option value="on_the_fly">COM_PAGESANDITEMS_RENDER_ON_THE_FLY</option>
 				</field>
 				<field name="display_when_edit" type="radio" default="no" label="COM_PAGESANDITEMS_TEXTAREA_FOR_PHP_CODE">
 			<option value="yes">COM_PAGESANDITEMS_DISPLAY_PHP_WHEN_EDIT</option>
 			<option value="no">COM_PAGESANDITEMS_DISPLAY_NO_PHP_WHEN_EDIT</option>
 				</field>
 				<field name="validation" type="radio" default="0" label="COM_PAGESANDITEMS_VALIDATION">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 	
 				<field name="no_pi_fish_table" type="hidden" default="1">

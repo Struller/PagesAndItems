@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -21,14 +21,21 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 		if(!$field_id)
 		{
 			//new field, set defaults here
+			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0
 			$field_params['values'] = $this->params->get('values'); //'';
 			$field_params['labels'] = $this->params->get('labels'); //'';
 			$field_params['default_value'] = $this->params->get('default_value'); //'';
 			$field_params['number_checkboxes'] = $this->params->get('number_checkboxes'); //'';
-			
+
 		}
+		$html = '';
+
+		//New show field name
+		$html .= $this->makeShowFieldName($field_id,$field_params);
 		//description
-		$html = $this->display_field_description($field_params);
+		$html .= $this->display_field_description($field_params);
+		
+
 		//validation
 		$html .= $this->display_field_validation($field_params);
 		//validation_mesage
@@ -48,12 +55,12 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 		$field_name = '<label class="hasTip" title="'.JText::_('COM_PAGESANDITEMS_LABELS_TIP').'"><span class="editlinktip">'.JText::_('COM_PAGESANDITEMS_LABELS').'</span></label>';
 		$field_content = '<textarea class="width200" name="field_params[labels]" />'.$field_params['labels'].'</textarea>';
 		$html .= $this->display_field($field_name, $field_content);
-					
+
 		return $html;
 	}
-	
+
 	function display_item_edit($field, $field_params, $field_values, $field_value, $new_field, $field_id){
-	
+
 		if($new_field){
 			//new field
 			$field_value = $field_params['default_value'];
@@ -62,18 +69,22 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 		$html = '<div class="field_type_checkbox fieldtype">';
 		$html .= '<div class="pi_form_wrapper">';
 		$html .= '<div class="pi_width20">';
-		$html .= $field->name;
+		
+		$html .= '&nbsp;'; //$field->name.':';
+		
 		if($this->check_if_field_param_is_present($field_params, 'validation')){
 			if($field_params['validation']){
 				$html .= '<span class="star">&nbsp;*</span>';
 			}
 		}
+		
 		$html .= '</div>';
 		$html .= '<div class="pi_width70">';
+		/*
 		if($field_params['description']){
 					$html .= '<div>'.$field_params['description'].'</div>';
 				}
-				
+		*/
 				$labels_array = explode("\n",$field_params['labels']);
 				$values_array = explode("\n",$field_params['values']);
 				for($n = 0; $n < count($values_array); $n++){
@@ -83,17 +94,17 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 						$html .= ' checked="checked"';
 					}
 					$html .= ' /> '.trim($labels_array[$n]).'</label><br />';
-								
+
 				}
 				$html .= '<input type="hidden" value="'.$n.'" id="total_checkboxes_field'.$field_id.'" />';
 				$html .= '<input type="hidden" value="'.$field_params['number_checkboxes'].'" id="min_checkboxes_field'.$field_id.'" />';
 		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '</div>';
-		
+
 		return $html;
 	}
-	
+
 	function render_field_output($field, $intro_or_full, $readmore_type=0, $editor_id=0){
 		$values = explode('-;-',$field->value);
 		/*
@@ -112,7 +123,7 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 			foreach($values as $value){
 				if(!$first){
 					$html .= '<br />';
-					
+
 				}
 				$html .= $value;
 				$first = 0;
@@ -120,21 +131,21 @@ class PagesAndItemsExtensionFieldtypeCheckbox extends PagesAndItemsExtensionFiel
 		}
 		return $html;
 	}
-	
+
 	function field_save($field, $insert_or_update){
-		
+
 		$value_name = 'field_values_'.$field->id;
-		
+
 		$value = '';
-		
+
 		//get vars
 		$checkboxes = JRequest::getVar($value_name, null, 'post', 'array');
-		
+
 		if(is_array($checkboxes)){
 			$value = implode('-;-',$checkboxes);
 			$value = str_replace('"','&quot;',$value);
 		}
-		
+
 		return $value;
 	}
 }

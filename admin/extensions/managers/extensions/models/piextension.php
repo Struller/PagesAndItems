@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -14,14 +14,14 @@ defined('_JEXEC') or die;
 /**
 
  */
- 
- 
+
+
 jimport('joomla.application.component.modeladmin');
 
 
 class PagesAndItemsModelPiextension extends JModelAdmin
 {
-		
+
 			/**
 	 * Abstract method for getting the form from the model.
 	 *
@@ -33,20 +33,20 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		/*
 		public function getForm($data = array(), $loadData = true)
 		{
-			
+
 		}
 		*/
 		/*
 		Fatal error: Class PagesAndItemsModelManageextensionBase contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (JModelForm::getForm) in U:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\administrator\components\com_pagesanditems\models\manageextension.php on line 40
-		
+
 		Fatal error: Class PagesAndItemsModelManageextensionBase contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PagesAndItemsModelManageextensionBase::getForm) in U:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\administrator\components\com_pagesanditems\models\manageextension.php on line 55
-		
+
 		*/
 
 
 
 	/*
-	BEGIN adopt from J1.6 
+	BEGIN adopt from J1.6
 	must TEST
 	*/
 	protected $_cache;
@@ -54,7 +54,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 	function getLanguageItems($item)
 	{
 		/*
-		here we search over 
+		here we search over
 		$tag = $item->element;
 		$pathComponent = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS);
 		// load up the extension details
@@ -70,11 +70,11 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 				if($type && $type !='' && $type =='pilanguage')
 				{
 					//ok here the manifest
-					
+
 					if ( $xml->administration->languages  && count($xml->administration->languages->children()) )
 					{
 						$languages = $xml->administration->languages->children();
-						foreach ($languages as $language) 
+						foreach ($languages as $language)
 						{
 							$path = JPATH_ADMINISTRATOR.DS.'language'.DS.$tag.DS.$language;
 							$languageItem = $this->getLanguageItem($path);
@@ -82,11 +82,11 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 							$languageItems[] = $languageItem;
 						}
 					}
-					
+
 					if ( $xml->languages  && count($xml->languages->children()) )
 					{
 						$languages = $xml->languages->children();
-						foreach ($languages as $language) 
+						foreach ($languages as $language)
 						{
 							$path = JPATH_SITE.DS.'language'.DS.$tag.DS.$language;
 							$languageItem = $this->getLanguageItem($path);
@@ -94,7 +94,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 							$languageItems[] = $languageItem;
 						}
 					}
-					
+
 					break;
 				}
 			}
@@ -117,45 +117,45 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 	function getLanguageItem($path)
 	{
 		$item = null;
-		if (JFile::exists($path)) 
-		{	
+		if (JFile::exists($path))
+		{
 					$stream = new JStream();
 					$stream->open($path);
 					$begin = $stream->read(4);
 					$bom = strtolower(bin2hex($begin));
-					if ($bom == '0000feff') 
+					if ($bom == '0000feff')
 					{
 						$item->bom = 'UTF-32 BE';
 					}
-					else if ($bom == 'feff0000') 
+					else if ($bom == 'feff0000')
 					{
 						$item->bom = 'UTF-32 LE';
 					}
-					else if (substr($bom, 0, 4) == 'feff') 
+					else if (substr($bom, 0, 4) == 'feff')
 					{
 						$item->bom = 'UTF-16 BE';
 					}
-					else if (substr($bom, 0, 4) == 'fffe') 
+					else if (substr($bom, 0, 4) == 'fffe')
 					{
 						$item->bom = 'UTF-16 LE';
 					}
 					$stream->seek(0);
 					$continue = true;
 					$lineNumber = 0;
-					while (!$stream->eof()) 
+					while (!$stream->eof())
 					{
 						$line = $stream->gets();
 						$lineNumber++;
-						if ($line[0] == '#' || $line[0] == ';') 
+						if ($line[0] == '#' || $line[0] == ';')
 						{
-							if (preg_match('/^(#|;).*(\$Id.*\$)/', $line, $matches)) 
+							if (preg_match('/^(#|;).*(\$Id.*\$)/', $line, $matches))
 							{
 								$item->svn = $matches[2];
 							}
-							elseif (preg_match('/(#|;)\s*@?(\pL+):?.*/', $line, $matches)) 
-							
+							elseif (preg_match('/(#|;)\s*@?(\pL+):?.*/', $line, $matches))
+
 							{
-								switch (strtolower($matches[2])) 
+								switch (strtolower($matches[2]))
 								{
 								case 'note':
 									preg_match('/(#|;)\s*@?(\pL+):?\s+(.*)/', $line, $matches2);
@@ -180,7 +180,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 								break;
 								case 'copyright':
 									preg_match('/(#|;)\s*@?(\pL+):?\s+(.*)/', $line, $matches2);
-									if (empty($item->maincopyright)) 
+									if (empty($item->maincopyright))
 									{
 										$item->maincopyright = $matches2[3];
 									}
@@ -204,7 +204,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 								case 'link':
 								break;
 								default:
-									if (empty($item->author)) 
+									if (empty($item->author))
 									{
 										preg_match('/(#|;)\s*(.*)/', $line, $matches2);
 										$item->author = $matches2[2];
@@ -218,11 +218,11 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 							break;
 						}
 					}
-					while (!$stream->eof()) 
+					while (!$stream->eof())
 					{
 						$line = $stream->gets();
 						$lineNumber++;
-						if (!preg_match('/^(|(\[[^\]]*\])|([A-Z][A-Z0-9_\-]*\s*=(\s*(("[^"]*")|(_QQ_)))+))\s*(;.*)?$/', $line)) 
+						if (!preg_match('/^(|(\[[^\]]*\])|([A-Z][A-Z0-9_\-]*\s*=(\s*(("[^"]*")|(_QQ_)))+))\s*(;.*)?$/', $line))
 						{
 							$item->error[] = $lineNumber;
 						}
@@ -243,12 +243,12 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// The folder and element vars are passed when saving the form.
-		if (empty($data)) 
+		if (empty($data))
 		{
-			$item		= $this->getItem();
+			$item	= $this->getItem();
 			$folder	= $item->folder;
-			$element	= $item->element;
-			$type		= $item->type;
+			$element= $item->element;
+			$type	= $item->type;
 		}
 		else
 		{
@@ -256,7 +256,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 			$element	= JArrayHelper::getValue($data, 'element', '', 'cmd');
 			$type		= JArrayHelper::getValue($data, 'type', '', 'cmd');
 		}
-		
+
 		//echo 'folder: '.$folder;
 		// These variables are used to add data from the plugin XML files.
 		$this->setState('item.folder',	$folder);
@@ -266,12 +266,11 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		// Get the form.
 		$form = $this->loadForm('com_pagesanditems.extension', 'extension', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
-			//print_r('xxxx');
 			return false;
 		}
 
 		// Modify the form based on access controls.
-		if (!$this->canEditState((object) $data)) 
+		if (!$this->canEditState((object) $data))
 		{
 			// Disable fields for display.
 			$form->setFieldAttribute('ordering', 'disabled', 'true');
@@ -319,11 +318,11 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		//echo '$pk state : '.$this->getState('extension.extension_id').' :$pk state,';
 		//echo 'X';
 		//$this->_cache[$pk]
-		if (!isset($this->_cache[$pk])) 
+		if (!isset($this->_cache[$pk]))
 		{
 			//echo 'XX';
 			$false	= false;
-			
+
 			// Get a row instance.
 			$table = $this->getTable();
 
@@ -331,7 +330,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 			$return = $table->load($pk);
 
 			// Check for a table object error.
-			if ($return === false && $table->getError()) 
+			if ($return === false && $table->getError())
 			{
 				$this->setError($table->getError());
 				return $false;
@@ -360,7 +359,6 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 				$path = str_replace('/',DS,$path.DS.$table->type.'s');
 			}
 			$path = JPath::clean($path.DS.$table->element.DS.$table->element.'.xml');
-			//dump($path);
 			if (file_exists($path)) {
 				$this->_cache[$pk]->xml = JFactory::getXML($path);
 			} else {
@@ -383,7 +381,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 	*/
 	public function getTable($type = 'piextension', $prefix = 'PagesAndItemsTable', $config = array())
 	{
-		
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -426,7 +424,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		$lang		= JFactory::getLanguage();
 		$client		= JApplicationHelper::getClientInfo(0);
 
-		if (empty($folder) && empty($element)) 
+		if (empty($folder) && empty($element))
 		{
 			//echo 'XX';
 			$app = JFactory::getApplication();
@@ -435,8 +433,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		// Try 1.6 format: /plugins/folder/element/element.xml
 		$path = realpath(dirname(__FILE__).'/../../../../extensions');
 		$pathExtensions = $path;
-		//print_r($path);
-		//print_r(dirname(__FILE__).'/../../../../extensions');
+
 		if($folder)
 		{
 			$extension_folder = $folder;
@@ -452,22 +449,21 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 			{
 				$path = str_replace('/',DS,$path.DS.$type.'s');
 			}
-			
+
 		}
 		//$path = $path.DS.$element.DS.$element.'.xml';
-		
+
 		$formFile = JPath::clean($path.DS.$element.DS.$element.'.xml'); //JPATH_PLUGINS.'/'.$folder.'/'.$element.'/'.$element.'.xml');
 
-		//dump($formFile);
-		if (!file_exists($formFile) && $type != 'language') 
+		if (!file_exists($formFile) && $type != 'language')
 		{
-			if (!file_exists($formFile)) 
+			if (!file_exists($formFile))
 			{
 				throw new Exception(JText::sprintf('COM_PLUGINS_ERROR_FILE_NOT_FOUND', $element.'.xml'));
 				return false;
 			}
 		}
-	
+
 		if($folder)
 		{
 			$extension_folder = str_replace('/','_',$folder);
@@ -486,7 +482,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		{
 			$defaultLang = 'en-GB';
 		}
-		
+
 		/*
 		if(defined('COM_PAGESANDITEMS_DEFAULT_LANG'))
 		{
@@ -535,19 +531,19 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		||	$lang->load('plg_'.$folder.'_'.$element, JPATH_ADMINISTRATOR, $lang->getDefault(), false, false)
 		||	$lang->load('plg_'.$folder.'_'.$element, JPATH_PLUGINS.'/'.$folder.'/'.$element, $lang->getDefault(), false, false);
 		*/
-		if (file_exists($formFile)) 
+		if (file_exists($formFile))
 		{
 			// Get the plugin form.
-			if (!$form->loadFile($formFile, false, '//config')) 
+			if (!$form->loadFile($formFile, false, '//config'))
 			{
 				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
 			}
 		}
 
 		// Attempt to load the xml file.
-		if (!$xml = simplexml_load_file($formFile)) 
+		if (!$xml = simplexml_load_file($formFile))
 		{
-			if ($type != 'language') 
+			if ($type != 'language')
 			{
 				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
 			}
@@ -565,10 +561,10 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 */
 		// Trigger the default form events.
 		parent::preprocessForm($form, $data, $group);
-		
+
 	}
 	/*
-	END adopt from J1.6 
+	END adopt from J1.6
 	must TEST
 	*/
 
@@ -603,7 +599,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 			$table->enabled = $value;
 		}
 		*/
-		if (!$table->store()) 
+		if (!$table->store())
 		{
 			$this->setError($table->getError());
 			$result = false;
@@ -622,7 +618,7 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 	 */
 	function refresh($eid)
 	{
-		if (!is_array($eid)) 
+		if (!is_array($eid))
 		{
 			$eid = array($eid => 0);
 		}
@@ -635,12 +631,12 @@ class PagesAndItemsModelPiextension extends JModelAdmin
 		//$installer = JInstaller::getInstance();
 		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'installer.php');
 		$installer = PagesAndItemsInstaller::getInstance();
-		
+
 		$row = JTable::getInstance('extension');
 		$result = 0;
 
 		// refresh the chosen extensions
-		foreach($eid as $id) 
+		foreach($eid as $id)
 		{
 			$result |= $installer->refreshManifestCache($id); //refreshManifestCache($id);
 		}

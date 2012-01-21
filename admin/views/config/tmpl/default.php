@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -14,16 +14,16 @@ if(!defined('_JEXEC'))
 }
 
 JHTML::_('behavior.tooltip');
-JHTML::_('behavior.modal'); 
+JHTML::_('behavior.modal');
 
 $checked = ' checked="checked"';
 
-if(!$this->model->isSuperAdmin)
+if(!PagesAndItemsHelper::getIsSuperAdmin())
 {
 	echo "<script> alert('you need to be logged in as a super administrator to edit the Pages-and-Items config'); window.history.go(-1); </script>";
 	exit();
 }
-$config = $this->model->getConfig();
+$config = PagesAndItemsHelper::getConfig();
 ?>
 
 <script src="components/com_pagesanditems/javascript/tab_cookies.js" language="JavaScript" type="text/javascript"></script>
@@ -31,10 +31,10 @@ $config = $this->model->getConfig();
 <script language="JavaScript" type="text/javascript">
 
 <?php
-if($this->model->joomlaVersion < '1.6')
+if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 {
 ?>
-	function submitbutton(pressbutton) 
+	function submitbutton(pressbutton)
 	{
 		if (pressbutton == 'config.config_save') {
 			submitform('config.config_save');
@@ -57,20 +57,26 @@ else
 		if (pressbutton == 'config.config_save') {
 			Joomla.submitform('config.config_save',document.getElementById('adminForm'));
 		}
-		if (pressbutton == 'config.config_apply') 
+		if (pressbutton == 'config.config_apply')
 		{
 			document.getElementById('sub_task').value = 'apply';
 			Joomla.submitform('config.config_save',document.getElementById('adminForm'));
 		}
-		if (pressbutton == 'config.cancel') 
+		if (pressbutton == 'config.cancel')
 		{
 			document.location.href = 'index.php?option=com_pagesanditems';
 		}
 	}
 <?php
 }
-?>
 
+?>
+function config_itemtype(itemtype){
+	document.id('sub_task').value = itemtype;
+	document.id('task').value = 'config.config_itemtype';
+	document.adminForm.submit();
+	//Joomla.submitform('config.config_itemtype',document.getElementById('adminForm'));
+}
 <?php
 $tab = JRequest::getVar('tab', false);
 if(!$tab){
@@ -114,6 +120,8 @@ function check_latest_version(){
 }
 
 </script>
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <div style="text-align: left;">
 	<div style="float:right;width: 100px;">
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -121,11 +129,12 @@ function check_latest_version(){
 			<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
 			<img alt="" border="0" src="https://www.paypal.com/nl_NL/i/scr/pixel.gif" width="1" height="1">
 			<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+
 		</form>
 	</div>
 	<form id="adminForm" name="adminForm" method="post" action="">
 		<input type="hidden" name="option" value="com_pagesanditems" />
-		<input type="hidden" name="task" value="config_save" />
+		<input type="hidden" name="task" id="task" value="config_save" />
 		<input type="hidden" name="sub_task" id="sub_task" value="" />
 		<?php echo JHtml::_('form.token'); ?>
 
@@ -156,9 +165,9 @@ general
 					<?php echo JText::_('COM_PAGESANDITEMS_STATUS_PLUGIN_CONTENT'); ?>
 				</td>
 				<td>
-					<?php 
-					//if($this->controller->mambot){
-					if($this->model->pluginContent)
+					<?php
+					$check = PagesAndItemsHelper::checkPlugin('content');
+					if($check == 2 || $check == 1)
 					{
 						echo '<span style="color: #5F9E30;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_CONTENT_INSTALLED').'</span>';
 					}
@@ -166,24 +175,7 @@ general
 					{
 						echo '<span style="color: red;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_CONTENT_NOT_INSTALLED').'</span>';
 					}
-					/*
-					$bot_published = false;
-					$table_name = '#__plugins';
-					$this->model->db->setQuery("SELECT published FROM $table_name WHERE name='Pages and Items' AND folder='content' LIMIT 1");
-					$rows = $this->model->db->loadObjectList();
-					$bot_published = false;
-					foreach($rows as $row)
-					{
-						$bot_published = true;
-					}
-					if($bot_published)
-					{
-						echo '<div style="color: #5F9E30;">'.JText::_('COM_PAGESANDITEMS_ISPUBLISHED').'</div>';
-					}else{
-						echo '<div style="color: red;">'.JText::_('COM_PAGESANDITEMS_ISNOTPUBLISHED').'</div>';
-					}
-					*/
-					if($this->model->pluginContentEnabled)
+					if($check == 2)
 					{
 						echo '<div style="color: #5F9E30;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_CONTENT_ENABLED').'</div>';
 					}
@@ -199,8 +191,9 @@ general
 					<?php echo JText::_('COM_PAGESANDITEMS_STATUS_PLUGIN_SYSTEM'); ?>
 				</td>
 				<td>
-					<?php 
-					if($this->model->pluginSystem)
+					<?php
+					$check = PagesAndItemsHelper::checkPlugin('system');
+					if($check == 2 || $check == 1)
 					{
 						echo '<span style="color: #5F9E30;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_SYSTEM_INSTALLED').'</span>';
 					}
@@ -208,7 +201,7 @@ general
 					{
 						echo '<span style="color: red;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_SYSTEM_NOT_INSTALLED').'</span>';
 					}
-					if($this->model->pluginSystemEnabled)
+					if($check == 2)
 					{
 						echo '<div style="color: #5F9E30;">'.JText::_('COM_PAGESANDITEMS_PLUGIN_SYSTEM_ENABLED').'</div>';
 					}
@@ -224,11 +217,6 @@ general
 					<?php echo JText::_('COM_PAGESANDITEMS_USE_PI_FRONTEND_EDITTING'); ?>
 				</td>
 				<td>
-					<?php
-					/*
-					ms: i think better use this so the user have more options
-					*/
-					?>
 					<label>
 						<input name="use_pi_frontend_editting" type="radio" value="0" class="radio" <?php if($config['use_pi_frontend_editting']=='0'){echo ' checked="checked"';} ?> /><?php echo JText::_('JNO'); ?>
 					</label>
@@ -240,13 +228,6 @@ general
 					<label>
 						<input name="use_pi_frontend_editting" type="radio" value="2" class="radio" <?php if($config['use_pi_frontend_editting']=='2'){echo ' checked="checked"';} ?> /><?php echo JText::_('COM_PAGESANDITEMS_USE_PI_FRONTEND_EDITTING_TIP_ONLY_PI').'<br />'.JText::_('COM_PAGESANDITEMS_USE_PI_FRONTEND_EDITTING_TIP'); ?>
 					</label>
-					<?php
-					/*
-					<label>
-					<input type="checkbox" name="use_pi_frontend_editting" value="true" <?php if($config['use_pi_frontend_editting']){echo 'checked="checked"';} ?> /> <?php echo JText::_('COM_PAGESANDITEMS_USE_PI_FRONTEND_EDITTING_TIP'); ?>
-					</label>
-					*/
-					?>
 				</td>
 			</tr>
 			<tr>
@@ -266,11 +247,64 @@ general
 			</tr>
 			<tr>
 				<td>
+					<?php echo JText::_('COM_PAGESANDITEMS_ENABLED_VIEW_CATEGORY'); ?>
+				</td>
+				<td>
+					<label>
+					<input type="checkbox" name="enabled_view_category" value="true" <?php if(isset($config['enabled_view_category']) && $config['enabled_view_category']){echo 'checked="checked"';} ?> /> <?php echo JText::_('COM_PAGESANDITEMS_ENABLE'); ?>
+					</label>
+					<span style="padding-left: 20px;">
+					<?php echo JText::_('COM_PAGESANDITEMS_ENABLED_VIEW_CATEGORY_TIP'); ?>
+					</span>
+				</td>
+
+			</tr>
+
+			<tr>
+				<td>
+					<?php echo JText::_('COM_PAGESANDITEMS_SHOW_SLIDER_IN_LISTS'); ?>
+				</td>
+				<td>
+					<select name="showSlider">
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'-1'){echo 'selected="selected"';} ?> value="-1"><?php echo JText::_('JYES'); ?></option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'2'){echo 'selected="selected"';} ?> value="1"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 1</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'2'){echo 'selected="selected"';} ?> value="2"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 2</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'3'){echo 'selected="selected"';} ?> value="3"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 3</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'4'){echo 'selected="selected"';} ?> value="4"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 4</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'5'){echo 'selected="selected"';} ?> value="5"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 5</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'6'){echo 'selected="selected"';} ?> value="6"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 6</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'7'){echo 'selected="selected"';} ?> value="7"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 7</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'8'){echo 'selected="selected"';} ?> value="8"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 8</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'9'){echo 'selected="selected"';} ?> value="9"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 9</option>
+						<option <?php if(isset($config['showSlider']) && $config['showSlider'] == (int)'10'){echo 'selected="selected"';} ?> value="10"><?php echo JText::_('COM_PAGESANDITEMS_GREATER'); ?> 10</option>
+						<option <?php if(isset($config['showSlider']) && !$config['showSlider']){echo 'selected="selected"';} ?> value="0"><?php echo JText::_('JNEVER'); ?></option>
+					</select>
+					<span style="padding-left: 20px;">
+					<?php echo JText::_('COM_PAGESANDITEMS_SHOW_SLIDER_IN_LISTS_TIP'); ?>
+					</span>
+				</td>
+
+			</tr>
+			<tr>
+				<td>
+					<?php echo JText::_('COM_PAGESANDITEMS_USE_CHECKEDOUT'); ?>
+				</td>
+				<td>
+					<label>
+						<input name="useCheckedOut" type="radio" value="0" class="radio" <?php if(!isset($config['useCheckedOut']) || (isset($config['useCheckedOut']) && ($config['useCheckedOut']=='0' || $config['useCheckedOut']==''))){echo ' checked="checked"';} ?> /><?php echo JText::_('JNO'); ?>
+					</label>
+					<label>
+						<input name="useCheckedOut" type="radio" value="1" class="radio" <?php if(isset($config['useCheckedOut']) && ($config['useCheckedOut']=='1' || $config['useCheckedOut']=='true')){echo ' checked="checked"';} ?> /><?php echo JText::_('JYES'); ?>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
 					<?php echo JText::_('COM_PAGESANDITEMS_VERSION'); ?>
 				</td>
 				<td>
-					<?php echo $this->model->version; ?> 
-					<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_CHECK_LATEST_VERSION'); ?>" onclick="check_latest_version();" style="margin-left: 20px;" />
+					<?php echo PagesAndItemsHelper::getPagesAndItemsVersion();//$this->model->version; ?>
+					<input type="button" class="button input_button  noicon" value="<?php echo JText::_('COM_PAGESANDITEMS_CHECK_LATEST_VERSION'); ?>" onclick="check_latest_version();" style="margin-left: 20px; padding: 3px 3px 3px 3px" />
 					<div id="version_checker_target"></div>
 					<span id="version_checker_spinner"><img src="components/com_pagesanditems/images/processing.gif" alt="processing" /></span>
 				</td>
@@ -320,7 +354,7 @@ general
 						Pages-and-Items <?php echo JText::_('COM_PAGESANDITEMS_ACL_A'); ?>.
 					</p>
 					<p>
-						<?php echo JText::_('COM_PAGESANDITEMS_ACL_F').' com_content '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
+						<?php echo JText::_('COM_PAGESANDITEMS_ACL_F').' com_menus '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
 						<br />
 						<a class="modal" href="index.php?option=com_config&amp;view=component&amp;component=com_menus&amp;path=&amp;tmpl=component" rel="{handler: 'iframe', size: {x: 875, y: 550}, onClose: function() {}}">
 							<span class="icon-32-options" style="width: 32px; height: 32px; display: block; float: left; ">
@@ -341,88 +375,6 @@ general
 							</span>
 						</a>
 					</p>
-					<p>
-						<?php echo JText::_('COM_PAGESANDITEMS_ACL_D').' Pages-and-Items '.JText::_('COM_PAGESANDITEMS_ACL_E'); ?>.
-					</p>
-				</td>
-			</tr>
-			</table>
-			<br />
-			<table  class="adminlist" width="100%">
-			<tr>
-				<td>
-				</td>
-				<td>
-					<?php echo JText::_('COM_PAGESANDITEMS_TITLE'); ?>
-				</td>
-				<td>
-					<?php echo JText::_('COM_PAGESANDITEMS_CREATE_PAGE'); ?>
-				</td>
-				<td>
-					<?php echo JText::_('COM_PAGESANDITEMS_EDIT_PAGE'); ?>
-				</td>
-				<td>
-					<?php echo JText::_('COM_PAGESANDITEMS_CREATE_ARTICLES'); ?>
-				</td>
-				<td>
-					<?php echo JText::_('COM_PAGESANDITEMS_EDIT_ARTICLES'); ?>
-				</td>
-			</tr>
-			<?php
-				foreach($this->helper->get_usergroups() as $group){
-					echo '<tr>';
-						echo '<td width="10" align="center">';
-							echo $group->id;
-						echo '</td>';
-						$padding = intval(($group->level)*15)+4;
-						echo '<td class="indent-'.$padding.'">';
-							echo $group->title;
-						echo '</td>';
-						echo '<td>';
-						echo '<input type="checkbox" name="permissions[]" value="'.$group->id.'_1"';
-						if (in_array($group->id.'_1', $config['permissions'])) {
-							echo $checked;
-						}
-						echo '/>';
-						echo '</td>	';
-						echo '<td>';
-						echo '<input type="checkbox" name="permissions[]" value="'.$group->id.'_2"';
-						if (in_array($group->id.'_2', $config['permissions'])) {
-							echo $checked;
-						}
-						echo '/>';
-						echo '</td>	';
-						echo '<td>';
-						echo '<input type="checkbox" name="permissions[]" value="'.$group->id.'_3"';
-						if (in_array($group->id.'_3', $config['permissions'])) {
-							echo $checked;
-						}
-						echo '/>';
-						echo '</td>	';
-						echo '<td>';
-						echo '<input type="checkbox" name="permissions[]" value="'.$group->id.'_4"';
-						if (in_array($group->id.'_4', $config['permissions'])) {
-							echo $checked;
-						}
-						echo '/>';
-						echo '</td>	';
-					echo '</tr>';
-
-				}
-			?>
-			</table>
-			<br />
-			<table class="adminlist" width="100%">
-				<tr>
-					<td>
-						<?php echo JText::_('COM_PAGESANDITEMS_MULTIGROUP'); ?>
-					</td>
-					<td>
-						<label style="white-space: nowrap;"><input type="radio" name="multigroup_access_requirement" value="one_group" class="radio" <?php if($config['multigroup_access_requirement']=='one_group'){echo 'checked="checked"';} ?> /><?php echo JText::_('COM_PAGESANDITEMS_ONE_GROUP'); ?></label><br />
-					<label style="white-space: nowrap;"><input type="radio" name="multigroup_access_requirement" value="every_group" class="radio" <?php if($config['multigroup_access_requirement']=='every_group'){echo 'checked="checked"';} ?> /><?php echo JText::_('COM_PAGESANDITEMS_EVERY_GROUP'); ?></label>
-					</td>
-					<td>
-						<?php echo JText::_('COM_PAGESANDITEMS_MULTIGROUP_A'); ?>.
 					</td>
 				</tr>
 			</table>
@@ -441,7 +393,7 @@ itemtypes
 			<tr>
 				<td>&nbsp;
 				</td>
-				<td style="text-align: right;"><a href="http://www.pages-and-items.com/extensions/pages-and-items-plugins" target="_blank"><?php echo JText::_('COM_PAGESANDITEMS_GET_MORE_ITEMTYPES'); ?></a>&nbsp;&nbsp;&nbsp;<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_CREATE_NEW_ITEMTYPE'); ?>" onclick="document.location.href='index.php?option=com_pagesanditems&view=config_custom_itemtype&sub_task=new';" />
+				<td style="text-align: right;"><a href="http://www.pages-and-items.com/extensions/pages-and-items-plugins" target="_blank"><?php echo JText::_('COM_PAGESANDITEMS_GET_MORE_ITEMTYPES'); ?></a>&nbsp;&nbsp;&nbsp;<input type="button" class="button input_button noicon" value="<?php echo JText::_('COM_PAGESANDITEMS_CREATE_NEW_ITEMTYPE'); ?>" onclick="document.location.href='index.php?option=com_pagesanditems&view=config_custom_itemtype&sub_task=new';" />
 				</td>
 			</tr>
 			<tr>
@@ -469,11 +421,11 @@ itemtypes
 
 						$query = 'SELECT element ';
 						$query .='FROM #__pi_extensions ';
-						$query .='WHERE type='.$this->model->db->Quote('itemtype').' ';
-						//$query .='AND version <>'.$this->model->db->Quote('integrated');
-						$query .='AND element <>'.$this->model->db->Quote('custom');
-						$this->model->db->setQuery( $query );
-						$itemtypeRows = $this->model->db->loadResultArray();
+						$query .='WHERE type='.$this->db->Quote('itemtype').' ';
+						//$query .='AND version <>'.$this->db->Quote('integrated');
+						$query .='AND element <>'.$this->db->Quote('custom');
+						$this->db->setQuery( $query );
+						$itemtypeRows = $this->db->loadResultArray();
 
 						if($itemtypeRows)
 						{
@@ -489,18 +441,21 @@ itemtypes
 						array_push($installed_itemtypes, 'html');
 						array_push($installed_itemtypes, 'other_item');
 						*/
+						$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
+						require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
+						$itemtype = ExtensionItemtypeHelper::importExtension(null, null,true,null,true);
 
 						//make array with extra column for alias and custom-or-not
 						$all_itemtypes = array();
-						foreach ($installed_itemtypes as $itemtype) 
+						foreach ($installed_itemtypes as $itemtype)
 						{
 							//$itemtype_array = array($itemtype, $this->controller->translate_item_type($itemtype), 0);
-							$itemtype_array = array($itemtype, $this->model->translate_item_type($itemtype), 0);
+							$itemtype_array = array($itemtype, PagesAndItemsHelper::translate_item_type($itemtype), 0);
 							array_push($all_itemtypes, $itemtype_array);
 						}
 						//get customitemtypes
-						$this->model->db->setQuery("SELECT id, name FROM #__pi_customitemtypes"  );
-						$custom_itemypes = $this->model->db->loadObjectList();
+						$this->db->setQuery("SELECT id, name FROM #__pi_customitemtypes"  );
+						$custom_itemypes = $this->db->loadObjectList();
 						foreach($custom_itemypes as $custom_itemype)
 						{
 							//echo $custom_itemype->name.'<br>';
@@ -514,21 +469,20 @@ itemtypes
 							$order[$key]  = strtolower($row[1]);
 						}
 						array_multisort($order, SORT_ASC, $all_itemtypes);
-
+/*
 						$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 						require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
 						$itemtype = ExtensionItemtypeHelper::importExtension(null, null,true,null,true);
-
+*/
 						$dispatcher = &JDispatcher::getInstance();
 						//display itemtype list
-						//dump(count($all_itemtypes));
 						foreach($all_itemtypes as $itemtype)
 						{
 							echo '<tr>';
 							echo '<td>'.$itemtype[1].'</td>';
 							$checked2 = '';
 							$custom_itemtype_name = 'custom_'.$itemtype[2];
-							$itemtypes = $this->model->getItemtypes();
+							$itemtypes = PagesAndItemsHelper::getItemtypes();
 							if(in_array($itemtype[0], $itemtypes) || in_array($custom_itemtype_name, $itemtypes) || $itemtype[0]=='content' || $itemtype[0]=='text')
 							{
 								$checked2 = ' checked="checked"';
@@ -594,23 +548,25 @@ itemtypes
 								echo JText::_('COM_PAGESANDITEMS_ITEMTYPE_PLUGIN');
 							}
 							echo '</span>';
-							//echo '<span class="sidestep">';
-							//echo $config;
-							//echo '</span>';
-							//echo '</td>';
-
-							//echo '<td>';
-
-							$itemtypeHtmlIsConfig = & new JObject();
+							$itemtypeHtmlIsConfig = new JObject();
 							$itemtypeHtmlIsConfig->text = '-';
 
 							if($itemtype[2])
 							{
+								//onItemtypeDisplay_config_form
 								$results = $dispatcher->trigger('onItemtypeIs_config_form', array(&$itemtypeHtmlIsConfig,'custom',$itemtype[2]));
 							}
 							else
 							{
 								$results = $dispatcher->trigger('onItemtypeIs_config_form', array(&$itemtypeHtmlIsConfig,$itemtype[0]));
+								if($itemtypeHtmlIsConfig->text == '-')
+								{
+									//$dispatcher->trigger('onItemtypeDisplay_config_form_tip', array(&$itemtypeHtmlIsConfig,$itemtype[0]));
+								}
+								//echo <a onclick="" $itemtype[0]
+								if($itemtypeHtmlIsConfig->text != '-')
+								$itemtypeHtmlIsConfig->text = '<a href="#" onclick="javascript: config_itemtype(\''.$itemtype[0].'\');">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+								//http://127.0.0.1:4001/administrator/index.php?option=com_pagesanditems&task=extension.doExecute&extensionName=extensions&extensionType=manager&layout=edit&extensionTask=display&view=piextension&client=both&sub_task=edit&cid[]=1&extension_id=1
 							}
 							echo $itemtypeHtmlIsConfig->text;
 
@@ -638,7 +594,7 @@ itemtypes
 					<?php echo JText::_('COM_PAGESANDITEMS_PLUGIN_SYNTAX_CHEATCHEAT'); ?>
 				</td>
 				<td width="150">
-					<textarea name="plugin_syntax_cheatcheat" cols="60" rows="3" style="width: 400px;"><?php echo $config['plugin_syntax_cheatcheat']; ?></textarea> 
+					<textarea name="plugin_syntax_cheatcheat" cols="60" rows="3" style="width: 400px;"><?php echo $config['plugin_syntax_cheatcheat']; ?></textarea>
 				</td>
 				<td><?php echo JText::_('COM_PAGESANDITEMS_PLUGIN_SYNTAX_CHEATCHEAT_INFO'); ?><br /><?php echo JText::_('COM_PAGESANDITEMS_EXAMPLE'); ?><br />
 				<img src="components/com_pagesanditems/images/syntax.gif" alt="example syntax cheatsheet" style="border: 1px solid #000;" />
@@ -670,7 +626,7 @@ itemtypes
 
 				</td>
 				<td colspan="2">
-					<input type="checkbox" name="item_props_hideforsuperadmin" value="true" <?php if($config['item_props_hideforsuperadmin']){echo $checked;} ?> /> 
+					<input type="checkbox" name="item_props_hideforsuperadmin" value="true" <?php if($config['item_props_hideforsuperadmin']){echo $checked;} ?> />
 					<?php echo JText::_('COM_PAGESANDITEMS_HIDE_FOR_SUPER_ADMIN'); ?>
 				</td>
 			</tr>
@@ -1104,7 +1060,7 @@ itemtypes
 			<table  class="adminlist" width="100%">
 			<tr>
 				<th colspan="2">
-					<?php echo JText::_('COM_PAGESANDITEMS_NEW_ITEM'); ?> 
+					<?php echo JText::_('COM_PAGESANDITEMS_NEW_ITEM'); ?>
 				</th>
 			</tr>
 			<tr>
@@ -1122,7 +1078,7 @@ itemtypes
 					<br />
 					<label>
 						<input name="item_save_redirect" type="radio" value="url" class="radio" <?php if($config['item_save_redirect']=='url'){echo ' checked="checked"';} ?> /><?php echo JText::_('COM_PAGESANDITEMS_ITEM_SAVE_REDIRECT_URL'); ?>.
-						<input type="text" name="item_save_redirect_url" style="width: 300px;" value="<?php echo $config['item_save_redirect_url']; ?>" /><?php echo JText::_('COM_PAGESANDITEMS_EXAMPLE'); ?>:  'index.php?option=com_content&view=frontpage' 
+						<input type="text" name="item_save_redirect_url" style="width: 300px;" value="<?php echo $config['item_save_redirect_url']; ?>" /><?php echo ' '.JText::_('COM_PAGESANDITEMS_EXAMPLE'); ?>:  'index.php?option=com_content&view=frontpage'
 					</label>
 					<br />
 					<label>
@@ -1171,90 +1127,132 @@ itemtypes
 			<div id="menus">
 			<table class="adminlist" width="100%">
 			<tr>
-				<th colspan="2">
+				<th>
 					<?php echo JText::_('COM_PAGESANDITEMS_MENUS'); ?>
 				</th>
 			</tr>
+			</table>
+			<table class="adminlist" width="100%">
+			<tbody>
 			<tr>
-				<td colspan="2">
-					<?php echo JText::_('COM_PAGESANDITEMS_MENUS_TIP_B'); ?>. <img src='components/com_pagesanditems/images/moremenus.gif' />
+				<td style="width: 100px;border:none;">
+					<img src="components/com_pagesanditems/images/moremenus2.gif" style="border: 1px solid #ccc;" />
 				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;
-
-				</td>
+				<?php
+				/*
+				here the old
+				?>
 				<td>
-					<span class="sidestep2 b"><?php echo JText::_('COM_PAGESANDITEMS_NAME'); ?></span><span class="b"><?php echo JText::_('COM_PAGESANDITEMS_ORDER'); ?></span>
+				
+					<table class="adminlist" width="100%">
+						<tr>
+							<td colspan="2">
+								<?php echo JText::_('COM_PAGESANDITEMS_MENUS_TIP_B'); ?>. 
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;
+
+							</td>
+							<td>
+								<span class="sidestep2 b"><?php echo JText::_('COM_PAGESANDITEMS_NAME'); ?></span><span class="b"><?php echo JText::_('COM_PAGESANDITEMS_ORDER'); ?></span>
+							</td>
+						</tr>
+				<?php
+
+						//loop through menutypes from config
+						$counter = 1;
+						$menus_from_config = $config['menus'];
+						$temp_menus = explode(',',$config['menus']);
+						if($temp_menus[0]==''){
+							$temp_menus = array();
+						}
+
+						//get all menutypes
+						$menutypes_db = array();
+						//joomla 1.5
+						$this->db->setQuery("SELECT title, menutype FROM #__menu_types ORDER BY title ASC"  );
+						//$this->db->setQuery("SELECT title, menutype FROM #__menu_types ORDER BY id ASC"  );
+						$rows = $this->db-> loadObjectList();
+						foreach($rows as $row)
+						{
+							$new_menutype = array(strtolower($row->menutype),$row->title);
+							array_push($menutypes_db, $new_menutype);
+						}
+
+						$menus_on_page = array();
+
+						for($m = 0; $m < count($temp_menus); $m++){
+							$menu_temp = explode(';',$temp_menus[$m]);
+						echo '<tr>';
+							echo '<td>&nbsp;</td>';
+							echo '<td>';
+							echo '<span class="sidestep2">';
+							echo '<label>';
+							echo '<input type="checkbox" class="checkbox" name="menus[m'.$m.'][menutype]" value="'.$menu_temp[0].'"';
+							echo ' checked="checked"';
+							echo ' />';
+							echo $menu_temp[1];
+
+							echo '</label>';
+							echo '</span>';
+							echo '<input type="hidden" name="menus[m'.$m.'][title]" value="'.$menu_temp[1].'" />';
+							echo '<input type="text" name="menus[m'.$m.'][order]" size="2" value="'.$counter.'"';
+							echo ' />';
+							echo '</td>';
+						echo '</tr>';
+							array_push($menus_on_page, $menu_temp[0]);
+							$counter = $counter + 1;
+						}
+
+
+						//loop through menutypes from database
+						for($m = 0; $m < count($menutypes_db); $m++){
+							if(!in_array($menutypes_db[$m][0], $menus_on_page)){
+						echo '<tr>';
+							echo '<td>&nbsp;</td>';
+							echo '<td>';
+								echo '<span class="sidestep2">';
+								echo '<label>';
+								echo '<input type="checkbox" class="checkbox" name="menus[m'.($counter-1).'][menutype]" value="'.$menutypes_db[$m][0].'"';
+								echo ' />';
+								echo $menutypes_db[$m][1];
+								echo '</label>';
+								echo '</span>';
+								echo '<input type="hidden" name="menus[m'.($counter-1).'][title]" value="'.$menutypes_db[$m][1].'" />';
+								echo '<input type="text" name="menus[m'.($counter-1).'][order]" size="2" value="'.$counter.'"';
+								echo ' />';
+							echo '</td>';
+						echo '</tr>';
+						$counter = $counter + 1;
+						}
+					}
+					
+				?>
+					</table>
 				</td>
+				here the old end
+				<?php
+				here the new
+				*/
+				?>
+				<td style="width: 500px;border:none;">
+				
+				<?php
+					require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'menuslist.php');
+					$menusList = new MenusList();
+					$output = $menusList->renderItems();
+					echo $output;
+				?>
+				</td>
+				<td style="border:none;">
+				</td>
+				
+				<?php
+				//here the new end
+				?>
 			</tr>
-			<?php
-
-			//loop through menutypes from config
-			$counter = 1;
-			$menus_from_config = $config['menus'];
-			$temp_menus = explode(',',$config['menus']);
-			if($temp_menus[0]==''){
-				$temp_menus = array();
-			}
-			$menus_on_page = array();
-			for($m = 0; $m < count($temp_menus); $m++){
-				$menu_temp = explode(';',$temp_menus[$m]);
-				echo '<tr>';
-				echo '<td>&nbsp;</td>';
-				echo '<td>';
-				echo '<span class="sidestep2">';
-				echo '<label>';
-				echo '<input type="checkbox" class="checkbox" name="menus[m'.$m.'][menutype]" value="'.$menu_temp[0].'"';
-				echo ' checked="checked"';
-				echo ' />';
-				echo $menu_temp[1];
-
-				echo '</label>';
-				echo '</span>';
-				echo '<input type="hidden" name="menus[m'.$m.'][title]" value="'.$menu_temp[1].'" />';
-				echo '<input type="text" name="menus[m'.$m.'][order]" size="2" value="'.$counter.'"';
-				echo ' />';
-				echo '</td>';
-				echo '</tr>';
-				array_push($menus_on_page, $menu_temp[0]);
-				$counter = $counter + 1;
-			}
-
-			//get all menutypes
-			$menutypes_db = array();
-			//joomla 1.5
-			$this->model->db->setQuery("SELECT title, menutype FROM #__menu_types ORDER BY title ASC"  );
-			$rows = $this->model->db-> loadObjectList();
-			foreach($rows as $row)
-			{
-				$new_menutype = array(strtolower($row->menutype),$row->title);
-				array_push($menutypes_db, $new_menutype);
-			}
-
-			//loop through menutypes from database
-			for($m = 0; $m < count($menutypes_db); $m++){
-				if(!in_array($menutypes_db[$m][0], $menus_on_page)){
-					echo '<tr>';
-					echo '<td>&nbsp;</td>';
-					echo '<td>';
-					echo '<span class="sidestep2">';
-					echo '<label>';
-					echo '<input type="checkbox" class="checkbox" name="menus[m'.($counter-1).'][menutype]" value="'.$menutypes_db[$m][0].'"';
-					echo ' />';
-					echo $menutypes_db[$m][1];
-					echo '</label>';
-					echo '</span>';
-					echo '<input type="hidden" name="menus[m'.($counter-1).'][title]" value="'.$menutypes_db[$m][1].'" />';
-					echo '<input type="text" name="menus[m'.($counter-1).'][order]" size="2" value="'.$counter.'"';
-					echo ' />';
-					echo '</td>';
-					echo '</tr>';
-					$counter = $counter + 1;
-				}
-			}
-
-			?>
+			</tbody>
 			</table>
 			</div>
 
@@ -1264,7 +1262,7 @@ itemtypes
 *********
 COMMENT
 if we use pagetypes as extension
-move this to the params from pagetype
+move this to the params from pagetypes?
 -->
 			<div id="pages">
 			<table class="adminlist" width="100%">
@@ -1292,7 +1290,7 @@ move this to the params from pagetype
 					<?php echo JText::_('COM_PAGESANDITEMS_MAKE_MENU_ALIAS_UNIQUE_TOOL'); ?>
 				</td>
 				<td colspan="2">
-					<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_MAKE_MENU_ALIAS_BUTTON').'.'; ?>" onclick="if(confirm('<?php echo addslashes(JText::_('COM_PAGESANDITEMS_ARE_YOU_SURE_MENU_ALIASSES_UNIQUE')); ?>')){document.location.href = 'index.php?option=com_pagesanditems&view=render_menu_alias_unique';}" /> <?php echo JText::_('COM_PAGESANDITEMS_MAKE_MENU_ALIAS_UNIQUE_TOOL_INFO').'.'; ?>
+					<input type="button" class="button input_button noicon" value="<?php echo JText::_('COM_PAGESANDITEMS_MAKE_MENU_ALIAS_BUTTON').'.'; ?>" onclick="if(confirm('<?php echo addslashes(JText::_('COM_PAGESANDITEMS_ARE_YOU_SURE_MENU_ALIASSES_UNIQUE')); ?>')){document.location.href = 'index.php?option=com_pagesanditems&view=render_menu_alias_unique';}" /> <?php echo JText::_('COM_PAGESANDITEMS_MAKE_MENU_ALIAS_UNIQUE_TOOL_INFO').'.'; ?>
 				</td>
 			</tr>
 			<tr>
@@ -1306,7 +1304,7 @@ move this to the params from pagetype
 						$truncate_item_title = $config['truncate_item_title'];
 					}
 					?>
-					<input type="text" value="<?php echo $truncate_item_title; ?>" name="truncate_item_title" /><?php echo JText::_('COM_PAGESANDITEMS_TRUNCATE_ITEM_TITLES2'); ?>.
+					<input type="text" value="<?php echo $truncate_item_title; ?>" name="truncate_item_title" /><?php echo ' '.JText::_('COM_PAGESANDITEMS_TRUNCATE_ITEM_TITLES2'); ?>.
 				</td>
 
 			</tr>
@@ -1349,7 +1347,7 @@ move this to the params from pagetype
 
 				</td>
 				<td colspan="2">
-					<input type="checkbox" name="page_props_hideforsuperadmin" value="true" <?php if($config['page_props_hideforsuperadmin']){echo 'checked="checked"';} ?> /> 
+					<input type="checkbox" name="page_props_hideforsuperadmin" value="true" <?php if($config['page_props_hideforsuperadmin']){echo 'checked="checked"';} ?> />
 					<?php echo JText::_('COM_PAGESANDITEMS_HIDE_FOR_SUPER_ADMIN'); ?>
 				</td>
 			</tr>
@@ -1368,7 +1366,7 @@ move this to the params from pagetype
 			</tr>
 
 			<?php
-			$page_fields = $this->helper->get_all_page_fields();
+			$page_fields = PagesAndItemsHelper::get_all_page_fields();
 			foreach($page_fields as $field){
 				$field_right = $field[0];
 				$field_label = $field[2];
@@ -1376,14 +1374,14 @@ move this to the params from pagetype
 				?>
 				<tr>
 					<td<?php if($field_type=='field'){echo ' class="pi_padleft"';}elseif($field_type=='menutype'){echo ' class="b"';}else{echo ' class="pi_padleft_panel"';}?>>
-						<?php 
+						<?php
 						if($field_type=='panel'){
 							echo '<legend>';
-						} 
+						}
 						if($field_type=='menutype'){
 							echo JText::_('COM_MENUS_MENU_MENUTYPE_LABEL').': ';
 						}
-						echo JText::_($field_label); 
+						echo JText::_($field_label);
 						if($field_type=='panel'){
 							echo '</legend>';
 						}
@@ -1447,7 +1445,7 @@ move this to the params from pagetype
 						<a href="http://www.easyteneweb.com/" target="_blank">Per Kersoe</a>
 					</td>
 					<td>
-						Danish translation 
+						Danish translation
 					</td>
 				</tr>
 				<tr>
@@ -1455,7 +1453,7 @@ move this to the params from pagetype
 						Matthias Dwidjosiswojo
 					</td>
 					<td>
-						German translation 
+						German translation
 					</td>
 				</tr>
 				<tr>
@@ -1463,7 +1461,7 @@ move this to the params from pagetype
 						<a href="http://www.re-media.ro" target="_blank">Razvan Rosca</a>
 					</td>
 					<td>
-						Romanian translation 
+						Romanian translation
 					</td>
 				</tr>
 				<tr>
@@ -1471,7 +1469,7 @@ move this to the params from pagetype
 						Athena Maliora
 					</td>
 					<td>
-						Greek translation 
+						Greek translation
 					</td>
 				</tr>
 				<tr>
@@ -1479,7 +1477,7 @@ move this to the params from pagetype
 						Rogelio Herrer&iacute;as Hern&aacute;ndez
 					</td>
 					<td>
-						Spanish translation 
+						Spanish translation
 					</td>
 				</tr>
 				<tr>
@@ -1487,7 +1485,7 @@ move this to the params from pagetype
 						Kiril Pamporov (nf1)
 					</td>
 					<td>
-						Bulgarian translation 
+						Bulgarian translation
 					</td>
 				</tr>
 				<tr>
@@ -1495,7 +1493,7 @@ move this to the params from pagetype
 						<a href="http://www.dazzleweb.com.br" target="_blank">Thiago Estrela</a>
 					</td>
 					<td>
-						Brazilian-portuguese translation 
+						Brazilian-portuguese translation
 					</td>
 				</tr>
 				<tr>
@@ -1578,9 +1576,7 @@ move this to the params from pagetype
 		</div>
 	</form>
 </div>
-<?php 
+	</div>
+<?php
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
-/*
-//$this->model->display_footer(); 
-*/
 ?>

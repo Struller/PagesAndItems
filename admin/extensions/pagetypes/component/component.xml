@@ -8,9 +8,7 @@
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		pagetype Component (Pages and Items)
-	</description>
+	<description>Component (pagetype for the Pages-and-Items framework)</description>
 	<files>
 		<filename pagetype="component">component.php</filename>
 		<filename >index.html</filename>

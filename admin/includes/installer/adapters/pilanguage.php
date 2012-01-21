@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -15,7 +15,7 @@ defined('JPATH_BASE') or die;
 /**
  * Language installer
  */
- 
+
 $version = new JVersion();
 $joomlaVersion = $version->getShortVersion();
 if($joomlaVersion < '1.6')
@@ -30,8 +30,8 @@ else
 	class PiInstallerLanguage extends JAdapterInstance
 	{
 	}
-} 
- 
+}
+
 class PiInstallerPilanguage extends PiInstallerLanguage
 {
 	/**
@@ -41,7 +41,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 	 */
 	//protected $_core = false;
 	//protected $parentParent = null;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -63,16 +63,15 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 	 */
 	public function install()
 	{
-		//var_dump('language');
 		$this->manifest = $this->parent->getManifest();
 		$xml = $this->manifest;
 
 		$this->parent->addLanguage($xml);
-		
+
 		$pathComponent = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS);
 		// We will copy the manifest file to its appropriate place.
 		// but only if pi core
-		
+
 		if ( ($xml->administration->languages  && count($xml->administration->languages->children()) ) || ($xml->languages  && count($xml->languages->children()) ) )
 		{
 			$path['src'] = $this->parent->getPath('manifest');
@@ -102,7 +101,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 	 */
 	public function update()
 	{
-		
+
 	}
 
 	/**
@@ -120,7 +119,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 		$extension = JTable::getInstance('piextension','PagesAndItemsTable');
 		if($extension->load($eid))
 		{
-		
+
 			// grab a copy of the client details
 			$client = JApplicationHelper::getClientInfo($extension->get('client_id'));
 
@@ -163,14 +162,14 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 									$this->parent->removeFiles($manifest->languages);
 								}
 							}
-	
-							
+
+
 							break;
-						
+
 						}
 					}
 				}
-	
+
 				//next step remove all element = $tag in #__pi_extensions
 				$db = $this->parent->getDBO();
 				$query = 'DELETE '
@@ -178,15 +177,15 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 					.' WHERE extension_id = '.$db->Quote($eid)
 					;
 				$db->setQuery($query);
-				if (!$db->Query()) 
+				if (!$db->Query())
 				{
 					// Install failed, roll back changes
 					//$this->abort($type.' Install: '.$db->stderr(true));
 					//return false;
 				}
 				//$tag
-				
-				
+
+
 				//next step remove in extensions all folders with language/$tag
 				$query = 'SELECT '
 					.' FROM #__pi_extensions'
@@ -194,7 +193,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 					.' AND element = '.$db->Quote($tag)
 					;
 				$db->setQuery($query);
-				if (!$db->Query()) 
+				if (!$db->Query())
 				{
 					// Install failed, roll back changes
 					//$this->abort($type.' Install: '.$db->stderr(true));
@@ -202,7 +201,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 				}
 				if(count($db->loadObjectList) && $extension->get('client_id'))
 				{
-					
+
 					//delete only ini
 					$files = JFolder::files($path,'.ini$',false,true);
 					if(count($files))
@@ -217,7 +216,7 @@ class PiInstallerPilanguage extends PiInstallerLanguage
 				{
 					JFolder::delete($path);
 				}
-			
+
 			}
 			elseif(strpos('com_',$name) !== false && $tag != 'en-GB')
 			{

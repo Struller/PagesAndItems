@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -40,7 +40,7 @@ class PagesAndItemsViewElement extends JView
 		$lists = $this->_getLists();
 		//Ordering allowed ?
 		$ordering = ($lists['order'] == 'section_name' && $lists['order_Dir'] == 'ASC');
-		
+
 		$model = &$this->getModel('element');
 		$rows = $model->getList();
 		$page = $model->getPagination();
@@ -72,7 +72,7 @@ class PagesAndItemsViewElement extends JView
 		$limit				= $app->getUserStateFromRequest('global.list.limit',					'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart			= $app->getUserStateFromRequest($option.'.articleelement.limitstart',			'limitstart',		0,	'int');
 		$search				= $app->getUserStateFromRequest($option.'.articleelement.search',				'search',			'',	'string');
-		if (strpos($search, '"') !== false) 
+		if (strpos($search, '"') !== false)
 		{
 			$search = str_replace(array('=', '<'), '', $search);
 		}

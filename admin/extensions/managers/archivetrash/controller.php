@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		1.6.0
-* @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -23,14 +23,14 @@ require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'cont
 
 class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsController //JController
 {
-	var $helper = null;
+	//var $helper = null;
 	function __construct($config = array())
 	{
 		parent::__construct($config);
 		//$this->registerTask( 'select', 'display' );
-		$this->helper = new PagesAndItemsHelper();
+		//$this->helper = new PagesAndItemsHelper();
 	}
-	
+
 	/**
 	 * Display the view
 	 */
@@ -46,15 +46,28 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				jimport( 'joomla.application.component.model' );
 				$path = realpath(dirname(__FILE__).DS.'models');
 				JModel::addIncludePath($path);
+				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'menutypes.php');
 				//$modelName[] = 'managerarchivetrash';
 				$modelName[] = 'archivetrash';
-				$modelName[] = 'Page';
+				if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
+				{
+					$helperName[] = 'helper';
+				}
+				else
+				{
+					$helperName[] = 'menus';
+				}
+				$helperPath[] = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers';
+				$this->addModelPath( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models' );
+				
+				
+				//$modelName[] = 'Page';
 				//$modelName[] = 'Base';
 				/*
 				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'menutypes.php');
 				$modelName[] = 'Page';
-				
+
 				if($modelBase->joomlaVersion < '1.6')
 				{
 					$helperName[] = 'helper';
@@ -64,19 +77,19 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 					$helperName[] = 'menus';
 				}
 				$helperPath[] = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers';
-				
+
 				$this->addModelPath( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models' );
 				*/
 				break;
 		}
 		$document = &JFactory::getDocument();
 		$vType = $document->getType();
-		
+
 		$this->addViewPath(realpath(dirname(__FILE__).'/views'));
-		
+
 		// Get/Create the view
 		$view = &$this->getView( $vName, $vType);
-		
+
 		$view->addTemplatePath(realpath(dirname(__FILE__).'/views'.DS.$vName.DS.'tmpl'));
 		// Set the layout
 		$view->setLayout($vLayout);
@@ -92,33 +105,46 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				}
 			}
 		}
-		
+		if(is_array($helperPath))
+		{
+			for($hp = 0; $hp < count($helperPath); $hp++)
+			{
+				$view->addHelperPath($helperPath[$hp]);
+			}
+		}
+		if(is_array($helperName))
+		{
+			for($hn = 0; $hn < count($helperPath); $hn++)
+			{
+				$view->loadHelper($helperName[$hn]);//make sure we have not use helpers/helper.php in pi??
+			}
+		}
 		parent::display($tpl);
 		//$view->display();
 	}
-	
+
 	function archive()
 	{
-		
+
 		$app = &JFactory::getApplication();
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_task=display';
+		$link .= '&extensionTask=display';
 		$link .= '&view=archivetrash'; //
 		$table_id = JRequest::getVar('table_id',0);
 		$link .= '&table_id='.$table_id; //
-		
-		
+
+
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
 		JModel::addIncludePath($path);
 
 		$model = &$this->getModel('archivetrash');
 		$tables = $model->getTables();
-		
+
 		$table = $tables[$table_id];
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
 		$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_ITEMS_ARCHIVED'));
@@ -130,7 +156,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				//$helper->archivePage($id);
 				$app->enqueueMessage('TEST if work as task Archive Item Id: '.$id);//.' ;-)');
 			}
-			
+
 		}
 		else
 		*/
@@ -138,10 +164,11 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 		{
 			foreach($ids as $id)
 			{
-			
+
 				//if(PagesAndItemsHelper::item_state($id,2) )
 				//if(
-				$this->helper->item_state($id,'2');// )
+				//$this->helper->item_state($id,'2');// )
+				PagesAndItemsHelper::item_state($id,2);
 				$app->enqueueMessage('Id: '.$id);
 			}
 		}
@@ -151,11 +178,21 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			{
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			
-				$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-				$typeName::importExtension(null, $table->extension,true,null,false);
+
+				//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+				//$typeName::importExtension(null, $table->extension,true,null,false);
+				switch(strtolower($table->extensionType))
+				{
+					case 'manager':
+						ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+					case 'itemtype':
+						ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+				}
 				$dispatcher = &JDispatcher::getInstance();
-			
 				foreach($ids as $id)
 				{
 					$dispatcher->trigger('onExtensionArchiveTrashItemArchive', array ( $id));
@@ -163,44 +200,45 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				}
 			}
 		}
-	
+
 		$app->redirect($link);
 	}
-	
+
 	function unpublish()
 	{
-		
+
 		$app = &JFactory::getApplication();
-		
+
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_task=display';
+		$link .= '&extensionTask=display';
 		$link .= '&view=archivetrash'; //
 		$table_id = JRequest::getVar('table_id',0);
 		$link .= '&table_id='.$table_id; //
-		
+
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
 		JModel::addIncludePath($path);
 
 		$model = &$this->getModel('archivetrash');
 		$tables = $model->getTables();
-		
+
 		$table = $tables[$table_id];
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
-		
+
 		$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_ITEMS_UNPUBLISHED'));
 
 		if($table->tableName == 'menu')
 		{
 			foreach($ids as $id)
 			{
-				
+
 				//if(
-				$this->helper->page_state($id,'0'); // )
+				//$this->helper->page_state($id,'0'); // )
+				PagesAndItemsHelper::page_state($id,'0'); // )
 				$app->enqueueMessage('Id: '.$id);
 				/*
 				{
@@ -214,7 +252,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->item_state($id,'0');
+				PagesAndItemsHelper::item_state($id,'0');
 				// )
 				$app->enqueueMessage('Id: '.$id);//.' ;-)');
 			}
@@ -225,11 +263,22 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			{
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			
-				$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-				$typeName::importExtension(null, $table->extension,true,null,false);
+
+				//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+				//$typeName::importExtension(null, $table->extension,true,null,false);
+				switch(strtolower($table->extensionType))
+				{
+					case 'manager':
+						ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+					case 'itemtype':
+						ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+				}
 				$dispatcher = &JDispatcher::getInstance();
-			
+
 				foreach($ids as $id)
 				{
 					$dispatcher->trigger('onExtensionArchiveTrashItemUnpublish', array ( $id));
@@ -239,32 +288,32 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 		}
 		$app->redirect($link);
 	}
-	
+
 	function trash()
 	{
-		
+
 		$app = &JFactory::getApplication();
-		
+
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_task=display';
+		$link .= '&extensionTask=display';
 		$link .= '&view=archivetrash'; //
 		$table_id = JRequest::getVar('table_id',0);
 		$link .= '&table_id='.$table_id; //
-		
+
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
 		JModel::addIncludePath($path);
 
 		$model = &$this->getModel('archivetrash');
 		$tables = $model->getTables();
-		
+
 		$table = $tables[$table_id];
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
-		
+
 		$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_ITEMS_TRASHED'));
 
 		if($table->tableName == 'menu')
@@ -272,21 +321,21 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->page_state($id,'-2');
+				PagesAndItemsHelper::page_state($id,'-2');
 				// )
 				$app->enqueueMessage('Id: '.$id);//.' ;-)');
 			}
-			
+
 		}
 		elseif($table->tableName == 'content')
 		{
 			foreach($ids as $id)
 			{
 				//if($
-				$this->helper->item_state($id,'-2'); // )
+				PagesAndItemsHelper::item_state($id,'-2'); // )
 				$app->enqueueMessage('Id: '.$id);//.' ;-)');
 			}
-		
+
 		}
 		else
 		{
@@ -294,11 +343,22 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			{
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			
-				$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-				$typeName::importExtension(null, $table->extension,true,null,false);
+
+				//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+				//$typeName::importExtension(null, $table->extension,true,null,false);
+				switch(strtolower($table->extensionType))
+				{
+					case 'manager':
+						ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+					case 'itemtype':
+						ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+				}
 				$dispatcher = &JDispatcher::getInstance();
-			
+
 				foreach($ids as $id)
 				{
 					$dispatcher->trigger('onExtensionArchiveTrashItemTrash', array ( $id));
@@ -306,25 +366,25 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				}
 			}
 		}
-		
+
 		$app->redirect($link);
 	}
-	
-	
+
+
 	function restore()
 	{
-		
+
 		$app = &JFactory::getApplication();
-		
+
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_task=display';
+		$link .= '&extensionTask=display';
 		$link .= '&view=archivetrash'; //
 		$table_id = JRequest::getVar('table_id',0);
-		
+
 
 		jimport( 'joomla.application.component.model' );
 		$path = realpath(dirname(__FILE__).DS.'models');
@@ -332,17 +392,17 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 
 		$model = &$this->getModel('archivetrash');
 		$tables = $model->getTables();
-		
+
 		$table = $tables[$table_id];
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
-		
+
 		$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_ITEMS_PUBLISHED'));
 		if($table->tableName == 'menu')
 		{
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->page_state($id,'1');// )
+				PagesAndItemsHelper::page_state($id,'1');// )
 				//{
 					$app->enqueueMessage('Id: '.$id);
 				//}
@@ -353,7 +413,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->item_state($id,'1');// )
+				PagesAndItemsHelper::item_state($id,'1');// )
 				$app->enqueueMessage('Id: '.$id);//.' ;-)');
 			}
 		}
@@ -363,11 +423,22 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			{
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			
-				$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-				$typeName::importExtension(null, $table->extension,true,null,false);
+
+				//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+				//$typeName::importExtension(null, $table->extension,true,null,false);
+				switch(strtolower($table->extensionType))
+				{
+					case 'manager':
+						ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+					case 'itemtype':
+						ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+				}
 				$dispatcher = &JDispatcher::getInstance();
-			
+
 				foreach($ids as $id)
 				{
 					$dispatcher->trigger('onExtensionArchiveTrashItemPublish', array ($id));
@@ -375,25 +446,25 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 				}
 			}
 		}
-		
+
 		$link .= '&table_id='.$table_id; //
 		$app->redirect($link);
 	}
-	
+
 	/*
 	the item will delete complete
 	*/
 	function delete()
 	{
-		
+
 		$app = &JFactory::getApplication();
-		
+
 		$link = 'index.php?option=com_pagesanditems';
 		$link .= '&task=manager.doExecute'; //display';
-		$link .= '&extension=archivetrash'; //the name
+		$link .= '&extensionName=archivetrash'; //the name
 		$link .= '&extensionType=manager'; //the type
 		$link .= '&extensionFolder='; //the folder
-		$link .= '&extension_task=display';
+		$link .= '&extensionTask=display';
 		$link .= '&view=archivetrash'; //
 		$table_id = JRequest::getVar('table_id',0);
 		$link .= '&table_id='.$table_id; //
@@ -404,7 +475,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 
 		$model = &$this->getModel('archivetrash');
 		$tables = $model->getTables();
-		
+
 		$table = $tables[$table_id];
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
 		$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_ITEMS_DELETED'));
@@ -413,7 +484,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->page_state($id,'delete');// )
+				PagesAndItemsHelper::page_state($id,'delete');// )
 				//{
 					$app->enqueueMessage('Id: '.$id);
 				//}
@@ -424,7 +495,7 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			foreach($ids as $id)
 			{
 				//if(
-				$this->helper->item_state($id,'delete');//)
+				PagesAndItemsHelper::item_state($id,'delete');//)
 				//{
 					$app->enqueueMessage('Id: '.$id);
 				//}
@@ -436,11 +507,22 @@ class PagesAndItemsControllerExtensionManagerArchiveTrash extends PagesAndItemsC
 			{
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.$table->extensionType.'helper.php');
-			
-				$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
-				$typeName::importExtension(null, $table->extension,true,null,false);
+
+				//$typeName = 'Extension'.ucfirst($table->extensionType).'Helper';
+				//$typeName::importExtension(null, $table->extension,true,null,false);
+				switch(strtolower($table->extensionType))
+				{
+					case 'manager':
+						ExtensionManagerHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+					case 'itemtype':
+						ExtensionItemtypeHelper::importExtension(null, $table->extension,true,null,false);
+					break;
+					
+				}
 				$dispatcher = &JDispatcher::getInstance();
-			
+
 				foreach($ids as $id)
 				{
 					$dispatcher->trigger('onExtensionArchiveTrashItemDelete', array ( $id));

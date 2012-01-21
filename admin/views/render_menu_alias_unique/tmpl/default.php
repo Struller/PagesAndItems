@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -12,12 +12,14 @@ if(!defined('_JEXEC')){
 	die('Restricted access');
 }
 //if($this->controller->user_type!='Super Administrator'){
-if(!$this->model->isSuperAdmin)
+if(!PagesAndItemsHelper::getIsSuperAdmin())
 {
 	echo "<script> alert('you need to be logged in as a super administrator to do this.'); window.history.go(-1); </script>";
 	exit();
 }
-echo '<link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems.css" />';
+
+// TODO CHECK 
+echo '<link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems2.css" />';
 
 echo '<div style="width: 600px; margin: 0 auto;">';
 echo '<h1>';
@@ -25,17 +27,18 @@ echo JText::_('COM_PAGESANDITEMS_MENU_ALIASSES_MAKING_UNIQUE');
 echo ' <img src="components/com_pagesanditems/images/processing.gif" alt="'.JText::_('COM_PAGESANDITEMS_MENU_ALIASSES_MAKING_UNIQUE').'" />';
 echo '</h1>';
 //get menu items which need updating
-$this->model->db->setQuery( "SELECT id, name, alias "
-. "\nFROM #__menu"		
+$db = JFactory::getDBO();
+$db->setQuery( "SELECT id, name, alias "
+. "\nFROM #__menu"
 . "\nORDER BY name ASC"
 );
-$menuitems_array = $this->model->db->loadObjectList();
+$menuitems_array = $db->loadObjectList();
 $total_to_render = count($menuitems_array);
 echo '<p>';
 echo 'total menu-items to render = '.$total_to_render;
 echo '</p>';
 if($total_to_render==0){
-	$this->model->redirect_to_url('index.php?option=com_pagesanditems&view=config', JText::_('COM_PAGESANDITEMS_MENU_ALIASSES_MADE_UNIQUE'));
+	PagesAndItemsHelper::redirect_to_url('index.php?option=com_pagesanditems&view=config', JText::_('COM_PAGESANDITEMS_MENU_ALIASSES_MADE_UNIQUE'));
 }
 //make javascript array of item id's
 $javascript_array_menuitems = 'var pi_array_menuitems = new Array(';
@@ -62,10 +65,10 @@ window.addEvent('domready', function() {
 	var delay = 0;
 	for (i = 0; i < pi_array_menuitems.length; i++){
 		//add ajax. to ajax_make_menu_alias_unique
-		ajax_url = 'index.php?option=com_pagesanditems&task=ajax.ajax_make_menu_alias_unique&format=raw&menu_item_id='+pi_array_menuitems[i];   
+		ajax_url = 'index.php?option=com_pagesanditems&task=ajax.ajax_make_menu_alias_unique&format=raw&menu_item_id='+pi_array_menuitems[i];
 		var req = new Ajax(ajax_url,{ update:'item_'+pi_array_menuitems[i], onComplete:progress_bar });
 		delay += 500; // 0.5 seconds between each call
-		req.request.delay(delay,req);          
+		req.request.delay(delay,req);
 	}
 });
 var rendered = 0;

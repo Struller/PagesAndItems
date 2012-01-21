@@ -2,8 +2,8 @@
 <extension version="1.5" type="itemtype" method="upgrade">
 	<name>Custom (Pages and Items itemtype)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
@@ -27,10 +27,84 @@
 
 	<config>
 		<fields name="params">
+			<fieldset name="basic" >
+				<field name="useDefault" type="hidden" default="1" label="COM_PAGESANDITEMS_CUSTOMITEMTYPE_USE_DEFAULT" description="COM_PAGESANDITEMS_CUSTOMITEMTYPE_USE_DEFAULT_TIP">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				
+				
+				<field name="sliderType" class="radiolong" type="radiolong" default="3" label="COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE" ><!--description="COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_TIP"-->
+					<option value="0">JNONE</option>
+					<option value="1">COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_ONE</option>
+					<option value="2">COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_TWO</option>
+					<option value="3">COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_THREE</option>
+					<option value="4">COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_FOUR</option>
+				</field>
+				
+				<field name="sliderTypeConditions" type="list" default="-1" label="COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_CONDITION" description="COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_CONDITION_TIP">
+					<option value="-1">JALL</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</field>
+				
+				<!--
+				<field name="showSlider" type="list" default="-1" label="COM_PAGESANDITEMS_SHOW_SLIDER" description="COM_PAGESANDITEMS_SHOW_SLIDER_CUSTOMITEMTYPE_TIP">
+					<option value="-1">JYES</option>
+					<option value="0">JNEVER</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</field>
+				
+				<field name="showSliderField" type="list" default="-1" label="COM_PAGESANDITEMS_SHOW_SLIDER_EACH_FIELD" description="COM_PAGESANDITEMS_SHOW_SLIDER_EACH_FIELD_TIP">
+					<option value="-1">JYES</option>
+					<option value="0">JNEVER</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</field>
+				-->
+				<field name="showIconField" type="radio" default="1" label="COM_PAGESANDITEMS_SHOW_ICON_FIELD">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="sliderCookie" type="hidden" default="1" label="COM_PAGESANDITEMS_SLIDER_COOKIE">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="sliderOpen" type="hidden" default="1" label="COM_PAGESANDITEMS_SLIDER_OPEN">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+			</fieldset>
 			<fieldset name="hidden" >
 				<field name="translatable" type="radio" default="0" label="translatable">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 			</fieldset>
 		</fields>

@@ -1,15 +1,15 @@
-<?php 
+<?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
 
 defined('_JEXEC') or die('Restricted access'); ?>
 
-<?php 
+<?php
 
 JHTML::_('behavior.tooltip');
 
@@ -20,16 +20,17 @@ JHTML::_('behavior.tooltip');
 <?php
 	/*
 	$this->item->nameA = '';
-	if ( $this->item->extension_id ) 
+	if ( $this->item->extension_id )
 	{
 		$row->nameA = '<small><small>[ '. $this->plugin->name .' ]</small></small>';
 	}
 	*/
+	$tmpl = JRequest::getVar('tmpl', 0 );
 ?>
 <script language="javascript" type="text/javascript">
 	Joomla.submitbutton = function(pressbutton)
 	{
-		if (pressbutton == "piextension.cancel") 
+		if (pressbutton == "piextension.cancel")
 		{
 			document.getElementById('extensionTask').value = pressbutton;
 			document.adminForm.submit();
@@ -41,25 +42,25 @@ JHTML::_('behavior.tooltip');
 		<?php
 		/*
 		var form = document.adminForm;
-		if (form.name.value == "") 
+		if (form.name.value == "")
 		{
 			alert( "<?php echo JText::_( 'Plugin must have a name', true ); ?>" );
 		}
-		else if (form.element.value == "") 
+		else if (form.element.value == "")
 		{
 			alert( "<?php echo JText::_( 'Plugin must have a filename', true ); ?>" );
-		} 
-		else 
+		}
+		else
 		*/
 		?>
-		if (pressbutton == "piextension.save") 
+		if (pressbutton == "piextension.save")
 		{
-			
+
 			document.getElementById('extensionTask').value = pressbutton;
 			document.adminForm.submit();
 			//submitform(pressbutton);
 		}
-		else if (pressbutton == "piextension.apply") 
+		else if (pressbutton == "piextension.apply")
 		{
 			document.getElementById('extensionTask').value = pressbutton;
 			document.adminForm.submit();
@@ -68,12 +69,13 @@ JHTML::_('behavior.tooltip');
 
 	}
 </script>
-
-<form action="index.php" method="post" name="adminForm">
+<div id="page_content">
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 <?php
 
 
-//dump($this->form->getValue('type'));
 
 
 
@@ -81,7 +83,7 @@ JHTML::_('behavior.tooltip');
 <fieldset class="adminform">
 
 <h1>
-	<?php echo JText::_('COM_PAGESANDITEMS_EXTENSIONS');?>: 
+	<?php echo JText::_('COM_PAGESANDITEMS_EXTENSIONS');?>:
 	<small>
 		[<?php echo JText::_('edit');?>]
 	</small>
@@ -98,25 +100,25 @@ COM_PAGESANDITEMS_MANAGEEXTENSIONS="Erweiterungen verwalten"
 
 */
 
-$hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->getValue('type').'1').'::'.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->getValue('type').'2');
+$hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.strtoupper ($this->form->getValue('type')).'_1').'::'.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.strtoupper ($this->form->getValue('type')).'_2');
 ?>
 <div class="col width-60" style=" float: left;">
 	<fieldset class="adminform">
 	<legend class="hasTip" title="<?php echo $hasTipType;?>"><?php echo JText::_('JDETAILS') ?>
 	</legend>
-	
+
 	 <?php /*echo JText::_('COM_PAGESANDITEMS_EXTENSION');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->getValue('type').'1');?></legend> */?>
-	
+
 			<ul class="adminformlist">
 			<li>
-			<?php 
-				echo $this->form->getLabel('name'); 
+			<?php
+				echo $this->form->getLabel('name');
 			//$this->form->setFieldAttribute('name', 'hidden','true');
 				//echo '<span style="display:none;">';
 				$this->form->setFieldAttribute('name', 'type', 'hidden');
 				echo $this->form->getInput('name');
 				//echo '</span>';
-				echo '<span class="readonly plg-name">'.JText::_($this->item->name).'</span>'; 
+				echo '<span class="readonly plg-name">'.JText::_($this->item->name).'</span>';
 			?>
 			</li>
 
@@ -127,9 +129,9 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 				//$this->form->setFieldAttribute('enabled', 'disabled', 'disabled');
 			}
 			//$this->form->setFieldAttribute('enabled', 'disabled', true);
-			
+
 			?>
-			
+
 			<li><?php echo $this->form->getLabel('enabled'); ?>
 			<?php echo $this->form->getInput('enabled'); ?></li>
 
@@ -141,19 +143,19 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 
 			<li>
 				<?php echo $this->form->getLabel('folder'); ?>
-				<?php 
-					//dump($this->form->getValue('folder'));
+				<?php
 					if($this->form->getValue('folder') != '')
 					{
-						list($view,$type) = explode('_',$this->form->getValue('folder'));
-						dump($view);
+						$view = '';
+						if(strpos($this->form->getValue('folder'), '_') !== false)
+						{
+							list($view,$type) = explode('_',$this->form->getValue('folder'));
+						}
 						$image = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'images'.DS.'view_'.$view.'.png');
-						dump($image);
-						//dump(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'images'.DS.'view_'.$view.'.png');
 						//if(file_exists($image))
 						if($image)
 						{
-							JHTML::_( 'behavior.modal' ); 
+							JHTML::_( 'behavior.modal' );
 							$image = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',$image));
 							$value = '<span class="editlinktip readonly plg-name"><a class="modal hasTip" title="'.JText::_('COM_PAGESANDITEMS_EXTENSION_FOLDER_TIP').'" href="'.$image.'" >';
 								$value .= $this->form->getValue('folder');
@@ -167,16 +169,16 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 						echo '<input type="text" readonly="readonly" size="20" class="readonly" value="'.JText::_('JOPTION_UNASSIGNED').'" >';
 						//
 					}
-					echo $this->form->getInput('folder'); 
+					echo $this->form->getInput('folder');
 					//echo JText::_('JOPTION_UNASSIGNED');
 				?>
 			</li>
 
 			<li>
-				<?php 
-					echo $this->form->getLabel('type'); 
+				<?php
+					echo $this->form->getLabel('type');
 				?>
-				<?php 
+				<?php
 					//class="hasTip" title="echo $hasTipType;"
 					$value = '<span class="hasTip editlinktip readonly plg-name" title="'.$hasTipType.'" href="#">';
 					$value .= $this->form->getValue('type');
@@ -190,7 +192,7 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 					//$this->form->setFieldAttribute('type', 'type', 'aimage');
 					//$this->form->setFieldAttribute('type', 'type', 'html');
 					$this->form->setFieldAttribute('type', 'type', 'hidden');
-					echo $this->form->getInput('type'); 
+					echo $this->form->getInput('type');
 				?>
 			</li>
 
@@ -199,7 +201,7 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 
 			<li><?php echo $this->form->getLabel('access'); ?>
 			<?php echo $this->form->getInput('access'); ?></li>
-			
+
 			<li><?php echo $this->form->getLabel('ordering'); ?>
 			<?php echo $this->form->getInput('ordering'); ?></li>
 
@@ -231,7 +233,7 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 </div>
 
 <?php
-	
+
 	JHTML::_('behavior.tooltip');
 	JHtml::_('behavior.formvalidation');
 ?>
@@ -269,7 +271,7 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 
 	<input type="hidden" name="option" value="com_pagesanditems" />
 	<input type="hidden" id="task" name="task" value="extension.doExecute" />
-	<input type="hidden" id="extension" name="extension" value="extensions" />
+	<input type="hidden" id="extensionName" name="extensionName" value="extensions" />
 	<input type="hidden" id="extensionTask" name="extensionTask" value="display" />
 	<input type="hidden" id="extensionType" name="extensionType" value="manager" />
 	<input type="hidden" id="extensionFolder" name="extensionFolder" value="" />
@@ -286,7 +288,12 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.$this->form->g
 	<input type="hidden" name="client" value="<?php echo $this->item->client_id; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>
+<!-- end id="form_content" need for css-->
+</div>
+<!-- end id="page_content"-->
+</div>
 <?php
-//echo $this->loadTemplate('footer'); 
+//echo $this->loadTemplate('footer');
+if(!$tmpl)
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
 ?>

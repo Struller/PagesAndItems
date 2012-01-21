@@ -1,5 +1,29 @@
 /* CSS Document */
 
+
+#adminForm .jgrid span.downarrow, #adminForm .jgrid span.uparrow {
+    background-repeat: no-repeat;
+    height: 12px;
+}
+
+#form_content .reorder_rows_arrows span {
+    float: left;
+    width: 16px;
+}
+
+.jgrid span.downarrow {
+    background-image: url("../images/admin/downarrow.png");
+}
+
+.jgrid span.uparrow {
+    background-image: url("../images/admin/uparrow.png");
+}
+
+.jgrid span.text {
+    display: none;
+}
+
+
 #adminForm label{
 	display: inline-block;
     vertical-align: top;

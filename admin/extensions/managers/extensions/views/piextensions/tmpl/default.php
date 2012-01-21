@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -18,10 +18,11 @@ if(!defined('_JEXEC'))
 	$rows = & $this->items;
 
 ?>
-
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <form action="index.php" method="post" name="adminForm" id="adminForm">
-<?php 
-if($this->joomlaVersion >= '1.6')
+<?php
+if(PagesAndItemsHelper::getIsJoomlaVersion('>=','1.6'))
 {
 ?>
 <script language="javascript" type="text/javascript">
@@ -37,8 +38,15 @@ if($this->joomlaVersion >= '1.6')
 			Joomla.submitform( 'extension.doExecute', document.getElementById('adminForm' ));
 			return;
 	}
+	
 	function submitbutton(pressbutton)
 	{
+		if(pressbutton == 'managers.cancel')
+		{
+			submitform( pressbutton);
+			return;
+		}
+		
 		document.getElementById('extensionTask').value = pressbutton;
 		Joomla.submitform( 'extension.doExecute', document.getElementById('adminForm' ));
 		return;
@@ -47,32 +55,32 @@ if($this->joomlaVersion >= '1.6')
 <?php
 }
 ?>
-	
+
 <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP');?>:
 <ol>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP1');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_PAGETYPE2');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_PAGETYPES');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_PAGETYPE_2');?>
 	</li>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP2');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE2');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPES');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE_2');?>
 	</li>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP3');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_FIELDTYPE2');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_FIELDTYPES');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_FIELDTYPE_2');?>
 	</li>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP4');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_HTML');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_HTMLS');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_HTML_2');?>
 	</li>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP5');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_MANAGER2');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_MANAGERS');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_MANAGER_2');?>
 	</li>
 	<li>
-		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP6');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_LANGUAGE2');?>
+		<?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_LANGUAGES');?>: <?php echo JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_LANGUAGE_2');?>
 	</li>
 </ol>
 
 <table>
 	<tr>
-		
+
 		<td align="left" width="100%">
 		<?php
 		/*	<?php echo JText::_( 'Filter' ); ?>:
@@ -105,8 +113,8 @@ if($this->joomlaVersion >= '1.6')
 		<th class="title">
 			<?php echo JHTML::_('grid.sort', 'COM_PAGESANDITEMS_EXTENSIONS_NAME', 'p.element', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 		</th>
-		
-		
+
+
 		<th nowrap="nowrap" width="5%">
 			<?php echo JHTML::_('grid.sort', 'JSTATUS', 'p.enabled', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 		</th>
@@ -129,13 +137,13 @@ if($this->joomlaVersion >= '1.6')
 		</th>
 
 		<th nowrap="nowrap" width="10%">
-			<?php 
-				echo JHTML::_('grid.sort', 'JVERSION', 'p.version', @$this->lists['order_Dir'], @$this->lists['order'] ); 
-				//echo JHTML::_('grid.sort',   'Access', 'groupname', @$this->lists['order_Dir'], @$this->lists['order'] ); 
+			<?php
+				echo JHTML::_('grid.sort', 'JVERSION', 'p.version', @$this->lists['order_Dir'], @$this->lists['order'] );
+				//echo JHTML::_('grid.sort',   'Access', 'groupname', @$this->lists['order_Dir'], @$this->lists['order'] );
 			?>
 		</th>
-		
-		
+
+
 		<th nowrap="nowrap"  width="1%" class="title">
 			<?php echo JHTML::_('grid.sort', 'JGRID_HEADING_ID', 'p.extension_id', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 		</th>
@@ -151,15 +159,15 @@ if($this->joomlaVersion >= '1.6')
 <tbody>
 <?php
 $k = 0;
-for ($i=0, $n=count( $rows ); $i < $n; $i++) 
+for ($i=0, $n=count( $rows ); $i < $n; $i++)
 {
 	$row 	= $rows[$i];
 	$item = $this->loadItem($row);
-	
+
 	//$link = JRoute::_( 'index.php?option=com_pagesanditems&view=manageextension&client='. $this->client .'&sub_task=edit&cid[]='. $row->extension_id.'&extension_id='. $row->extension_id );
-	$link = JRoute::_( 'index.php?option=com_pagesanditems&task=extension.doExecute&extension=extensions&extensionType=manager&layout=edit&extensionTask=display&view=piextension&client='. $this->client .'&sub_task=edit&cid[]='. $row->extension_id.'&extension_id='. $row->extension_id );
+	$link = JRoute::_( 'index.php?option=com_pagesanditems&task=extension.doExecute&extensionName=extensions&extensionType=manager&layout=edit&extensionTask=display&view=piextension&client='. $this->client .'&sub_task=edit&cid[]='. $row->extension_id.'&extension_id='. $row->extension_id );
 	//$access 	= JHTML::_('grid.access', $row, $i );
-	
+
 	$protected = 0;
 	//$published 	= JHTML::_('grid.published', $row, $i,'tick.png', 'publish_x.png','extensions.publish'); //,'extension_id' );
 	if( ($row->type == 'itemtype' && ($row->element == 'content' || $row->element == 'text')) || ($row->type == 'pagetype' && $row->version == 'integrated') || ($row->type == 'manager' && $row->element == 'extensions' && $row->version == 'integrated') || $row->type == 'language')
@@ -194,55 +202,55 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 		$published = JHtml::_('jgrid.published', $item->enabled, $i, 'piextensions.');
 		//$published .= JHtml::_('jgrid.published', $item->state, $i, 'piextensions.');
 	}
-	
+
 	if($row->version == 'integrated' || ($row->type == 'language' && ($row->protected || $row->element == 'en-GB')) )
 	{
 		$protected++;
 	}
-	
+
 	$checked 	= JHTML::_('grid.checkedout', $row, $i,'extension_id' );
 	$user		= JFactory::getUser();
 	$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $item->checked_out==$user->get('id') || $item->checked_out==0;
 	$checked_out = '';
-	if ($item->checked_out) 
-	{ 
+	if ($item->checked_out)
+	{
 		$checked_out = JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'piextensions.', $canCheckin);
 		/*
 		if($protected >= 2)
 		{
-		
+
 		}
 		<a class="jgrid hasTip" title="" onclick="return listItemTask('cb0','piextensions.checkin')" href="javascript:void(0);">
 			<span class="state checkedout">
 				<span class="text">Ausgecheckt</span>
 			</span>
 		</a>
-		
+
 		*/
 	//icon-16-lock.png
 	}
-	
-	
+
+
 ?>
 	<tr class="<?php echo "row$k"; ?>">
 		<td align="right">
-			<?php 
-			
-			echo $this->pagination->getRowOffset( $i ); 
-			
+			<?php
+
+			echo $this->pagination->getRowOffset( $i );
+
 			?>
 		</td>
 		<td>
-			<?php 
+			<?php
 			if( $row->installed)
 			{
 				if($protected < 2)
 				{
-			
+
 			//name="cid[]"
 			?>
 					<input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $item->extension_id; ?>" onclick="isChecked(this.checked);" <?php echo $item->cbd; ?> />
-				<?php 
+				<?php
 				}
 				else
 				{
@@ -253,18 +261,20 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 				?>
 					<input type="hidden" name="xcid[]" id="cb<?php echo $i;?>" value="<?php echo $item->extension_id; ?>" onclick="isChecked(this.checked);" <?php echo $item->cbd; ?> />
 					<input type="checkbox" disabled="disabled" value="<?php echo $item->extension_id; ?>" <?php echo $item->cbd; ?> />
-				<?php 
+				<?php
 				}
 			}
 			else
 			{
 				echo '<img src="'.PagesAndItemsHelper::getDirIcons().'base/icon-16-no_access_slash_button.png">';
 			}
-			//echo $checked; 
+			//echo $checked;
 			?>
 		</td>
 		<td>
 			<?php
+			$name = JText::_(strtoupper ($row->name)) <> strtoupper ($row->name) ? JText::_(strtoupper ($row->name)) : $row->name;
+			
 			echo $checked_out;
 			if($row->type == 'language' && ($row->name <> $row->element ) )
 			{
@@ -278,7 +288,7 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 				$more .= '</span>';
 				echo $more;
 			}
-			if (  JTable::isCheckedOut($this->user->get ('id'), $row->checked_out ) || !$row->installed || $row->type == 'language') 
+			if (  JTable::isCheckedOut($this->user->get ('id'), $row->checked_out ) || !$row->installed || $row->type == 'language')
 			{
 				if(!$row->installed)
 				{
@@ -288,7 +298,7 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 					?>
 					<p class="smallsub">
 					<span></span>
-						<?php echo htmlspecialchars($row->name); ?>
+						<?php echo htmlspecialchars($name); //$row->name); ?>
 					</p>
 					<?php
 				}
@@ -308,15 +318,15 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 						$addSpan = true;
 					}
 					?>
-					
-					<?php echo htmlspecialchars($row->element); 
-					
+
+					<?php echo htmlspecialchars($row->element);
+
 					if($addSpan) // && $row->type == 'language') // && $row->element != 'en-GB')
 					{
 						echo '</span>';
 					}
 					?>
-					
+
 					<p class="smallsub">
 					<?php
 					if($row->type == 'language' && ($row->name <> $row->element ) )
@@ -328,7 +338,7 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 					echo '<span></span>';
 					}
 					?>
-						<?php echo htmlspecialchars($row->name); ?>
+						<?php echo htmlspecialchars($name); //$row->name); ?>
 						<?php
 						if($row->type == 'language')
 						{
@@ -339,8 +349,8 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 					</p>
 					<?php
 				}
-			} 
-			else 
+			}
+			else
 			{
 			?>
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_PAGESANDITEMS_EXTENSION_EDIT' );?>::<?php echo htmlspecialchars($row->element); ?>">
@@ -350,9 +360,9 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 				</span>
 				<p class="smallsub">
 					<span></span>
-						<?php echo htmlspecialchars($row->name); ?>
+						<?php echo htmlspecialchars($name); //$row->name); ?>
 				</p>
-					
+
 			<?php } ?>
 		</td>
 		<?php
@@ -372,11 +382,11 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 		</td>
 		*/
 		?>
-		
-		
+
+
 		<td align="center">
-			<?php 
-				
+			<?php
+
 				echo $published;
 			?>
 		</td>
@@ -385,34 +395,40 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 		{
 		?>
 		<td class="order">
-			<span><?php 
+			<span><?php
 				//orderUpIcon($i, $condition = true, $task = 'orderup', $alt = 'Move Up', $enabled = true)
 				echo $this->pagination->orderUpIcon( $i, ($row->type == @$rows[$i-1]->type && $row->folder == @$rows[$i-1]->folder && $row->ordering > -10000 && $row->ordering < 10000), 'piextensions.orderup', 'JLIB_HTML_MOVE_UP', $ordering ); ?></span>
 			<span><?php echo $this->pagination->orderDownIcon( $i, $n, ($row->type == @$rows[$i+1]->type && $row->folder == @$rows[$i+1]->folder && $row->ordering > -10000 && $row->ordering < 10000), 'piextensions.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?></span>
-			<?php 
-			
-			$disabled = $ordering ?  '' : 'disabled="disabled"'; 
-			
+			<?php
+
+			$disabled = $ordering ?  '' : 'disabled="disabled"';
+
 			?>
-			
+
 			<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>"  <?php echo $disabled ?> class="text_area" style="text-align: center" />
 		</td>
-		<?php 
+		<?php
 		}
 		?>
-		
+
 		<td nowrap="nowrap">
 			<?php echo $row->type;?>
 		</td>
 		<td>
 			<?php
-			if ( $row->folder && $row->folder != '' ) 
+			if ( $row->folder && $row->folder != '' )
 			{
-				list($view,$type) = explode('_',$row->folder);
+
+				$view = '';
+				if(strpos($row->folder, '_') !== false)
+				{
+					list($view,$type) = explode('_',$row->folder);
+				}
+				
 				$image = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'images'.DS.'view_'.$view.'.png');
 				if($image)
 				{
-					JHTML::_( 'behavior.modal' ); 
+					JHTML::_( 'behavior.modal' );
 					$image = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',$image));
 					$value = '<span class="editlinktip"><a class="modal hasTip editlinktip" title="'.JText::_('COM_PAGESANDITEMS_EXTENSION_FOLDER_TIP').'" href="'.$image.'">';
 						$value .= $row->folder;
@@ -431,9 +447,9 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 			 ?>
 		</td>
 
-		
+
 		<td align="center">
-			<?php 
+			<?php
 				echo $row->version;
 				//echo $access;
 			?>
@@ -458,24 +474,26 @@ for ($i=0, $n=count( $rows ); $i < $n; $i++)
 	<input type="hidden" name="option" value="com_pagesanditems" />
 	<input type="hidden" id="task" name="task" value="extension.doExecute" />
 	<input type="hidden" id="extensionTask" name="extensionTask" value="" />
-	<input type="hidden" id="extension" name="extension" value="extensions" />
+	<input type="hidden" id="extensionName" name="extensionName" value="extensions" />
 	<input type="hidden" id="extensionType" name="extensionType" value="manager" />
 	<input type="hidden" id="extensionFolder" name="extensionFolder" value="" />
 	<input type="hidden" id="view" name="view" value="piextensions" />
-	
-	
-	
-	
+
+
+
+
 	<!--<input type="hidden" name="filter_client" value="<?php echo $this->client;?>" />-->
-	
-	
+
+
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>
+<!-- end id="form_content" need for css-->
+</div>
 <?php
-//echo $this->loadTemplate('footer'); 
+//echo $this->loadTemplate('footer');
 /*
 $path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..')));
 echo '<link href="'.JURI::root(true).'/'.$path.'/css/pagesanditems_icons.css" rel="stylesheet" type="text/css" />'."\n";

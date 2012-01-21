@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,34 +13,37 @@ if(!defined('_JEXEC'))
 	die('Restricted access');
 }
 
-//if($this->model->user_type!='Super Administrator' && !$this->pagesAndItemsModel->isSuperAdmin)
-if(!$this->model->isSuperAdmin)
+//if(PagesAndItemsHelper::user_type!='Super Administrator' && !$this->pagesAndItemsModel->isSuperAdmin)
+if(!PagesAndItemsHelper::getIsSuperAdmin())
 {
 	exit("you need to be logged in as a super administrator to edit the Pages-and-Items config.");
 }
 $type_id = JRequest::getVar('type_id', '' );
 if(!$type_id){
 	//start new
-		
+
 		$type_id = '';
 		$name = '';
 		$read_more = '1';
 		$items_of_this_type = 0;
-		
-	//end new	
+		$editor_id = 0;
+		$html_after = '';
+		$html_before = '';
+
+	//end new
 }else{
 	//start edit
-	
+
 	//get data about this itemtype
-	$this->model->db->setQuery("SELECT * FROM #__pi_customitemtypes WHERE id='$type_id' LIMIT 1");
-	$customitemtypes = $this->model->db->loadObjectList();
+	$this->db->setQuery("SELECT * FROM #__pi_customitemtypes WHERE id='$type_id' LIMIT 1");
+	$customitemtypes = $this->db->loadObjectList();
 	$customitemtype = $customitemtypes[0];
 	$name = $customitemtype->name;
 	$read_more = $customitemtype->read_more;
 	$template_intro = $customitemtype->template_intro;
 	//display &nbsp;  ?
 	//$template_intro = str_replace('&nbsp;','&amp;nbsp;',$template_intro);
-	
+
 	$template_full = $customitemtype->template_full;
 	$editor_id = $customitemtype->editor_id;
 	if($editor_id==0){
@@ -48,53 +51,41 @@ if(!$type_id){
 	}
 	$html_after = $customitemtype->html_after;
 	$html_before = $customitemtype->html_before;
-	
+
 	//get fields
-	$this->model->db->setQuery("SELECT * FROM #__pi_custom_fields WHERE type_id='$type_id' ORDER BY ordering ASC");
-	$fields = $this->model->db->loadObjectList();
-	//print_r($fields);
-	
+	$this->db->setQuery("SELECT * FROM #__pi_custom_fields WHERE type_id='$type_id' ORDER BY ordering ASC");
+	$fields = $this->db->loadObjectList();
+
 	//get itemtype name
 	$itemtype_name = 'custom_'.$type_id;
 	//get number of items which need updating
-	$this->model->db->setQuery( "SELECT c.id "
-	."FROM #__pi_item_index AS i "		
+	$this->db->setQuery( "SELECT c.id "
+	."FROM #__pi_item_index AS i "
 	."LEFT JOIN #__content AS c "
 	."ON c.id=i.item_id "
 	."WHERE i.itemtype='$itemtype_name' "
-	."AND (c.state='0' OR c.state='1') "	
+	."AND (c.state='0' OR c.state='1') "
 	);
-				
-	$items_array = $this->model->db->loadObjectList();
+
+	$items_array = $this->db->loadObjectList();
 	$items_of_this_type = count($items_array);
-	
-					
+
+
 	//end edit
 }
 
-/*
-require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
-$itemtype = ExtensionHelper::importExtension('itemtype',null, 'custom',true,null,true);
-$dispatcher = &JDispatcher::getInstance();
-
-
-first load all avaible fields
-*/
-//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
-//$fieldtypes = ExtensionHelper::importExtension('fieldtype',null, null,true,null,true);
+//first load all avaible fields
 $path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
 $fieldtypes = ExtensionFieldtypeHelper::importExtension(null, null,true,null,true,' ORDER BY element');
 $dispatcher = &JDispatcher::getInstance();
-
-//$allFieldtypes = ExtensionHelper::getExtension('fieldtype',null, null);
 $allFieldtypes = ExtensionFieldtypeHelper::getExtension(null, null,' ORDER BY element');
-//
 
 
 ?>
-
-<!-- <link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems.css" /> -->
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
+<!-- <link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems2.css" /> -->
 <script language="JavaScript" type="text/javascript">
 function do_pre_submit_checks(){
 	if (document.adminForm.name.value == '') {
@@ -105,9 +96,9 @@ function do_pre_submit_checks(){
 		if(!$type_id)
 		{
 			//new custom itemtype
-			
+
 			//echo 'submitform(\'customitemtype.config_custom_itemtype_save\');';
-			if($this->model->joomlaVersion < '1.6')
+			if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 			?>
 			submitform('customitemtype.config_custom_itemtype_save');
@@ -130,7 +121,7 @@ function do_pre_submit_checks(){
 				template_full_original = document.getElementById('template_full_original').value;
 				old_read_more_option = document.getElementById('old_read_more_option').value;
 				new_read_more_option = getCheckedValue(document.adminForm.read_more);
-				
+
 				//ADD MS 18.09.2009
 				editor_id = document.getElementById('editor_id').value;
 				old_editor_id = document.getElementById('old_editor_id').value;
@@ -139,9 +130,9 @@ function do_pre_submit_checks(){
 				html_before = document.getElementById('html_before').value;
 				old_html_before = document.getElementById('old_html_before').value;
 				//ADD MS 18.09.2009 END
-				
+
 				items_of_this_type = document.getElementById('items_of_this_type').value;
-							
+
 				if((template_intro!=template_intro_original || template_full!=template_full_original || old_read_more_option!=new_read_more_option || old_editor_id!=editor_id || old_html_after!=html_after || old_html_before!=html_before) && items_of_this_type!=0)
 				{
 					if(confirm("<?php echo addslashes(JText::_('COM_PAGESANDITEMS_CHANGE_TO_TEMPLATE')).' '.addslashes(JText::_('COM_PAGESANDITEMS_WANT_TO_UPDATE_ITEMS')); ?>")){
@@ -150,7 +141,7 @@ function do_pre_submit_checks(){
 				}
 				//submitform('customitemtype.config_custom_itemtype_save');
 				<?php
-				if($this->model->joomlaVersion < '1.6')
+				if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 				{
 				?>
 				submitform('customitemtype.config_custom_itemtype_save');
@@ -186,9 +177,9 @@ function getCheckedValue(radioObj) {
 	return "";
 }
 
-//function submitbutton(pressbutton) 
-<?php 
-if($this->model->joomlaVersion < '1.6')
+//function submitbutton(pressbutton)
+<?php
+if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 {
 echo 'function submitbutton(pressbutton)'."\n";
 }
@@ -198,24 +189,24 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 }
 ?>
 {
-	if (pressbutton == 'customitemtype.config_custom_itemtype_save') 
+	if (pressbutton == 'customitemtype.config_custom_itemtype_save')
 	{
 		do_pre_submit_checks();
 	}
-	//COMMENT 
-	if (pressbutton == 'config_itemtype_render') 
+	//COMMENT
+	if (pressbutton == 'config_itemtype_render')
 	{
 		if(confirm("<?php echo addslashes(JText::_('COM_PAGESANDITEMS_WANT_TO_UPDATE_ITEMS')); ?>"))
 		{
 			document.location.href = 'index.php?option=com_pagesanditems&view=render_items_by_custom_itemtype&type_id=<?php echo $type_id; ?>&futuretask=config_custom_itemtype';
 		}
 	}
-	if (pressbutton == 'customitemtype.config_custom_itemtype_apply') 
+	if (pressbutton == 'customitemtype.config_custom_itemtype_apply')
 	{
 		document.getElementById('sub_task').value = 'apply';
 		do_pre_submit_checks();
 	}
-	
+
 	if (pressbutton == 'customitemtype.config_custom_itemtype_archive') {
 		if(confirm("<?php echo JText::_('COM_PAGESANDITEMS_SURE_ITEMTYPE_ARCHIVE'); ?>"))
 		{
@@ -225,7 +216,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			}
 			return;
 			<?php
-			if($this->model->joomlaVersion < '1.6')
+			if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 			?>
 			submitform('customitemtype.config_custom_itemtype_archive');
@@ -240,7 +231,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			?>
 		}
 	}
-	if (pressbutton == 'customitemtype.config_custom_itemtype_trash') 
+	if (pressbutton == 'customitemtype.config_custom_itemtype_trash')
 	{
 		if(confirm("<?php echo JText::_('COM_PAGESANDITEMS_SURE_ITEMTYPE_TRASH'); ?>")){
 			if(confirm("<?php echo JText::_('COM_PAGESANDITEMS_SURE_ITEMS_TRASH'); ?>"))
@@ -250,7 +241,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			return;
 			//submitform('customitemtype.config_custom_itemtype_trash');
 			<?php
-			if($this->model->joomlaVersion < '1.6')
+			if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 			?>
 			submitform('customitemtype.config_custom_itemtype_trash');
@@ -265,7 +256,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			?>
 		}
 	}
-	
+
 	if (pressbutton == 'customitemtype.config_custom_itemtype_delete') {
 		if(confirm("<?php echo JText::_('COM_PAGESANDITEMS_SURE_ITEMTYPE_DELETE'); ?>"))
 		{
@@ -276,7 +267,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			//alert(document.getElementById('delete_items').value);
 			//submitform('customitemtype.config_custom_itemtype_delete');
 			<?php
-			if($this->model->joomlaVersion < '1.6')
+			if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 			{
 			?>
 			submitform('customitemtype.config_custom_itemtype_delete');
@@ -291,12 +282,12 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 			?>
 		}
 	}
-	if (pressbutton == 'customitemtype.cancel') 
+	if (pressbutton == 'customitemtype.cancel')
 	{
 		document.getElementById('view').value = 'config';
 		document.getElementById('tab').value = 'itemtypes';
 		<?php
-		if($this->model->joomlaVersion < '1.6')
+		if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 		{
 		?>
 		submitform('display');
@@ -313,16 +304,16 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 		document.location.href = 'index.php?option=com_pagesanditems&view=config&tab=itemtypes';
 	}
 }
-Array.prototype.in_array = function (element) 
+Array.prototype.in_array = function (element)
 {
   var retur = false;
-  for (var values in this) 
+  for (var values in this)
   {
-    if (this[values] == element) 
+    if (this[values] == element)
     {
       retur = true;
       break;
-    }  
+    }
   }
   return retur;
 };
@@ -358,12 +349,12 @@ function delete_fields(){
 	}
 }
 // ADD MS
-function insert_in_textarea(aTag, eTag, template_element) 
+function insert_in_textarea(aTag, eTag, template_element)
 {
 	var input = document.forms['adminForm'].elements[template_element];
 	input.focus();
 	/* for Internet Explorer */
-	if(typeof document.selection != 'undefined') 
+	if(typeof document.selection != 'undefined')
 	{
 		/* inseret code */
 		var range = document.selection.createRange();
@@ -371,11 +362,11 @@ function insert_in_textarea(aTag, eTag, template_element)
 		range.text = aTag + insText + eTag;
 		/* adapt Cursorposition */
 		range = document.selection.createRange();
-		if (insText.length == 0) 
+		if (insText.length == 0)
 		{
 			range.move('character', -eTag.length);
-		} 
-		else 
+		}
+		else
 		{
 			range.moveStart('character', aTag.length + insText.length + eTag.length);
 		}
@@ -391,11 +382,11 @@ function insert_in_textarea(aTag, eTag, template_element)
 		input.value = input.value.substr(0, start) + aTag + insText + eTag + input.value.substr(end);
 		/* adapt Cursorposition */
 		var pos;
-		if (insText.length == 0) 
+		if (insText.length == 0)
 		{
 			pos = start + aTag.length;
-		} 
-		else 
+		}
+		else
 		{
 			pos = start + aTag.length + insText.length + eTag.length;
 		}
@@ -408,11 +399,11 @@ function insert_in_textarea(aTag, eTag, template_element)
 		/* get insertposition */
 		var pos;
 		var re = new RegExp('^[0-9]{0,3}$');
-		while(!re.test(pos)) 
+		while(!re.test(pos))
 		{
 			pos = prompt("insert at position (0.." + input.value.length + "):", "0");
 		}
-		if(pos > input.value.length) 
+		if(pos > input.value.length)
 		{
 			pos = input.value.length;
 		}
@@ -425,9 +416,10 @@ function insert_in_textarea(aTag, eTag, template_element)
 </script>
 <?php
 //give headers in Joomla 1.5 a bit more spunk
-//$this->model->spunk_up_headers_1_5(); //is in css
+//PagesAndItemsHelper::spunk_up_headers_1_5(); //is in css
 ?>
-<div style="margin: 0 auto; width: 950px; text-align: left;">
+
+<div  style="margin: 0 auto; width: 950px; text-align: left;">
 	<form id="adminForm" name="adminForm" method="post" action="">
 		<input type="hidden" name="option" value="com_pagesanditems" />
 		<input type="hidden" id="task" name="task" value="customitemtype.config_custom_itemtype_save" />
@@ -435,20 +427,23 @@ function insert_in_textarea(aTag, eTag, template_element)
 		<input type="hidden" id="tab" name="tab" value="" />
 		<input type="hidden" id="sub_task" name="sub_task" value="" />
 		<input type="hidden" id="type_id" name="type_id" value="<?php echo $type_id; ?>" />
-		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="delete_items" id="delete_items" value="0" />
 		<input type="hidden" name="update_items" id="update_items" value="0" />
 		<input type="hidden" name="old_read_more_option" id="old_read_more_option" value="<?php echo $read_more; ?>" />
 		<input type="hidden" name="items_of_this_type" id="items_of_this_type" value="<?php echo $items_of_this_type; ?>" />
-		
+
 		<?php //ADD MS 18.09.2009 ?>
 		<input type="hidden" name="old_editor_id" id="old_editor_id" value="<?php echo $editor_id; ?>" />
 		<input type="hidden" name="old_html_after" id="old_html_after" value="<?php echo $html_after; ?>" />
 		<input type="hidden" name="old_html_before" id="old_html_before" value="<?php echo $html_before; ?>" />
+
+
+
+		<input type="hidden" name="boxchecked" value="0" />
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<?php //ADD MS 18.09.2009 END ?>
-			
-		
+
+
 		<?php
 		/*
 		<a href="index.php?option=com_pagesanditems">pages and items</a> >
@@ -467,9 +462,9 @@ function insert_in_textarea(aTag, eTag, template_element)
 		</div>
 		<?php if($type_id)
 		{
-		//start edit 
+		//start edit
 		//echo '<fieldset class="adminform">';
-		//echo '<legend>fields:</legend>';		
+		//echo '<legend>fields:</legend>';
 		echo '<br />';
 		echo '<div class="line_top">';
 		echo '<br />';
@@ -479,27 +474,28 @@ function insert_in_textarea(aTag, eTag, template_element)
 			echo '</strong>';
 			echo '</div>';
 			echo '<div class="right_align">';
-				echo '<a href="http://www.pages-and-items.com/custom-itemtype-fields/" target="_blank">';
+				//echo '<a href="http://www.pages-and-items.com/custom-itemtype-fields/" target="_blank">';
+				echo '<a href="http://www.pages-and-items.com/extensions/pages-and-items-plugins/custom-itemtype-fields/" target="_blank">';
 					echo JText::_('COM_PAGESANDITEMS_GET_MORE_FIELDTYPES');
 				echo '</a>';
 			echo '</div>';
 		echo '<br />';
-		
+
 		?>
 
 		<div class="right_align">
 			<?php
-		
+
 				//get fieldtypes
 				foreach($allFieldtypes as $key => $fieldtype)
 				{
 					$required_fieldtype = false;
 					$only_once = false;
-					$params = null;					
-					//here we can not dispatch the fields not load 
-					//here we must set registery object 
-					
-					if($this->model->joomlaVersion < '1.6')
+					$params = null;
+					//here we can not dispatch the fields not load
+					//here we must set registery object
+
+					if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 					{
 						if($fieldtype->params != '')
 						{
@@ -557,7 +553,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 						}
 					}
 				}
-				
+
 				echo '<select name="plugins" id="plugins">';
 				echo '<option value="0">'.JText::_('COM_PAGESANDITEMS_SELECT_FIELD_TYPE').'</option>';
 				foreach($allFieldtypes as $fieldtype)
@@ -568,10 +564,10 @@ function insert_in_textarea(aTag, eTag, template_element)
 					echo $fieldtype->name;
 					echo '</option>';
 				}
-				
-				
+
+
 				echo '</select>';
-				
+
 			?>
 			&nbsp;&nbsp;&nbsp;
 			<!-- button with image? -->
@@ -583,7 +579,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 			$button->onclick = 'add_new_field();';
 			$button->imageName = 'base/icon-16-add.png';
 			echo $button->makeButton();
-			
+
 			$button = PagesAndItemsHelper::getButtonMaker();
 			$button->imagePath = PagesAndItemsHelper::getDirIcons();
 			$button->buttonType = 'input';
@@ -591,7 +587,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 			$button->onclick = 'delete_fields();';
 			$button->imageName = 'base/icon-16-trash_delete.png';
 			echo $button->makeButton();
-			
+
 			/*
 			<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_ADD_NEW_FIELD'); ?>" onclick="add_new_field();" />&nbsp;&nbsp;&nbsp;
 			*/
@@ -621,7 +617,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 				$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,'cci_fields'));
 				//ms: we will at this moment not display the buttons
 				//echo $htmlelement->html;
-			
+
 			$button = PagesAndItemsHelper::getButtonMaker();
 			$button->imagePath = PagesAndItemsHelper::getDirIcons();
 			$button->buttonType = 'input';
@@ -629,33 +625,34 @@ function insert_in_textarea(aTag, eTag, template_element)
 			$button->onclick = 'delete_fields();';
 			$button->imageName = 'base/icon-16-trash_delete.png';
 			//echo $button->makeButton();
-			
+
 			/*
 			<input type="button" value="<?php echo JText::_('COM_PAGESANDITEMS_DELETE_SELECTED_FIELD'); ?>" onclick="delete_fields();" />
 			*/
 			?>
 		</div>
 		<?php
-			
+			/*
+			//old begin
 			//hide the data on the page
 			echo '<div style="display: none;">';
-			
+
 			//headers
 			echo '<div id="header_column_1"><strong>'.JText::_('COM_PAGESANDITEMS_TITLE').'</strong></div>';
 			echo '<div id="header_column_2"><strong>'.JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE').'</strong></div>';
 			echo '<div id="header_column_3"><strong>'.JText::_('COM_PAGESANDITEMS_TYPE').'</strong></div>';
-		
+
 			//loop through items and echo data to hidden fields
 			$counter = 0;
 			foreach($fields as $field)
 			{
 				$areThereItems = true;
 				$counter = $counter + 1;
-				$title = $this->model->truncate_string(stripslashes($field->name), '50');
+				$title = PagesAndItemsHelper::truncate_string(stripslashes($field->name), '50');
 				$title = str_replace('"','&quot;',$title);
-				
+
 				echo '<input name="reorder_item_id_'.$counter.'" id="reorder_item_id_'.$counter.'" type="hidden" value="'.$field->id.'" />';
-				
+
 				//column 1
 				echo '<div id="item_column_1_'.$counter.'">';
 				echo '<input type="checkbox" class="checkbox" id="items_to_delete_'.$counter.'" name="items_to_delete[]" value="'.$field->id.'"  onclick="isChecked(this.checked);" />';
@@ -671,79 +668,67 @@ function insert_in_textarea(aTag, eTag, template_element)
 					$field->installed = true;
 					echo '<a href="index.php?option=com_pagesanditems&view=config_custom_itemtype_field&field_id='.$field->id.'">';
 				}
-				/*
-				if ()
-				{
-					//unset($installed_fieldtypes[$key]);
-				}
-				*/
-				
-				
 				echo $title.'</a>';
 				echo '</div>';
-				
+
 				//column 2
 				echo '<div id="item_column_2_'.$counter.'">';
 				echo '{field_'.$field->name.'_'.$field->id.'}';
 				echo '</div>';
-				
+
 				//column 3
 				echo '<div id="item_column_3_'.$counter.'">';
 				echo $field->plugin;
 				echo '</div>';
-							
+
 			}
 			echo '</div>';
-		
-			
+
+
 			//2 hidden fields which are usefull for updating the ordering when submitted
 			echo '<input name="items_are_reordered" id="items_are_reordered" type="hidden" value="false" />';
 			echo '<input name="items_total" id="items_total" type="hidden" value="'.$counter.'" />';
-			
+
 			echo '<div id="target_items" class="more_space"></div>';
 			echo '<script src="components/com_pagesanditems/javascript/reorder_items.js" language="JavaScript" type="text/javascript"></script>';
 			echo '<script language="JavaScript"  type="text/javascript">';
 			echo "<!--\n";
 			echo "var joomlaVersion = '1.6';\n";
+			echo "var moveUp = '".JText::_('JLIB_HTML_MOVE_UP')."';\n";
+			echo "var moveDown = '".JText::_('JLIB_HTML_MOVE_DOWN')."';\n";
 			echo "var items_total = ".$counter.";\n";
 			echo "var number_of_columns = '3';\n";
 			echo "var ordering = '".JText::_('COM_PAGESANDITEMS_ORDERING')."';\n";
 			echo "var no_items = '".JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE_HAS_NO_FIELDS')."';\n";
-			
+
 			echo "document.onload = print_items();\n";
 			echo "-->\n";
 			echo "</script>\n";
-			
-			
+
+
 			echo '<br />';
 			echo '<div class="line_top">';
 			echo '<br />';
+			
+			*/
+			
+			//old end
 			?>
-			
-			
-
 			<?php
-			
+			//new start
+			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'customfieldslist.php');
+			$customfieldsList = new CustomFieldsList();
+			echo $customfieldsList->renderItems($fields,$dispatcher);
+			//new end
+			?>
+			<?php
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
-				/*
-				require_once($path.DS.'includes'.DS.'extensions'.DS.'htmlhelper.php');
-				ExtensionHtmlHelper::importExtension('template', null,true,null,true);
-				$htmlelementVars = null;
-				$htmlelement->html = '';
-				$dispatcher->trigger('onGetHtmlelementConfig',array(&$htmlelement,$htmlelementVars,'manager',$type_id));
-				*/
 				require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
-				//ExtensionManagerHelper::importExtension(null,'template',true,null,true);
 				ExtensionManagerHelper::importExtension(null,null,true,null,true);
-				//$htmlelementVars = null;
-				//$htmlelement->html = '';
-				
+
 				$managerItemtypeConfigEdit->html = '';
 				$dispatcher->trigger('onGetManagerItemtypeConfigEdit',array(&$managerItemtypeConfigEdit,'custom_'.$type_id,$type_id));
 				echo $managerItemtypeConfigEdit->html;
-				//$dispatcher->trigger('onGetHtmlelementConfig',array(&$htmlelement,$htmlelementVars,'template',$type_id));
-				//$html .= $htmlelement->html;
-				//echo $htmlelement->html;
 				if($managerItemtypeConfigEdit->html != '')
 				{
 					echo '<br />';
@@ -752,11 +737,90 @@ function insert_in_textarea(aTag, eTag, template_element)
 						//echo '<br />';
 					echo '</div>';
 				}
-			
+
 			?>
 			<div class="pi_form_wrapper">
+				<?php
+				
+				$extension = 'com_plugins';
+				$lang = &JFactory::getLanguage();
+				//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+				$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+				/*
 				<strong>
-					<?php echo JText::_('COM_PAGESANDITEMS_DISPLAY_READ_MORE_LINK') ?>: 
+					<?php echo JText::_('COM_PAGESANDITEMS_PARAMS') ?>:
+				</strong>
+				*/
+				?>
+				
+				<?php echo JHtml::_('sliders.start','params_sliders', array('useCookie'=>0,'startOffset'=>-1) ); ?>
+				<?php //echo JHtml::_('sliders.panel',JText::_('COM_PAGESANDITEMS_PARAMS'), 'customitemtype'); ?>
+				<?php
+				
+				$doc = JFactory::getDocument();
+				$contentCss = "";
+				$contentCss .= ".radiolong {max-width: 500px;min-width:400px;}";
+				$doc->addStyleDeclaration($contentCss);
+				
+				$this->form->setFieldAttribute('useDefault','type','radio','params');
+				$fieldSets = $this->form->getFieldsets('params');
+				foreach ($fieldSets as $name => $fieldSet) :
+				$label = !empty($fieldSet->label) ? $fieldSet->label : 'COM_PLUGINS_'.$name.'_FIELDSET_LABEL';
+				if($name != 'hidden')
+				{
+					
+					echo JHtml::_('sliders.panel',JText::_($label), $name.'-options');
+					if (isset($fieldSet->description) && trim($fieldSet->description)) :
+						echo '<p class="tip">'.$this->escape(JText::_($fieldSet->description)).'</p>';
+					endif;
+					
+					$hidden = '';
+					
+				}
+				else
+				{
+					$hidden = 'style="display:none;"';
+				}
+				?>
+				<fieldset class="panelform" <?php echo $hidden; ?>>
+					<?php
+					$hidden_fields = '';
+					$countHiddenFields = 0;
+					$countFields = 0;
+					?>
+					<ul class="adminformlist">
+						<?php foreach ($this->form->getFieldset($name) as $field) : ?>
+						<?php if (!$field->hidden) : ?>
+						<li>
+							<?php echo $field->label; ?>
+							<?php echo $field->input;
+							$countFields++;
+							?>
+						</li>
+						<?php else : $hidden_fields.= $field->input;
+						$countHiddenFields++;
+						?>
+						<?php endif; ?>
+						<?php endforeach; ?>
+					</ul>
+					<?php echo $hidden_fields;
+					if($countHiddenFields == count($this->form->getFieldset($name)))
+					{
+						//echo JText::_('COM_PAGESANDITEMS_EXTENSION_ONLY_HIDDEN_PARAMS');
+					}
+					?>
+				</fieldset>
+			<?php
+			endforeach;
+			echo JHtml::_('sliders.end');
+			?>
+			</div>
+			<div class="line_top">
+			
+			
+			<div class="pi_form_wrapper">
+				<strong>
+					<?php echo JText::_('COM_PAGESANDITEMS_DISPLAY_READ_MORE_LINK') ?>:
 				</strong>
 				<div>
 					<label><input type="radio" class="radio" name="read_more" value="1" <?php if($read_more=='1'){ echo "checked=\"checked\""; }?> /><?php echo JText::_('COM_PAGESANDITEMS_CIT_READMORE_NONE'); ?>.</label><br />
@@ -766,7 +830,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 				</div>
 			</div>
 			<?php
-			
+
 			//echo '<br />';
 			echo '<div class="line_top">';
 			echo '<br />';
@@ -782,172 +846,17 @@ function insert_in_textarea(aTag, eTag, template_element)
 				echo '<textarea name="template_intro_original" id="template_intro_original" cols="110" rows="25" style="display: none;">'.$template_intro.'</textarea>';
 			echo '</div>';
 
-//				echo '<div>';
 			echo '<div class="line_bottom">';
-				/*
-				$this->model->db->setQuery("SELECT * FROM #__pi_custom_fields WHERE type_id='$type_id' ORDER BY ordering");
-				$this->model->db->query();
-				$rows_pi_fields = $this->model->db->loadObjectList();
-				*/
-				//$htmlelements = ExtensionHelper::importExtension('html','cci_template', null,true,null,true);
 				$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 				require_once($path.DS.'includes'.DS.'extensions'.DS.'htmlhelper.php');
 				$htmlelements = ExtensionHtmlHelper::importExtension('cci_template', null,true,null,true);
-				//$htmlelementVars = null;
 				$htmlelement->html = '';
-				//$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,$htmlelementVars,'cci_template','intro',$fields));
-				
 				$htmlOptions->template = 'intro';
 				$htmlOptions->fields = $fields;
 				$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,'cci_template',$htmlOptions));
-				//$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,'cci_template','intro',$fields));
-				//$html .= $htmlelement->html;
 
 				echo $htmlelement->html;
-			
-				//TODO template_special_button
-				/*
-				foreach($fields as $field)
-				{	
-					$htmlelementVars = null;
-					$htmlelement->html = '';
-					$dispatcher->trigger('onGetTemplate_special_button',array(&$htmlelement,$htmlelementVars,'cci_template','intro',$fields,$field->plugin));
-					//$html .= $htmlelement->html;
 
-					echo $htmlelement->html;
-				}
-				*/
-			/*
-				//insert field tags
-				
-				echo '<select name="pi_fields_intro" onchange="insert_in_textarea( this.value , \'\',\'template_intro\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_FIELD_CODE').' - </option>';
-				foreach( $rows_pi_fields as $row_pi_fields )
-				{
-					$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-					if(in_array(true,$results))
-					{
-					if($row_pi_fields->plugin=='image_multisize')
-					{
-						for ($n = 1; $n <= 5; $n++){
-							$option_Field = '{field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.' size='.$n.'}'."\n";
-							$_option = '<option value="'.$option_Field.'">';
-							$_option .= $row_pi_fields->name.' size='.$n;
-							$_option .= '</option>';
-						echo $_option;
-						}
-					}else{	
-						
-						$option_Field = '{field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$_option = '<option value="'.$option_Field.'">';
-						$_option .= $row_pi_fields->name;
-						$_option .= '</option>';
-						echo $_option;
-					}
-					}
-				}
-				echo '</select>';
-			
-			
-				//insert if-empty tags
-				echo '<select name="pi_fields_if_intro" onchange="insert_in_textarea( this.value , this.form.pi_fields_if_intro.options[this.form.pi_fields_if_intro.selectedIndex].label,\'template_intro\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_IF_EMPTY_CODE').' - </option>';
-				foreach( $rows_pi_fields as $row_pi_fields )
-				{
-					$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-					if($row_pi_fields->plugin!='image_multisize' && in_array(true,$results))
-					{
-						$option_Field_begin = '{if-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$option_Field_end = '{/if-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$_option = '<option value="'.$option_Field_begin.'" ';
-						$_option .= 'label="'.$option_Field_end.'" >';
-						$_option .= 'if empty '.$row_pi_fields->name;
-						$_option .= '</option>';
-						echo $_option;
-					}
-				}
-				echo '</select>';
-			
-			
-				//insert if-empty tags
-				echo '<select name="pi_fields_ifnot_intro" onchange="insert_in_textarea( this.value , this.form.pi_fields_ifnot_intro.options[this.form.pi_fields_ifnot_intro.selectedIndex].label,\'template_intro\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_IF_NOT_EMPTY_CODE').' - </option>';
-				foreach( $rows_pi_fields as $row_pi_fields )
-				{
-					$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-					if($row_pi_fields->plugin!='image_multisize' && in_array(true,$results))
-					{
-						$option_Field_begin = '{if-not-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$option_Field_end = '{/if-not-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$_option = '<option value="'.$option_Field_begin.'" ';
-						$_option .= 'label="'.$option_Field_end.'" >';
-						$_option .= 'if not empty '.$row_pi_fields->name;
-						$_option .= '</option>';
-						echo $_option;
-					}
-				}
-				echo '</select>';
-				
-				echo ' ';
-				echo '<input	 type="button" value="'.JText::_('COM_PAGESANDITEMS_ADD_DIV').'" onClick="insert_in_textarea(\'<div>\', \'</div>\',\'template_intro\')">';
-				echo '	 ';
-				echo '<input type="button" value="'.JText::_('COM_PAGESANDITEMS_ADD_HIDE_FULL_VIEW').'" onClick="insert_in_textarea(\'{hide_in_full_view}\', \'{/hide_in_full_view}\',\'template_intro\')">';
-				echo ' ';
-				echo '<input type="button" value="'.JText::_('COM_PAGESANDITEMS_ADD_HIDE_INTRO_VIEW').'" onClick="insert_in_textarea(\'{hide_in_intro_view}\', \'{/hide_in_intro_view}\',\'template_intro\')">';
-				echo ' ';
-			
-				echo '<select name="pi_fields_other_intro" onchange="insert_in_textarea( this.value , 	this.form.pi_fields_other_intro.options[this.form.pi_fields_other_intro.selectedIndex].label,\'template_intro\' );this.options[0].selected=true;return false;">';
-					echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_OTHER_CODE').' - </option>';
-					echo '<option value="{article_id}" label="">{article_id}</option>';
-					echo '<option value="{article_title}" label="">{article_title}</option>';
-					echo '<option value="{article_created}" label="">{article_created}</option>';
-					echo '<option value="{article_modified}" label="">{article_modified}</option>';
-					echo '<option value="{article_publish_up}" label="">{article_publish_up}</option>';
-					echo '<option value="{article_hits}" label="">{article_hits}</option>';
-					echo '<option value="{article_rating}" label="">{article_rating}</option>';
-					echo '<option value="<p>" label="</p>">&lt;p&gt;&lt;/p&gt;</option>';
-					echo '<option value="<a href=&quot;&quot;>" label="</a>">&lt;a&gt;&lt;/a&gt;</option>';
-					echo '<option value="<br />" label="">&lt;br /&gt;</option>';
-					echo '<option value="<strong>" label="</strong>">&lt;strong&gt;&lt;/strong&gt;</option>';
-					echo '<option value="<h1>" label="</h1>">&lt;h1&gt;&lt;/h1&gt;</option>';
-					echo '<option value="<h2>" label="</h2>">&lt;h2&gt;&lt;/h2&gt;</option>';
-					echo '<option value="<h3>" label="</h3>">&lt;h3&gt;&lt;/h3&gt;</option>';
-					echo '<option value="<h4>" label="</h4>">&lt;h4&gt;&lt;/h4&gt;</option>';
-					echo '<option value="<h5>" label="</h5>">&lt;h5&gt;&lt;/h5&gt;</option>';
-					echo '<option value="<h6>" label="</h6>">&lt;h6&gt;&lt;/h6&gt;</option>';
-					echo '<option value="<em>" label="</em>">&lt;em&gt;&lt;/em&gt;</option>';
-					echo '<option value="<span style=&quot;text-decoration: underline;&quot;>" label="</span>">underline</option>';
-					echo '<option value="<pre>" label="</pre>">&lt;pre&gt;&lt;/pre&gt;</option>';
-				echo '</select>';
-				*/	
-				
-				
-				//Carsten 16-9-2009. sorry Micha. Temporarily taken out code.
-				//Carsten 17-9-2009. ok Micha, code back in :-)#
-				// ADD MS 30.07.2009
-				/*
-				foreach($fields as $field)
-				{
-					if($class_object = $this->model->get_field_class_object($field->plugin,'template_special_button'))
-					{
-						if(in_array($field->plugin, $this->model->fieldtypes_integrated))
-						{
-							$template_button = $class_object->template_special_button($type_id, 'template_intro');
-						}
-						else
-						{
-							$this->model->get_fieldtype_language($fieldtype);
-							$template_button = $class_object->template_special_button($type_id, 'template_intro');
-						}
-						echo $template_button;
-					}
-				}
-				*/
-
-
-				// ADD MS END 30.07.2009
-			
-//				echo '</div>';
 			echo '</div>';
 			echo '<br />';
 			echo '<div class="top"><strong>';
@@ -962,216 +871,46 @@ function insert_in_textarea(aTag, eTag, template_element)
 			//echo '</div>';
 			echo '</div>';//<br /><strong>'; // CHANGE MS
 			echo '<div class="line_bottom">';
-			
-			
-			
-			//$htmlelementVars = null;
+
 			$htmlelement->html = '';
-			//$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,$htmlelementVars,'cci_template','full',$fields));
 			$htmlOptions->template = 'full';
-			//$htmlOptions->fields = $fields;
 			$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,'cci_template',$htmlOptions));
-			//$dispatcher->trigger('onGetHtmlelement',array(&$htmlelement,'cci_template','full',$fields));
-			//$html .= $htmlelement->html;
 
 			echo $htmlelement->html;
-			
-			//TODO template_special_button
-			/*
-			foreach($fields as $field)
-			{
-				$htmlelementVars = null;
-				$htmlelement->html = '';
-				$dispatcher->trigger('onGetTemplate_special_button',array(&$htmlelement,$htmlelementVars,'cci_template','full',$fields,$field->plugin));
-				//$html .= $htmlelement->html;
 
-				echo $htmlelement->html;
-			}
-			*/
-			/*
-			$this->model->db->setQuery("SELECT * FROM #__pi_custom_fields WHERE type_id='$type_id' ");
-			$this->model->db->query();
-			$rows_pi_fields = $this->model->db->loadObjectList();
-			
-			//insert field tags
-			echo '<select name="pi_fields_intro" onchange="insert_in_textarea( this.value , \'\',\'template_full\' );this.options[0].selected=true;return false;">';
-			echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_FIELD_CODE').' - </option>';
-			foreach( $rows_pi_fields as $row_pi_fields )
-			{
-				$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-				if($row_pi_fields->plugin=='image_multisize' && in_array(true,$results))
-				{
-					for ($n = 1; $n <= 5; $n++){
-						$option_Field = '{field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.' size='.$n.'}'."\n";
-						$_option = '<option value="'.$option_Field.'">';
-						$_option .= $row_pi_fields->name.' size='.$n;
-						$_option .= '</option>';
-						echo $_option;
-					}
-				}else{
-					$option_Field = '{field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-					$_option = '<option value="'.$option_Field.'">';
-					$_option .= $row_pi_fields->name;
-					$_option .= '</option>';
-					echo $_option;
-				}
-			}
-			echo '</select>';
-			
-			//insert if-empty tags
-			echo '<select name="pi_fields_if_full" onchange="insert_in_textarea( this.value , this.form.pi_fields_if_full.options[this.form.pi_fields_if_full.selectedIndex].label,\'template_full\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_IF_EMPTY_CODE').' - </option>';
-				foreach( $rows_pi_fields as $row_pi_fields )
-				{
-					$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-					if($row_pi_fields->plugin!='image_multisize' && in_array(true,$results))
-					{
-						$option_Field_begin = '{if-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$option_Field_end = '{/if-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$_option = '<option value="'.$option_Field_begin.'" ';
-						$_option .= 'label="'.$option_Field_end.'" >';
-						$_option .= 'if empty '.$row_pi_fields->name;
-						$_option .= '</option>';
-						echo $_option;
-					}
-				}
-			echo '</select>';
-			
-			//insert if-empty tags
-			echo '<select name="pi_fields_ifnot_full" onchange="insert_in_textarea( this.value , this.form.pi_fields_ifnot_full.options[this.form.pi_fields_ifnot_full.selectedIndex].label,\'template_full\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_IF_NOT_EMPTY_CODE').' - </option>';
-				foreach( $rows_pi_fields as $row_pi_fields )
-				{
-					$results = $dispatcher->trigger('onGetParams',array(&$params,$row_pi_fields->plugin));
-					if($row_pi_fields->plugin!='image_multisize' && in_array(true,$results)){
-						$option_Field_begin = '{if-not-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$option_Field_end = '{/if-not-empty_field_'.$row_pi_fields->name.'_'.$row_pi_fields->id.'}'."\n";
-						$_option = '<option value="'.$option_Field_begin.'" ';
-						$_option .= 'label="'.$option_Field_end.'" >';
-						$_option .= 'if not empty '.$row_pi_fields->name;
-						$_option .= '</option>';
-						echo $_option;
-					}
-				}
-			echo '</select>';
-			
-			echo ' ';
-			echo '<input type="button" value="'.JText::_('COM_PAGESANDITEMS_ADD_DIV').'" onClick="insert_in_textarea(\'<div>\', \'</div>\',\'template_full\')">';
-			echo ' ';
-			
-			
-			//ADD CHANGE MS END 13.09.2009
-			
-			//select other code
-			echo '<select name="pi_fields_other_full" onchange="insert_in_textarea( this.value , this.form.pi_fields_other_full.options[this.form.pi_fields_other_full.selectedIndex].label,\'template_full\' );this.options[0].selected=true;return false;">';
-				echo '<option value="" selected="selected">- '.JText::_('COM_PAGESANDITEMS_INSERT_OTHER_CODE').' - </option>';
-				echo '<option value="{article_id}" label="">{article_id}</option>';
-				echo '<option value="{article_title}" label="">{article_title}</option>';
-				echo '<option value="{article_created}" label="">{article_created}</option>';
-				echo '<option value="{article_modified}" label="">{article_modified}</option>';
-				echo '<option value="{article_publish_up}" label="">{article_publish_up}</option>';
-				echo '<option value="{article_hits}" label="">{article_hits}</option>';
-				echo '<option value="{article_rating}" label="">{article_rating}</option>';
-				echo '<option value="<p>" label="</p>">&lt;p&gt;&lt;/p&gt;</option>';
-				echo '<option value="<a href=&quot;&quot;>" label="</a>">&lt;a&gt;&lt;/a&gt;</option>';
-				echo '<option value="<br />" label="">&lt;br /&gt;</option>';
-				echo '<option value="<strong>" label="</strong>">&lt;strong&gt;&lt;/strong&gt;</option>';
-				echo '<option value="<h1>" label="</h1>">&lt;h1&gt;&lt;/h1&gt;</option>';
-				echo '<option value="<h2>" label="</h2>">&lt;h2&gt;&lt;/h2&gt;</option>';
-				echo '<option value="<h3>" label="</h3>">&lt;h3&gt;&lt;/h3&gt;</option>';
-				echo '<option value="<h4>" label="</h4>">&lt;h4&gt;&lt;/h4&gt;</option>';
-				echo '<option value="<h5>" label="</h5>">&lt;h5&gt;&lt;/h5&gt;</option>';
-				echo '<option value="<h6>" label="</h6>">&lt;h6&gt;&lt;/h6&gt;</option>';
-				echo '<option value="<em>" label="</em>">&lt;em&gt;&lt;/em&gt;</option>';
-				echo '<option value="<span style=&quot;text-decoration: underline;&quot;>" label="</span>">underline</option>';
-				echo '<option value="<pre>" label="</pre>">&lt;pre&gt;&lt;/pre&gt;</option>';
-			echo '</select>';
-			*/
-			//Carsten 16-9-2009. sorry Micha. Temporarily taken out code.
-			//Carsten 17-9-2009. ok Micha, code back in :-)#
-			// ADD MS 30.07.2009
-			/*
-			foreach($fields as $field)
-			{
-				if($class_object = $this->model->get_field_class_object($field->plugin,'template_special_button'))
-				{
-					if(in_array($field->plugin, $this->model->fieldtypes_integrated))
-					{
-						$template_button = $class_object->template_special_button($type_id, 'template_full');
-					}
-					else
-					{
-						$this->model->get_fieldtype_language($fieldtype);
-						$template_button = $class_object->template_special_button($type_id, 'template_full');
-					}
-					echo $template_button;
-				}
-			}
-			*/
-			// ADD MS END
-			
 			echo '</div>';
 			echo '<div><br /><strong>';
-			
+
 			echo JText::_('COM_PAGESANDITEMS_TEMPLATE_DEFAULT');
 			echo '</strong><br />';
 			echo JText::_('COM_PAGESANDITEMS_TEMPLATE_DEFAULT_TIP');
 			echo '</div>';
 			echo '<div>';
 			echo '<textarea name="template_default" cols="110" rows="25" style="width: 100%;" readonly="readonly">';
-			// CHANGE ADD all fields function spezial_template_output?
-			//ADD MS
 			$template_special = false;
 			$template = false;
-			
-			/*
-			//TODO remove template_special
-			
-			foreach($fields as $field)
-			{
-				$htmlelementVars = null;
-				$htmlelement->html = '';
-				$dispatcher->trigger('onGetTemplate_special',array(&$htmlelement,$htmlelementVars,'cci_template','default',$fields,$field->plugin));
-				//$html .= $htmlelement->html;
 
-				echo $htmlelement->html;
-			}
-			*/
-			
-			/*
-			foreach($fields as $field)
-			{
-				if($class_object = $this->model->get_field_class_object($field->plugin,'template_special'))
-				{
-					$template = $class_object->template_special($fields);
-					echo $template;
-				}
-			}
-			*/
-			//if(!$template_spezial)
 			if(!$template)
 			{
-			//END ADD MS
 				foreach($fields as $field){
 					echo '<div>'."\n";
 					echo '{field_'.$field->name.'_'.$field->id.'}'."\n";
 					echo '</div>'."\n";
 				}
-			//ADD MS
 			}
-			//END ADD MS
 			echo '</textarea>';
 			echo '</div>';
-			
+
 			//end edit
 		}else{
 			//when new field set default
 			echo '<input type="hidden" class="radio" name="read_more" value="1" />';
 		} ?>
-		
+
 	</form>
+</div>
+<!-- end id="form_content" need for css-->
 </div>
 <?php
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
-// $this->model->display_footer(); 
 ?>

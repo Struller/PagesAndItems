@@ -1,10 +1,8 @@
 /**
 * @package Pages-and-Items (com_pagesanditems)
-* @version 2.0.0
+* @version 2.1.0
 * @copyright	Copyright (C) . All rights reserved.
 * @license	GNU/GPL, see LICENSE.php
-
-
  */
 
 var popupExtension = 

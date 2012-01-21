@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -25,13 +25,66 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 		$icons = parent::onGetPageTypeIcons($icons,$pageType,$dirIcons, $component);
 		return true;
 	}
-	
-	function onGetPageItems(&$html,$view)
+
+	function onGetContentItems(&$ContentItems,$model)
 	{
-		if(isset($view->menuItemsType->icons->default->imageUrl))
+	
+		$ContentItems = $this->getContentItems($model);
+	}
+	
+	
+	
+	function getContentItems($model)
+	{
+		/*
+		if(is_object($model))
 		{
-			$image = $view->menuItemsType->icons->default->imageUrl;
+			//we must load the model page
+			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'page.php');
+			$menuItem = $model->menuItem;
+			$model = new PagesAndItemsModelPage();
+			//$modelPage->menuItem = $model->menitem;
 		}
+		else
+		{
+			$menuItem = $model->menuItem;
+			
+		}
+		return $model->getContentItems(true,true,true,$menuItem);
+		*/
+		/*
+		if(is_object($model))
+		{
+			$menuItem = $model->menuItem;
+		}
+		else
+		{
+			$menuItem = $model->menuItem;
+		}
+		*/
+		$menuItem = $model->menuItem;
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'itemslist.php');
+		$ItemsList = new ItemsList();
+		return $ItemsList->getContentItems(true,true,true,$menuItem,'COM_PAGESANDITEMS_ITEMS');
+	}
+	
+	function onGetPageItems(&$html,$model)
+	{
+		$html = '';
+		if($this->params->get('showCategoriesList'))
+		{
+			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'categorieslist.php');
+			$CategoriesList = new CategoriesList();
+			//$html,$model,$maxLevelcat = 'maxLevelcat',$open = true, $parent = false, $add = false
+			$html .= $CategoriesList->getCategories($html,$model,'maxLevel',false,true,true,'com_content'); //($html,$model,'maxLevel',true) if we want the slider is open
+		}
+		//$html .= $this->onCategory($html,$model,'maxLevel',false);
+		
+		if(isset($model->menuItemsType->icons->default->imageUrl))
+		{
+			$image = $model->menuItemsType->icons->default->imageUrl;
+		}
+		/*
 		if($image)
 		{
 			$image = '<img src="'.$image.'" alt="" style="vertical-align: middle;position: relative;" />&nbsp;';
@@ -40,25 +93,35 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 		{
 			$image = '<img src="'.PagesAndItemsHelper::getDirIcons().'icon-16-menu.png" alt="" style="vertical-align: middle;" />&nbsp;';
 		}
-		$html = '';
-		$html .= '<table class="adminform" width="98%">';
-			$html .= '<tr>';
-				$html .= '<th style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
-					$html .= $image;
-					$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
-				$html .= '</th>';
-			$html .= '</tr>';
-			//$html .= '<tr>';
-				//$html .= '<td>';
-					//$html .= 'from pagetypes/content_category_blog/content_category_blog.php';
-				//$html .= '</td>';
-			//$html .= '</tr>';
-			$html .= '<tr>';
-				$html .= '<td>';
-					//TODO toolbar visible itemtypeselect visible
-					$html .= $view->getContentItems();
-				$html .= '</td>';
-			$html .= '</tr>';
+		*/
+		if(!$image)
+		{
+			$image = PagesAndItemsHelper::getDirIcons().'icon-16-menu.png';
+		}
+		
+		$html .= '<table class="piadminform xadminform" width="98%">';
+			$html .= '<thead class="piheader">';
+				$html .= '<tr>';
+					$html .= '<th>';// class="piheader">';//style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
+						//$html .= $image;
+						//$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
+						$html .= PagesAndItemsHelper::getThImageTitle($image,JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE'));
+					$html .= '</th>';
+				$html .= '</tr>';
+			$html .= '</thead>';
+			$html .= '<tbody>';
+				//$html .= '<tr>';
+					//$html .= '<td>';
+						//$html .= 'from pagetypes/content_category_blog/content_category_blog.php';
+					//$html .= '</td>';
+				//$html .= '</tr>';
+				$html .= '<tr>';
+					$html .= '<td>';
+						//TODO toolbar visible itemtypeselect visible
+						$html .= $this->getContentItems($model); //$model->getContentItems();
+					$html .= '</td>';
+				$html .= '</tr>';
+			$html .= '</tbody>';
 		$html .= '</table>';
 		return true;
 	}
@@ -67,21 +130,21 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 	{
 		return 1;
 	}
-	
+
 	function onGetListItems(&$listItems)
 	{
 		$listItems = 1;
 		return true;
 	}
-	
-	
+
+
 	// hide some in the pagepropertys if need
-	// or add 
+	// or add
 	function onGetLists(&$lists,$pageMenuItem,$view)
 	{
-		//why style the id here?		
+		//why style the id here?
 		//$lists->display->id = 'style="color: green;font-style: oblique;font-size: large;"';
-		
+
 		// TODO add button new category and new section
 		/*
 		$addtop = '<tr style="color: blue;font-style: oblique;">';
@@ -93,22 +156,22 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 		$addtop .= 'we can add something here also script-code';
 		$addtop .= '</td>';
 		$addtop .= '</tr>';
-		
+
 		$addtop .= '<tr>';
 		$addtop .= '<td>';
 		$addtop .= 'ore buttons:';
 		$addtop .= '</td>';
-		$addtop .= '<td>';		
-		
+		$addtop .= '<td>';
+
 		$addtop .= '</td>';
 		$addtop .= '</tr>';
-		
+
 		$button = PagesAndItemsHelper::getButtonMaker();
 		$button->imagePath = $this->controller->dirIcons;
 		$button->buttonType = 'input';
 		//$button->name = 'anButton';
-		//$button->id = null; //generated by the ButtonMaker if need and empty 
-		$button->text = 'oh an modal input button'; // without we have an image button 
+		//$button->id = null; //generated by the ButtonMaker if need and empty
+		$button->text = 'oh an modal input button'; // without we have an image button
 		$button->alt = 'alt an modal button';
 		$button->altTitle = 'an modal button';
 		$button->onclick = 'alert(\'for future\')';
@@ -119,24 +182,24 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 		//$button->paddingLeft = '16';
 		$button->joomlaToolTip = 1;
 		$html .= $button->makeButton();
-		*/				
-		
-		
+		*/
+
+
 		//if new, show option for creating new category
 		if(!isset($pageMenuItem->params['id'])){
-			
+
 			//new category blog page
-			
+
 			/*
 			$addtop = '<tr>';
 			$addtop .= '<td>';
 			$addtop .= JText::_('COM_PAGESANDITEMS_CREATE_NEW_CATEGORY');
 			$addtop .= '</td>';
 			$addtop .= '<td>';
-			$addtop .= '<input type="checkbox" value="1" name="create_new_category" />';			
+			$addtop .= '<input type="checkbox" value="1" name="create_new_category" />';
 			$addtop .= '</tr>';
 			*/
-			
+
 			/*
 			//did this on PHP level so tooltips get rendered correctly
 			$addtop = '<tr style="display: none;">';
@@ -150,9 +213,9 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 			//split string
 			$addtop .= "posSelect = inner_html.indexOf(\"<select\");\n";
 			$addtop .= "cat_label = inner_html.substr(0, posSelect);\n";
-			$addtop .= "cat_select = inner_html.substr(posSelect, inner_html.length);\n";			
-			$addtop .= "cat_label = cat_label.replace('*', '');\n";		
-			
+			$addtop .= "cat_select = inner_html.substr(posSelect, inner_html.length);\n";
+			$addtop .= "cat_label = cat_label.replace('*', '');\n";
+
 			$addtop .= "html = '<table>';\n";
 			$addtop .= "html += '<tr>';\n";
 				$addtop .= "html += '<td>';\n";
@@ -170,31 +233,31 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 				$addtop .= "html += '<input type=\"radio\" name=\"create_new_category\" value=\"1\" id=\"create_new_category_1\" checked=\"checked\" />';\n";
 				$addtop .= "html += '</td>';\n";
 				$addtop .= "html += '<td>';\n";
-				$addtop .= "html += '<label class=\"hasTip\" for=\"create_new_category_1\" />';\n";				
+				$addtop .= "html += '<label class=\"hasTip\" for=\"create_new_category_1\" />';\n";
 				$addtop .= "html += '".addslashes(JText::_('COM_PAGESANDITEMS_CREATE_NEW_CATEGORY'))."';\n";
 				$addtop .= "html += '</label>';\n";
 				$addtop .= "html += '</td>';\n";
-				$addtop .= "html += '<td>';\n";	
+				$addtop .= "html += '<td>';\n";
 				$addtop .= "html += '".addslashes(JText::_('COM_PAGESANDITEMS_CREATE_NEW_CATEGORY_TIP'))."';\n";
-				$addtop .= "html += '</td>';\n";			
+				$addtop .= "html += '</td>';\n";
 				$addtop .= "html += '</tr>';\n";
-			$addtop .= "html += '</table>';\n";			
-			
+			$addtop .= "html += '</table>';\n";
+
 			$addtop .= "$(parent).innerHTML = html;\n";
 			$addtop .= "\n";
 			$addtop .= "}\n";
 			$addtop .= "if(window.addEventListener)window.addEventListener(\"load\",display_new_category_option,false);\n";
 			$addtop .= "else if(window.attachEvent)window.attachEvent(\"onload\",display_new_category_option);\n";
-			
+
 			$addtop .= '</script>'."\n";
 			$addtop .= '</td>';
 			$addtop .= '</tr>';
 			$lists->add->top = $addtop;
 			*/
-			
+
 		}
-		
-		
+
+
 		/*
 		$addbottom = '<tr>';
 		$addbottom .= '<td>';
@@ -205,44 +268,107 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 		*/
 		return true;
 	}
-	
+
 	function onBeforSave($data, $isnew)
 	{
 
 	}
-	
-	function onAfterSave($menu_id, $data, $isnew){	
-	
+
+	function onAfterSave($menu_id, $data, $isnew,$item){
+
 		//if we need to create a new category
-		if(JRequest::getVar('create_new_category', '')){			
-			//we need to create a new category from the menu-item title		
-						
-			$database = JFactory::getDBO();			
-			
+		if(JRequest::getVar('create_new_category', '')){
+			//we need to create a new category from the menu-item title
+
+			$database = JFactory::getDBO();
+
 			//$title = JRequest::getVar('jform[title]', '');
 			$jform = JRequest::getVar('jform', array(), 'post', 'array');
+			
+			
+			//ms: change
+			$app = JFactory::getApplication();
+			$parent_id = $jform['request']['id'];
+			$categoryData['id'] = 0;
+			$categoryData['title'] = $item->title;
+			$categoryData['alias'] = $item->alias;
+			$categoryData['parent_id'] = $parent_id;
+			$categoryData['extension'] = 'com_content';
+			$categoryData['published'] = 1;
+			$categoryData['access'] = 1;
+			$categoryData['language'] = '*';
+			//." params='{\"category_layout\":\"\",\"image\":\"\"}', "
+			//." metadata='{\"author\":\"\",\"robots\":\"\"}', "
+			
+			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'categoriescategory.php');
+			$modelCategory = new PagesAndItemsModelCategoriesCategory();
+			// set the form path
+			JForm::addFormPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'forms');
+			// set the fields path
+			JForm::addFieldPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'fields');
+			
+			$modelCategory->setState('category.id',0);
+			$modelCategory->setState('category.component','com_content');
+			
+			$form = $modelCategory->getForm($categoryData, false);
+			$validData = $modelCategory->validate($form, $categoryData);
+			// Check for validation errors.
+			if ($validData === false) 
+			{
+				// Get the validation messages.
+				$errors	= $modelCategory->getErrors();
+				// Push up to three validation messages out to the user.
+				for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+				{
+					if (JError::isError($errors[$i])) {
+						$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+					}
+					else {
+						$app->enqueueMessage($errors[$i], 'warning');
+					}
+				}
+				return false;
+			}
+			// Attempt to save the data.
+			if (!$modelCategory->save($validData)) {
+				$app->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $modelCategory->getError()), 'error');
+				return false;
+			}
+			
+			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controllers'.DS.'category.php');
+			$controller = new PagesAndItemsControllerCategory();
+			if($itemCategory = $modelCategory->getItem()) //$controller->item_save($data))
+			{
+				//update menu-item to new category id
+				$database->setQuery( "UPDATE #__menu SET link='index.php?option=com_content&view=category&layout=blog&id=$itemCategory->id' WHERE id='$menu_id' ");
+				$database->query();
+				return true;
+			}
+			return true;
+			////ms: change end
+
+
 			$title = $jform['title'];
 			$title = addslashes($title);
-			
+
 			$alias = str_replace("'",'',$title);
 			$alias = str_replace('"','',$alias);
 			jimport( 'joomla.filter.output' );
 			$alias = JFilterOutput::stringURLSafe($alias);
-			
 			$user =& JFactory::getUser();
 			$user_id = $user->get('id');
-			
+
 			//get current date
 			$app =& JFactory::getApplication();
 			$date = JFactory::getDate();
 			jimport('joomla.utilities.date');
-			$offset = $app->getCfg('offset');			
-			$summertime = date( 'I', $date->toUnix() ); 
+			$offset = $app->getCfg('offset');
+			$summertime = date( 'I', $date->toUnix() );
 			if($summertime){
 				$offset = $offset +1;
 			}
-			$date->setOffset($offset);	
-			
+			$date->setOffset($offset);
+
 			//to reorder row in the category table, get the last child of the parent
 			$database->setQuery("SELECT rgt "
 			." FROM #__categories "
@@ -252,88 +378,87 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 			$rows = $database->loadObjectList();
 			$new_left = '1';
 			$new_right = '2';
-			foreach($rows as $row){	
+			foreach($rows as $row){
 				$new_left = $row->rgt+1;
-				$new_right = $new_left+1;	
+				$new_right = $new_left+1;
 				break;
-			}		
-			
-			//insert new category			
+			}
+
+			//insert new category
 			$database->setQuery( "INSERT INTO #__categories SET "
 			." parent_id='1', "
-			." level='1', "		
-			." path='$alias', "		
+			." level='1', "
+			." path='$alias', "
 			." extension='com_content', "
 			." title='$title', "
-			." alias='$alias', "	
+			." alias='$alias', "
 			." published='1', "
 			." access='1', "
 			." params='{\"category_layout\":\"\",\"image\":\"\"}', "
 			." metadata='{\"author\":\"\",\"robots\":\"\"}', "
-			." created_user_id='$user_id', "	
+			." created_user_id='$user_id', "
 			." created_time='$date', "
 			." language='*', "
 			." lft='$new_left', "
-			." rgt='$new_right' "		
+			." rgt='$new_right' "
 			);
-			//$database->query() or die($database->getErrorMsg());	
+			//$database->query() or die($database->getErrorMsg());
 			$database->query();
-			
-			$new_category_id = $database->insertid(); 
-			
-			//rebuild category rows			
+
+			$new_category_id = $database->insertid();
+
+			//rebuild category rows
 			require_once(JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_categories'.DS.'models'.DS.'category.php');
 			$CategoriesModelCategory = new CategoriesModelCategory;
 			$table = $CategoriesModelCategory->getTable();
 			$table->rebuild();
-			
+
 			//to reorder row in the assets table, get the last child of the parent
 			$database->setQuery("SELECT rgt "
-			." FROM #__assets "			
+			." FROM #__assets "
 			." WHERE parent_id='8' AND level='2' "
 			." ORDER BY rgt DESC "
 			);
 			$rows = $database->loadObjectList();
 			$new_left = '1';
 			$new_right = '2';
-			foreach($rows as $row){	
+			foreach($rows as $row){
 				$new_left = $row->rgt+1;
-				$new_right = $new_left+1;	
+				$new_right = $new_left+1;
 				break;
 			}
-			
-			
-			//print_r($rows);
+
+
 			//exit;
 			//$row = $rows[0];
 			//$temp = 'rgt'.$row->rgt;
-			
+
 			//$database->setQuery( "UPDATE #__pi_config SET config='$temp' WHERE id='debug' ");
 			//$database->query();
-			
+
 			//do insert of assets table
 			$database->setQuery( "INSERT INTO #__assets SET "
 			." parent_id='8', "
 			." level='2', "
-			." name='com_content.category.$new_category_id', "			
-			." title='$title', "			
-			." rules='{\"core.create\":[],\"core.delete\":[],\"core.edit\":[],\"core.edit.state\":[],\"core.edit.own\":[]}', "	
+			." name='com_content.category.$new_category_id', "
+			." title='$title', "
+			." rules='{\"core.create\":[],\"core.delete\":[],\"core.edit\":[],\"core.edit.state\":[],\"core.edit.own\":[]}', "
 			." lft='$new_left', "
-			." rgt='$new_right' "				
-			);			
+			." rgt='$new_right' "
+			);
 			$database->query();
-			
-			$new_asset_id = $database->insertid(); 
-			
+
+			$new_asset_id = $database->insertid();
+
 			//update asset id in category row
 			$database->setQuery( "UPDATE #__categories SET asset_id='$new_asset_id' WHERE id='$new_category_id' ");
 			$database->query();
-			
+
 			//update menu-item to new category id
 			$database->setQuery( "UPDATE #__menu SET link='index.php?option=com_content&view=category&layout=blog&id=$new_category_id' WHERE id='$menu_id' ");
-			$database->query();		
-			
-		}	
+			$database->query();
+
+		}
 	}
 }
 

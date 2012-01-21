@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -30,34 +30,64 @@ class PagesAndItemsControllerConfig extends PagesAndItemsController
 	{
 		parent::__construct($default);
 	}
-	
+
+	function config_itemtype()
+	{
+		$db = JFactory::getDBO();
+		$app = JFactory::getApplication();
+		$option = JRequest::getVar('option');
+		$itemtype = JRequest::getVar( 'sub_task', '');
+		
+		$app->setUserState( $option.'.refer','&view=config');
+		$query = 'SELECT *'
+			. ' FROM #__pi_extensions '
+			. " WHERE element ='".$itemtype."' "
+			. " AND type = 'itemtype' ";
+		$db->setQuery($query);
+		$row = $db->loadObject();
+		$id = 0;
+		$msg = '';
+		if($row)
+		{
+			$id = $row->extension_id;
+			$url = 'index.php?option=com_pagesanditems&task=extension.doExecute&extensionName=extensions&extensionType=manager&layout=edit&extensionTask=display&view=piextension&client=both&sub_task=edit&cid[]='.$id.'&extension_id='.$id;
+		}
+		else
+		{
+			$msg = JText::_('COM_PAGESANDITEMS_ITEMTYPENOTINSTALLED');
+			$url = 'index.php?option=com_pagesanditems&view=config';
+		}
+		$this->setRedirect(JRoute::_($url, false),$msg);
+	}
+
+
 	function config_save()
 	{
-	
-		// Check for request forgeries 
+
+		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
-	
+
 		//here we need the model base for future config?
-		$model = &$this->getModel('Base','PagesAndItemsModel');
-		$config = $model->getConfig();
+		//$model = &$this->getModel('Base','PagesAndItemsModel');
 		
+		$config = PagesAndItemsHelper::getConfig();
+		$db = JFactory::getDBO();
 		//get plugin_syntax_cheatcheat
 		$plugin_syntax_cheatcheat = JRequest::getVar('plugin_syntax_cheatcheat','','post','string', JREQUEST_ALLOWRAW);
 		//clean lines
-		$plugin_syntax_cheatcheat = str_replace('
-','[newline]',$plugin_syntax_cheatcheat);
+		$plugin_syntax_cheatcheat = str_replace('\n','[newline]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = str_replace('=','[equal]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = addslashes($plugin_syntax_cheatcheat);
-		
-		
+
+
 		//get custom redirect url
 		$item_save_redirect_url = JRequest::getVar('item_save_redirect_url','','post','string', JREQUEST_ALLOWRAW);
 		//clean lines
 		$item_save_redirect_url = str_replace('=','[equal]',$item_save_redirect_url);
-		
+
 		//menus
 		$menus = JRequest::getVar('menus',array(0));
-
+		
 		//if menutype is not selected, take it out of array
 		//added the 'm' because of the problem with numerical indexes when unsetting in loop
 		$loops = count($menus);
@@ -68,12 +98,10 @@ class PagesAndItemsControllerConfig extends PagesAndItemsController
 				unset ($menus['m'.$n]);
 			}
 		}
-		
 		//sort array by order
 		foreach ($menus as $key => $row) {
-			$order[$key] = $row['order']; 
+			$order[$key] = (int)$row['order'];
 		}
-		
 		if(count($menus)!=0)
 		{
 			array_multisort($order, SORT_ASC, $menus);
@@ -84,23 +112,24 @@ class PagesAndItemsControllerConfig extends PagesAndItemsController
 		if (is_array($menus)){
 			$counter = 0;
 			foreach($menus as $menu){
-				//$config .= '\''.$menu[menutype].'\' => \''.$menu[title].'\',';
 				if($counter!=0)
 				{
 					$menu_string .= ',';
 				}
-				$menu_string .= $menu['menutype'].';'.$menu['title'];
+				$menu_string .= $menu['menutype'].';'.$menu['title']; //.';'.$menu['id'];
 				$counter = $counter+1;
 			}
 		}
 		
-		//permissions
-		$permissions_array = JRequest::getVar('permissions',array(0));
-		$permissions_string = implode(',', $permissions_array);
-				
+
+
 		$config = 'use_pi_frontend_editting='.JRequest::getVar('use_pi_frontend_editting', 'false').'
+useCheckedOut='.JRequest::getVar('useCheckedOut', '', 'post').'
+enabled_view_category='.JRequest::getVar('enabled_view_category', '', 'post').'
+showSlider='.JRequest::getVar('showSlider', -1, 'post').'
+plugin_system_add_button='.JRequest::getVar('plugin_system_add_button', 'false').'
+plugin_system_hidde_button='.JRequest::getVar('plugin_system_hidde_button', 'false').'
 menus='.$menu_string.'
-permissions='.$permissions_string.'
 cit=1
 item_show_frontpage_option='.JRequest::getVar('item_show_frontpage_option', 'false').'
 plugin_syntax_cheatcheat='.$plugin_syntax_cheatcheat.'
@@ -253,57 +282,71 @@ page_new_publish_category='.JRequest::getVar('page_new_publish_category', 'false
 page_new_publish_menu='.JRequest::getVar('page_new_publish_menu', 'false').'
 page_new_access_menu='.JRequest::getVar('page_new_access_menu', '0').'
 page_new_access_category='.JRequest::getVar('page_new_access_category', '0').'
-multigroup_access_requirement='.JRequest::getVar('multigroup_access_requirement', 'one_group').'
 ';
-	//get published itemtypes
-	$itemtypes = JRequest::getVar('itemtypes');
-	
-	$enabledItemtypes = array();
-	//
-	$config .= 'itemtypes=';
-	for($n = 0; $n < count($itemtypes); $n++)
-	{	
-		$row = each($itemtypes);
-		if($n!=0)
-		{
-			$config .= ',';
-		}
-		$config .= $row['key'];
-		
-		if(strpos($row['key'], 'ustom_') === false)
-		{
-			$enabledItemtypes[] = $row['key'];
-		}
-		/*
-		ms: we need no extra installer script here all off this will call if we install the extension over the pi-installer
-		also we need not $model->pathPluginsItemtypes
-		*/
-		/*
-		//if itemtype is itemtype plugin, run plugin specific installer script if available
-		$item_type = $row['key'];
+//multigroup_access_requirement='.JRequest::getVar('multigroup_access_requirement', 'one_group').'
+		//get published itemtypes
+		$itemtypes = JRequest::getVar('itemtypes');
 
-		if(file_exists($model->pathPluginsItemtypes.'/'.$item_type.'/'.$item_type.'.php'))
+		$enabledItemtypes = array();
+		$customItemtypes = array();
+
+		$config .= '
+itemtypes=';
+		for($n = 0; $n < count($itemtypes); $n++)
 		{
-			require_once($model->pathPluginsItemtypes.'/'.$item_type.'/'.$item_type.'.php');
-			$class_name = 'classItemtypeController'.$item_type;
-			$class_itemtype = new $class_name();
-			if(method_exists($class_itemtype,'installer'))
+			$row = each($itemtypes);
+			//only custom will add to config
+			if(strpos($row['key'], 'ustom_') !== false)
 			{
-				$class_itemtype->installer();
+				$customItemtypes[] = $row['key'];
+			}
+
+			if(strpos($row['key'], 'ustom_') === false)
+			{
+				$enabledItemtypes[] = $row['key'];
 			}
 		}
-		*/
-	}
-	/*
-	ms: we must check if an itemtype enabled ore not and set this also in #__pi_extensions
-	*/
-	
+		if(count($customItemtypes))
+		{
+			//if itemtype custom not enabled
+			$db->setQuery( "UPDATE #__pi_extensions SET enabled='1' WHERE type='itemtype' AND element='custom' ");
+			$db->query();
+			$config .= implode(',',$customItemtypes);
+		}
+		
+		//make sure no empty lines
+		$configParams = array();
+		$configurationParams = explode( "\n", $config);
+		for($n = 0; $n < count($configurationParams); $n++)
+		{
+			$var = '';
+			$temp = explode('=',$configurationParams[$n]);
+			$var = trim($temp[0]);
+			$value = '';
+			if(count($temp)==2){
+				$value = trim($temp[1]);
+				if($value=='false'){
+					$value = false;
+				}
+				if($value=='true'){
+					$value = true;
+				}
+			}
+			if($var != '')
+			{
+				$configParams[] = $var.'='.$value;
+			}
+		}
+		$config = implode( "\n", $configParams);
+		//end make sure no empty lines
+		
+		//ms: we must check if an itemtype enabled ore not and set this also in #__pi_extensions
 		$query = 'SELECT extension_id,element,enabled ';
 		$query .='FROM #__pi_extensions ';
-		$query .='WHERE type='.$model->db->Quote('itemtype').' ';
-		$query .='AND element <>'.$model->db->Quote('custom');
-		$model->db->setQuery( $query );
-		$itemtypeRows = $model->db->loadObjectList();
+		$query .='WHERE type='.$db->Quote('itemtype').' ';
+		$query .='AND element <>'.$db->Quote('custom');
+		$db->setQuery( $query );
+		$itemtypeRows = $db->loadObjectList();
 		if($itemtypeRows)
 		{
 			foreach($itemtypeRows as $itemtype)
@@ -311,22 +354,22 @@ multigroup_access_requirement='.JRequest::getVar('multigroup_access_requirement'
 				if(!in_array($itemtype->element,$enabledItemtypes) && $itemtype->enabled)
 				{
 					//we must set the extension field enabled to 0
-					$model->db->setQuery( "UPDATE #__pi_extensions SET enabled='0' WHERE extension_id='$itemtype->extension_id' ");
-					$model->db->query();
+					$db->setQuery( "UPDATE #__pi_extensions SET enabled='0' WHERE extension_id='$itemtype->extension_id' ");
+					$db->query();
 				}
 				elseif(in_array($itemtype->element,$enabledItemtypes) && !$itemtype->enabled)
 				{
-					//we must set the extension field enabled to 0
-					$model->db->setQuery( "UPDATE #__pi_extensions SET enabled='1' WHERE extension_id='$itemtype->extension_id' ");
-					$model->db->query();
+					//we must set the extension field enabled to 1
+					$db->setQuery( "UPDATE #__pi_extensions SET enabled='1' WHERE extension_id='$itemtype->extension_id' ");
+					$db->query();
 				}
 			}
-		}	
+		}
 
 		//update config
-		$model->db->setQuery( "UPDATE #__pi_config SET config='$config' WHERE id='pi' ");
-		$model->db->query();
-		
+		$db->setQuery( "UPDATE #__pi_config SET config='$config' WHERE id='pi' ");
+		$db->query();
+
 		//redirect
 		$sub_task = JRequest::getVar('sub_task', '');
 		if($sub_task=='apply')
@@ -337,9 +380,8 @@ multigroup_access_requirement='.JRequest::getVar('multigroup_access_requirement'
 		{
 			$url = 'index.php?option=com_pagesanditems';
 		}
-		$model->redirect_to_url($url, JText::_('COM_PAGESANDITEMS_CONFIGSAVED'));
+		
+		$this->setRedirect($url, JText::_('COM_PAGESANDITEMS_CONFIGSAVED'));
+		//$model->redirect_to_url($url, JText::_('COM_PAGESANDITEMS_CONFIGSAVED'));
 	}
-	
-	
-
 }

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -26,9 +26,9 @@ class PagesAndItemsViewArchive extends PagesAndItemsViewDefault
 	{
 		$archiveType = JRequest::getVar('archiveType','all');
 		$this->assignRef('archiveType', $archiveType);
-		if ($model = &$this->getModel('Page')) 
+		if ($model = &$this->getModel('Page'))
 		{
-			
+
 			$pageTree = $model->getPages();
 			$this->assignRef( 'pageTree',$pageTree);
 
@@ -38,16 +38,16 @@ class PagesAndItemsViewArchive extends PagesAndItemsViewDefault
 			$this->assignRef( 'model',$model);
 		}
 		/*
-		not here JHTML::stylesheet('pagesanditems.css', 'administrator/components/com_pagesanditems/css/');
+		not here JHTML::stylesheet('pagesanditems2.css', 'administrator/components/com_pagesanditems/css/');
 		JHTML::stylesheet('dtree.css', 'administrator/components/com_pagesanditems/css/');
 		*/
 		$pathComponent = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).'/../../../../../../../').DS));
 		JHTML::script('dtree.js',$path,false); //, 'administrator/components/com_pagesanditems/javascript/',false);
 		//JHTML::script('overlib_mini.js', 'includes/js/',false);
 		JHTML::_('behavior.tooltip');
-		
+
 		parent::display($tpl);
 
 	}
-	
+
 }

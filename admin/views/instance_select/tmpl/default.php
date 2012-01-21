@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -11,7 +11,7 @@
 if(!defined('_JEXEC')){
 	die('Restricted access');
 }
-	
+
 
 ?>
 <script language="JavaScript" type="text/javascript">
@@ -20,7 +20,7 @@ function select_parent(parent_id){
 	document.getElementById('new_parent_id').value = parent_id;
 }
 <?php
-if($this->model->joomlaVersion < '1.6')
+if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 {
 ?>
 function submitbutton(pressbutton) {
@@ -45,7 +45,7 @@ else
 {
 ?>
 Joomla.submitbutton = function(pressbutton) {
-	if (pressbutton == 'cancel') 
+	if (pressbutton == 'cancel')
 	{
 		//ms: not run
 		history.back();
@@ -68,10 +68,12 @@ Joomla.submitbutton = function(pressbutton) {
 ?>
 -->
 </script>
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 	<tr>
 		<td valign="top" width="20%">
-		<?php 
+		<?php
 			echo $this->pageTree;
 		?>
 		</td>
@@ -79,33 +81,37 @@ Joomla.submitbutton = function(pressbutton) {
 			<form name="adminForm" method="post" action="">
 				<input type="hidden" name="option" value="com_pagesanditems" />
 				<input type="hidden" name="new_parent_id" id="new_parent_id" value="" />
-				<input type="hidden" name="other_item_id" value="<?php echo JRequest::getVar('other_item_id'); ?>" />				
-		<table class="adminform" width="100%">
+				<input type="hidden" name="other_item_id" value="<?php echo JRequest::getVar('other_item_id'); ?>" />
+		<table class="piadminform xadminform" width="100%">
+			<thead class="piheader">
 			<tr>
-				<th>
+				<th> <!-- class="piheader">-->
 					 <?php echo JText::_('COM_PAGESANDITEMS_NEW_INSTANCE'); ?>
 				</th>
 			</tr>
+			</thead>
+			<tbody>
+			
 				<tr>
 					<td>
-						<p><?php echo JText::_('COM_PAGESANDITEMS_SELECT_PAGE_FOR_NEW_INSTANCE'); ?>.</p> 
+						<p><?php echo JText::_('COM_PAGESANDITEMS_SELECT_PAGE_FOR_NEW_INSTANCE'); ?>.</p>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<?php
-						
+
 						//see how many loops we need
-						$model = new PagesAndItemsModelMenutypes();
-						$menutypes = $this->model->getMenutypes();
+						$modelMenutypes = new PagesAndItemsModelMenutypes();
+						$menutypes = PagesAndItemsHelper::getMenutypes();
 						$loops = count($menutypes);
-						$config = $this->model->getConfig();
+						$config = PagesAndItemsHelper::getConfig();
 						//loop menutypes
 						for($m = 0; $m < $loops; $m++)
 						{
 							echo '<div class="dtree pi_instance_select">';
 							echo '<p><a href="javascript: pages_tree'.$m.'.openAll();">'.JText::_('COM_PAGESANDITEMS_OPEN_ALL').'</a> | <a href="javascript: pages_tree'.$m.'.closeAll();">'.JText::_('COM_PAGESANDITEMS_CLOSE_ALL').'</a></p>';
-						
+
 							//open javascript
 							echo "<script type=\"text/javascript\" type=\"text/javascript\">\n";
 							echo "<!--\n";
@@ -128,8 +134,8 @@ Joomla.submitbutton = function(pressbutton) {
 			nlMinus	: '".PagesAndItemsHelper::getDirIcons()."nolines_minus.gif'
 			};\n";
 							echo $script;
-*/							
-							if ($this->model->joomlaVersion < '1.6')
+*/
+							if (PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
 							{
 								echo "pages_tree$m.add(0,-1,'";
 							}
@@ -139,17 +145,16 @@ Joomla.submitbutton = function(pressbutton) {
 							}
 							//echo "pages_tree$m.add(0,-1,'";
 							//$script .= $this->getMenutypeTitle($menutypes[$m]);
-							echo $this->model->getMenutypeTitle($menutypes[$m]);
+							echo PagesAndItemsHelper::getMenutypeTitle($menutypes[$m]);
 							echo "','','','','','',true);\n";
-						
+
 							//make javascript-array from main-menu-items
-							$menuitems = $this->model->getMenutypeMenuitems($menutypes[$m]);
-							
-							//print_r($menuitems);
+							$menuitems = PagesAndItemsHelper::getMenutypeMenuitems($menutypes[$m]);
+
 							foreach($menuitems as $row)
 							{
 
-								
+
 								$show_item = false;
 								if($row->menutype == $menutypes[$m])
 								{
@@ -162,13 +167,18 @@ Joomla.submitbutton = function(pressbutton) {
 									$itemtype_no_access = array();
 									$not_installed_no_access = false;
 									$pageType = null;
+									if($row->type == 'components'){
+										//backward compatibility for site which were migrated from Joomla 1.5
+										$row->type = 'component';
+									}
+
 									if($row->type != 'component')
 									{
 										$pageType = $row->type;
 									}
 									else
 									{
-										$pageType =$model->buildPageType($row->link);
+										$pageType =$modelMenutypes->buildPageType($row->link);
 										if(!isset($this->menuItemsTypes[$pageType]))
 										{
 											$pageType = null;
@@ -184,7 +194,7 @@ Joomla.submitbutton = function(pressbutton) {
 										$not_installed_no_access = true;
 									}
 									$menuItemsType = $this->menuItemsTypes[$pageType];
-					
+
 									if(isset($menuItemsType->icons->default->imageUrl))
 									{
 										$image = $menuItemsType->icons->default->imageUrl;
@@ -212,7 +222,7 @@ Joomla.submitbutton = function(pressbutton) {
 										$image = $imageNoAccess;
 										$itemtype_no_access = addslashes(JText::_('COM_PAGESANDITEMS_COMPONENT_NOT_INSTALLED_NO_ACCESS'));
 									}
-								
+
 									if($row->type == 'separator' )
 									{
 										$name = JText::_('COM_PAGESANDITEMS_MENU_ITEM_TYPE').': '.JText::_('SEPARATOR');
@@ -231,7 +241,7 @@ Joomla.submitbutton = function(pressbutton) {
 										$menuName = $row->name;
 									}
 									$section_id = '';
-									
+
 									$title = '';
 									if($itemtype_no_access != '' && !is_array($itemtype_no_access))
 									{
@@ -244,10 +254,10 @@ Joomla.submitbutton = function(pressbutton) {
 									{
 										//TODO get this over the pagetype
 										//if(((strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type!='url') || $row->type=='content_blog_category') && $class_pi->check_section_access($section_id)
-										
+
 										if( (strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type != 'url') || $row->type=='content_category_blog')
 										{
-										
+
 										}
 										else
 										{
@@ -255,8 +265,8 @@ Joomla.submitbutton = function(pressbutton) {
 											$title = JText::_('COM_PAGESANDITEMS_NO_CATEGORY_BLOG');
 											//$menuName = '<a title="'.JText::_('COM_PAGESANDITEMS_NO_CATEGORY_BLOG').'" class="node nocategoryblog" >'.$menuName.'</a>';
 										}
-									
-									
+
+
 										//$menuName = addslashes($menuName);
 										//$script .= "d$m.add(".$row->id;//." id
 										//$script .= ",".$row->parent;//." , pid
@@ -267,9 +277,9 @@ Joomla.submitbutton = function(pressbutton) {
 									//$menuName
 									//echo "pages_tree$m.add(".$row->id.",".$row->parent.",'".(addslashes($row->name))."','";
 									echo "pages_tree$m.add(".$row->id.",".$row->parent.",";
-									
+
 									echo "'".(addslashes($menuName))."','";
-									
+
 									//if content page (content category blog) and not in the category it came from, make selectable link
 									//TODO get this over the pagetype
 									if((strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type!='url') || $row->type=='content_blog_category')
@@ -278,7 +288,7 @@ Joomla.submitbutton = function(pressbutton) {
 									}
 									else
 									{
-										//echo '#'; //echo 'XX';										
+										//echo '#'; //echo 'XX';
 									}
 									/*
 									if(((strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type=='url') || !strstr($row->link, 'index.php?option=com_content&view=category&layout=blog')) && $row->type!='content_blog_category')
@@ -290,33 +300,36 @@ Joomla.submitbutton = function(pressbutton) {
 										echo "','','','components/com_pagesanditems/images/page.gif','components/com_pagesanditems/images/page.gif";
 									}
 									*/
-									
+
 									/*
 									we will always set an title
 									but dTree will only set an title to an <a>
 									*/
-									//echo "','".$itemtype_no_access; 
-									echo "','".$title; 
+									//echo "','".$itemtype_no_access;
+									echo "','".$title;
 									echo "','','".$image."','".$image;
 									echo "');\n";
 								}
 							}
 							echo "document.write(pages_tree$m);\n";
-						
+
 							//close javascript
 							echo "//-->\n";
 							echo "</script>\n";
 							echo '</div>';
-						
+
 						}//end loops menutypes
 						?>
 					</td>
 				</tr>
+				</tbody>
 			</table>
 		</form>
 	</td>
 	</tr>
 </table>
+<!-- end id="form_content" need for css-->
+</div>
 <?php
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
 // $this->model->display_footer();

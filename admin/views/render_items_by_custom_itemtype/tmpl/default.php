@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,12 +13,13 @@ if(!defined('_JEXEC'))
 	die('Restricted access');
 }
 //if($this->controller->user_type!='Super Administrator'){
-if(!$this->model->isSuperAdmin)
+if(!PagesAndItemsHelper::getIsSuperAdmin())
 {
 	echo "<script> alert('you need to be logged in as a super administrator to edit the Pages-and-Items config.'); window.history.go(-1); </script>";
 	exit();
 }
-echo '<link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems.css" />';
+// TODO CHECK 
+echo '<link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems2.css" />';
 
 $type_id = intval(JRequest::getVar('type_id', ''));
 //get url together for after rendering
@@ -76,22 +77,24 @@ echo '<div style="width: 600px; margin: 0 auto;">';
 
 	$itemtype_name = 'custom_'.$type_id;
 	//get items which need updating
-	$this->model->db->setQuery( "SELECT c.id, c.title, c.catid"
-	. "\nFROM #__content AS c"		
+	$db = JFactory::getDBO();
+	$db->setQuery( "SELECT c.id, c.title, c.catid"
+	. "\nFROM #__content AS c"
 	. "\nLEFT JOIN #__pi_item_index AS i"
 	. "\nON c.id=i.item_id"
 	. "\nWHERE i.itemtype='$itemtype_name'"
 	. "\nAND (c.state='0' OR c.state='1') "
 	. "\nORDER BY c.title ASC"
 	);
-	$items_array = $this->model->db->loadObjectList();
+	$items_array = $db->loadObjectList();
 	$total_to_render = count($items_array);
 	echo '<p>';
 		echo 'total items to render = '.$total_to_render;
 	echo '</p>';
 	if($total_to_render==0){
 		$message_after_rendering .=  '. '.JText::_('COM_PAGESANDITEMS_NO_ITEMS_TO_UPDATE').'.';
-		$this->model->redirect_to_url($url_after_processing, $message_after_rendering);
+		//$this->model->redirect_to_url($url_after_processing, $message_after_rendering);
+		PagesAndItemsHelper::redirect_to_url($url_after_processing, $message_after_rendering);
 	}
 	//make javascript array of item id's
 	$javascript_array_items = 'var pi_array_items = new Array(';
@@ -114,16 +117,16 @@ echo '<div style="width: 600px; margin: 0 auto;">';
 	var custom_itemtype_id = '<?php echo $type_id; ?>';
 	//add ajax. to ajax_update_cit_item
 	//does not get triggered in the ajax controller, so moved to the main controller
-	window.addEvent('domready', function() 
+	window.addEvent('domready', function()
 	{
 		var delay = 0;
-		for (i = 0; i < pi_array_items.length; i++){			
+		for (i = 0; i < pi_array_items.length; i++){
 			//ajax_url = 'index.php?option=com_pagesanditems&task=ajax.ajax_update_cit_item&format=raw&itemtype='+custom_itemtype_id+'&item_id='+pi_array_items[i]+'&<?php echo JUtility::getToken(); ?>=1';
 			ajax_url = 'index.php?option=com_pagesanditems&task=ajax_update_cit_item&format=raw&itemtype='+custom_itemtype_id+'&item_id='+pi_array_items[i]+'&<?php echo JUtility::getToken(); ?>=1';
 			//alert(ajax_url);
 			var req = new Request.HTML({url:ajax_url, update:'item_'+pi_array_items[i], onComplete:progress_bar });
 			delay += 500; // 0.5 seconds between each call
-			req.send.delay(delay,req); 
+			req.send.delay(delay,req);
 		}
 	});
 	var rendered = 0;
@@ -144,7 +147,7 @@ echo '<div style="width: 600px; margin: 0 auto;">';
 			document.location.href = '<?php echo $url_after_processing; ?>';
 		}
 	}
-	
+
 	</script>
 	<div id="percent">
 		0%
@@ -163,13 +166,13 @@ echo '<div style="width: 600px; margin: 0 auto;">';
 			echo '</th>';
 			echo '<th>';
 				echo 'title';
-			echo '</th>';			
+			echo '</th>';
 			echo '<th>';
 				echo 'category id';
-			echo '</th>';	
+			echo '</th>';
 			echo '<th>';
 				echo 'status';
-			echo '</th>';		
+			echo '</th>';
 		echo '</tr>';
 		foreach($items_array as $item)
 		{
@@ -179,12 +182,12 @@ echo '<div style="width: 600px; margin: 0 auto;">';
 			echo '</td>';
 			echo '<td>';
 				echo $item->title;
-			echo '</td>';			
+			echo '</td>';
 			echo '<td>';
 				echo $item->catid;
-			echo '</td>';	
+			echo '</td>';
 			echo '<td id="item_'.$item->id.'">&nbsp;';
-			echo '</td>';		
+			echo '</td>';
 		echo '</tr>';
 		}
 	echo '</table>';

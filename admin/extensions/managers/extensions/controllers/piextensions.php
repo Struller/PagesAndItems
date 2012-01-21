@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -10,7 +10,7 @@
 // No direct access.
 defined('_JEXEC') or die;
 
- 
+
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
  /**
  * @package		PagesAndItems
@@ -56,7 +56,6 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-		//dump(JRequest::get());
 		$uid	= JRequest::getVar('cid', array(), '', 'array');
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'models');
 		JModel::addIncludePath($path);
@@ -64,8 +63,7 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		JArrayHelper::toInteger($uid, array());
 		$uid    = $uid[0];
 		$result = $model->checkin($uid);
-		//dump($result);
-		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
+		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
 	}
 
 	/**
@@ -82,19 +80,16 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		//$option = JRequest::getVar('option');
 		$user	= JFactory::getUser();
 		$ids	= JRequest::getVar('cid', array(), '', 'array');
-		
+
 		//$values	= array('enable' => 1, 'disable' => 0);
 		$values	= array('publish' => 1, 'unpublish' => 0);
-		
-		//dump();
+
 		$task	= JRequest::getVar('extensionTask'); //$this->getTask();
-		//dump($task);
-		//dump($this->getTask());
 		$value	= JArrayHelper::getValue($values, $task, 0, 'int');
 
 
 
-		if (empty($ids)) 
+		if (empty($ids))
 		{
 			JError::raiseWarning(500, JText::_('COM_INSTALLER_ERROR_NO_EXTENSIONS_SELECTED'));
 		}
@@ -106,7 +101,7 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 			JModel::addIncludePath($path);
 			$model	= $this->getModel('piextensions','PagesAndItemsModel');
 			// Change the state of the records.
-			if (!$model->publish($ids, $value)) 
+			if (!$model->publish($ids, $value))
 			{
 				JError::raiseWarning(500, implode('<br />', $model->getErrors()));
 			}
@@ -116,14 +111,14 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 				{
 					$ntext = 'COM_PAGESANDITEMS_EXTENSIONS_PUBLISHED';
 				}
-				else if ($value == 0) 
+				else if ($value == 0)
 				{
 					$ntext = 'COM_PAGESANDITEMS_EXTENSIONS_UNPUBLISHED';
 				}
 				//$this->setMessage(JText::plural($ntext, count($ids)));
 			}
 		}
-		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',$ntext);
+		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',$ntext);
 		//$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&view=manage',$ntext));
 
 	}
@@ -139,15 +134,14 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		JArrayHelper::toInteger($cid, array(0));
 
 		$uid    = $cid[0];
-		//dump($this->getTask());
 		$inc    = ( $this->getTask() == 'orderup' ? -1 : 1 );
 		$client = JRequest::getWord( 'filter_client', 'site' );
 
-		if ($client == 'admin') 
+		if ($client == 'admin')
 		{
 			$where = "client_id = 1";
-		} 
-		else 
+		}
+		else
 		{
 			$where = "client_id = 0";
 		}
@@ -155,11 +149,11 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 		$row =& JTable::getInstance('piextension','PagesAndItemsTable');
 		$row->load( $uid );
-		
+
 		//$row->reorder( 'type = '.$db->Quote($row->type).' AND folder = '.$db->Quote($row->folder).' AND ordering > -10000 AND ordering < 10000 AND ( '.$where.' )' );
 		$row->move( $inc, 'type = '.$db->Quote($row->type).' AND folder='.$db->Quote($row->folder).' AND ordering > -10000 AND ordering < 10000 AND ('.$where.')' );
 
-		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions' );
+		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions' );
 	}
 
 	/**
@@ -174,15 +168,19 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 		//$option = JRequest::getVar('option');
 		$eid	= JRequest::getVar('cid', array(), '', 'array');
-		
+
 		//$model	= $this->getModel('manage','PagesAndItemsModel');
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'models');
 		JModel::addIncludePath($path);
 		$model	= $this->getModel('piextensions','PagesAndItemsModel');
 		//$model	= &$this->getModel( 'Install','pagesanditemsModel');
+		$extension = 'com_installer';
+		$lang = &JFactory::getLanguage();
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 		JArrayHelper::toInteger($eid, array());
 		$result = $model->remove($eid);
-		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
+		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
 	}
 
 	function saveorder( )
@@ -234,16 +232,16 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 			$row->load( $cond[0] );
 			$row->reorder( $cond[1] );
 		}
-		
+
 /*
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..');
 		$extensionHelper::importExtension(null, 'extensions',true,null,true);
 */
 		//PagesAndItemsHelper::loadExtensionLanguage('extensions','manager');
-		
+
 		$msg 	= JText::_( 'PI_EXTENSION_MANAGER_EXTENSIONS_SAVE_EXTENSION_ORDER_SAVED'); //New ordering saved' );
-		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions', $msg );
-	}	
+		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions', $msg );
+	}
 
 	function refresh()
 	{
@@ -256,12 +254,12 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextensions extends Page
 		$model	= $this->getModel('piextensions','PagesAndItemsModel');
 		JArrayHelper::toInteger($uid, array());
 		$result = $model->refresh($uid);
-		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
+		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions',false));
 	}
-	
+
 	function cancel()
 	{
 		$this->setRedirect(JRoute::_('index.php?option=com_pagesanditems&view=managers',false));
 	}
-	
+
 }

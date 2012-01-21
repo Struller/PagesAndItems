@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -16,11 +16,13 @@ require_once(dirname(__FILE__).'/../../../includes/extensions/fieldtype.php');
 //IMAGE
 class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldtype
 {
+	
 	function display_config_form($plugin, $type_id, $name, $field_params, $field_id){
 		if(!$field_id)
 		{
 			//new field, set defaults here
-			$field_params['show_field_name'] = $this->params->get('show_field_name'); //0
+			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0
+			//$field_params['show_field_name'] = $this->params->get('show_field_name'); //0
 			$field_params['resize'] = $this->params->get('resize'); //0
 			$field_params['max_width'] = $this->params->get('max_width'); //''
 			$field_params['max_height'] = $this->params->get('max_height'); //''
@@ -31,17 +33,23 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			$field_params['image_dir'] = $this->params->get('image_dir'); //'images/stories/'
 			$field_params['auto_alt'] = $this->params->get('auto_alt'); //1
 		}
-		
+
+		$html = '';
+		//New show field name
+		$html .= $this->makeShowFieldName($field_id,$field_params);
 		//description
-		$html = $this->display_field_description($field_params);
+		$html .= $this->display_field_description($field_params);
+
+		/*
 		//show field name
 		$field_name = JText::_('COM_PAGESANDITEMS_SHOW_FIELD_NAME');
 		$field_content = '<input type="checkbox" ';
 		if($this->check_if_field_param_is_present($field_params, 'show_field_name')){
 			$field_content .= ' checked="checked"';
-		} 
+		}
 		$field_content .= 'name="field_params[show_field_name]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
+		*/
 		//validation
 		$field_name = JText::_('COM_PAGESANDITEMS_VALIDATION');
 		$field_content = '<input type="checkbox" class="checkbox" ';
@@ -49,7 +57,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			if($field_params['validation']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[validation]" value="not_empty" /> '.JText::_('COM_PAGESANDITEMS_NEED_IMAGE');
 		$html .= $this->display_field($field_name, $field_content);
 		//validation_mesage
@@ -61,7 +69,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			if($field_params['resize']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[resize]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
 		//width
@@ -77,7 +85,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$field_content = '<input type="checkbox" class="checkbox" ';
 		if($this->check_if_field_param_is_present($field_params, 'delete_old_image')){
 			$field_content .= ' checked="checked"';
-		} 
+		}
 		$field_content .= 'name="field_params[delete_old_image]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
 		//show source
@@ -87,7 +95,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			if($field_params['show_src']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[show_src]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
 		//classname
@@ -101,7 +109,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			if($field_params['only_source']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[only_source]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
 		//auto add image source to alt field
@@ -111,7 +119,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			if($field_params['auto_alt']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[auto_alt]" value="1" /> '.JText::_('COM_PAGESANDITEMS_AUTO_ADD_SRC_TO_ALT2');
 		$html .= $this->display_field($field_name, $field_content);
 		//image dit
@@ -120,7 +128,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$html .= $this->display_field($field_name, $field_content);
 		return $html;
 	}
-	
+
 	function display_item_edit($field, $field_params, $field_values, $field_value, $new_field, $field_id){
 		if($new_field){
 			//new field
@@ -139,44 +147,61 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 				$alt = '';
 			}
 		}
-				
+
 		$html = '<div class="field_type_image fieldtype">';
-	
+		
+		/*
 		if($this->check_if_field_param_is_present($field_params, 'show_field_name')){
-			$html .= '<div>'.$field->name.'</div>';
+			$html .= '<div>'.$field->name.':</div>';
 		}
+		*/
+		/*
 		if($field_params['description']){
 			$html .= '<div>'.$field_params['description'].'</div>';
-		} 
-		
+		}
+		*/
 		$html .= '<div class="pi_form_wrapper">';
 		$html .= '<div class="pi_width20">';
-		$html .= '<label class="hasTip" title="'.JText::_('COM_PAGESANDITEMS_IMAGE_TIP').'"><span class="editlinktip">'.JText::_('COM_PAGESANDITEMS_IMAGE').'</span></label>';
-		$html .= JText::_('COM_PAGESANDITEMS_IMAGE');
-		$html .= '</span>';
-		if($this->check_if_field_param_is_present($field_params, 'validation')){
-			$html .= '<span class="star">&nbsp;*</span>';
-		}
-		$html .= '</div>';
-		$html .= '<div class="pi_width70">';
+		//$html .= '&nbsp;';
 		
+		$html .= '<label class="hasTip" title="'.JText::_('COM_PAGESANDITEMS_IMAGE_TIP').'"><span class="editlinktip">'.JText::_('COM_PAGESANDITEMS_IMAGE').'</span></label>';
+		//$html .= JText::_('COM_PAGESANDITEMS_IMAGE');
+		//$html .= '</span>';
+		
+		if($this->check_if_field_param_is_present($field_params, 'validation')){
+			if($field_params['validation']){
+				$html .= '<span class="star">&nbsp;*</span>';
+			}
+		}
+		
+		$html .= '</div>';
+		
+		$html .= '<div class="pi_width70">';
+
 		$html .= '<script language="javascript"  type="text/javascript">'."\n";
 		//function to check extension
-		$html .= 'function check_extension_'.$field_id.'(thisthing){'."\n";
-		$html .= 'value = thisthing.value.toLowerCase();'."\n";
-		$html .= 'pos_jpg = value.indexOf(".jpg");'."\n";
-		$html .= 'pos_jpeg = value.indexOf(".jpeg");'."\n";
-		$html .= 'pos_gif = value.indexOf(".gif");'."\n";
-		$html .= 'pos_png = value.indexOf(".png");'."\n";
-		$html .= 'if(pos_jpg==-1 && pos_jpeg==-1 && pos_gif==-1 && pos_png==-1){'."\n";
-		$html .= 'thisthing.value = \'\';'."\n";
-		$html .= 'alert(\'wrong file-type. allowed are: gif, jpg, png and jpeg\')'."\n";
-		$html .= '}'."\n";
+		$html .= 'function check_extension_'.$field_id.'(id)'."\n";
+		$html .= '{'."\n";
+		$html .= '	var element = document.id(id);'."\n";
+		$html .= '	value = element.value.toLowerCase();'."\n";
+		$html .= '	pos_jpg = value.indexOf(".jpg");'."\n";
+		$html .= '	pos_jpeg = value.indexOf(".jpeg");'."\n";
+		$html .= '	pos_gif = value.indexOf(".gif");'."\n";
+		$html .= '	pos_png = value.indexOf(".png");'."\n";
+		$html .= '	if(pos_jpg==-1 && pos_jpeg==-1 && pos_gif==-1 && pos_png==-1)'."\n";
+		$html .= '	{'."\n";
+		$html .= '		element.value = \'\';'."\n";
+		$html .= '		alert(\'wrong file-type. allowed are: gif, jpg, png and jpeg\')'."\n";
+		$html .= '	}'."\n";
 		$html .= '}'."\n";
 		$html .= '</script>'."\n";
 		
-		$html .= '<input type="file" value="1" name="'.$field_id.'_image" id="'.$field_id.'_image" onchange="check_extension_'.$field_id.'(this);" />';
-		$html .= '</div>';
+		//some error if file to big so for test:
+		//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'helpers'.DS.'file.php');
+		//$html .= PagesAndItemsHelperFile::checkUploadScript($field_id,array('gif', 'jpg', 'jpeg', 'png' ));
+		
+		$html .= '<input type="file" value="1" name="'.$field_id.'_image" id="'.$field_id.'_image" onchange="check_extension_'.$field_id.'(\''.$field_id.'_image\');" />';
+			$html .= '</div>';
 		$html .= '</div>';
 		if($src){
 			$html .= '<div class="pi_form_wrapper">';
@@ -250,7 +275,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$html .=  '" />';
 		return $html;
 	}
-	
+
 	function render_field_output($field, $intro_or_full, $readmore_type=0, $editor_id=0){
 		$html = '';
 		if($this->get_field_value($field->value, 'src')!=''){
@@ -269,11 +294,11 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		}
 		return $html;
 	}
-	
+
 	function field_save($field, $insert_or_update){
-		
+
 		$value_name = 'field_values_'.$field->id;
-		
+
 		$image = $value_name.'_image';
 		$max_width = JRequest::getVar($value_name.'_max_width');
 		$max_height = JRequest::getVar($value_name.'_max_height');
@@ -283,104 +308,130 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$delete_image = JRequest::getVar($value_name.'_delete_image', false);
 		$image_dir = JRequest::getVar($value_name.'_image_dir', false);
 		$auto_alt = JRequest::getVar($value_name.'_auto_alt', false);
-		
+
 		$image_upload = false;
-		
+		$imagePathRoot = JPath::clean(JPATH_ROOT.DS.$image_dir);
+		//load the file Helper
+		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'helpers'.DS.'file.php');
+		if(!JFolder::exists($imagePathRoot))
+		{
+			//the $image_dir not exists
+			//create it
+			if(!JFolder::create($imagePathRoot))
+			{
+				//JFolder::create make an own error but we must make this:
+				$return = array('error'=>'');
+				return $return;
+			}
+			
+		}
 		//check if there is an image to upload
 		$userfile_name = strtolower($_FILES[$image]['name']);
 		if($userfile_name && !$delete_image){
 			$image_upload = true;
 		}
-		
+
 		//if image edit, delete old image
 		if(($userfile_name && $src && $delete_old_image) || $delete_image){
 			//get the bare src
 			$source_bits = explode('/',$src);
 			$source_bits = array_reverse($source_bits);
 			$src_delete = $source_bits[0];
-			if(file_exists(JPATH_ROOT.DS.$image_dir.$src_delete)){
-				unlink(JPATH_ROOT.DS.$image_dir.$src_delete);
+			
+			//if(file_exists(JPATH_ROOT.DS.$image_dir.$src_delete)){
+			//	unlink(JPATH_ROOT.DS.$image_dir.$src_delete);
+			if(file_exists($imagePathRoot.$src_delete)){
+				unlink($imagePathRoot.$src_delete);
 			}
 		}
 		$new_name = '';
 		//upload image
 		if($image_upload==true)
 		{
-			
+
 			$userfile_name = strtolower($_FILES[$image]['name']);
 			$userfile_tmp = $_FILES[$image]['tmp_name'];
 			$userfile_size = $_FILES[$image]['size'];
 			$userfile_type = $_FILES[$image]['type'];
-			
 			if (isset($_FILES[$image]['name'])){
-				
+
 				// get extension
 				$extension = explode(".", $userfile_name);
 				$last = count($extension) - 1;
 				$extension = "$extension[$last]";
-				
+
 				//check extension
 				$allowed_ext = "jpg jpeg gif png";
 				$allowed_extensions = explode(" ", $allowed_ext);
 				if (!in_array($extension, $allowed_extensions)){
-					die('wrong file-type. allowed are: '.$allowed_ext);
+					//JError::raiseWarning( 100, 'wrong file-type. allowed are: '.$allowed_ext);
+					return array('error'=>'wrong file-type. allowed are: '.$allowed_ext);
+					//die('wrong file-type. allowed are: '.$allowed_ext);
 				}
-				
+
 				//rewrite jpeg to jpg
 				if($extension=='jpeg'){
 					$extension = 'jpg';
-				}   			
-	
+				}
+
 				// get the old name of the file
 				$old_name = str_replace('.'.$extension,'',$userfile_name);
 				
+				
+				//$imagePathRoot
 				//rename file if already exist
-				if(file_exists(JPATH_ROOT.DS.$image_dir.$old_name.'.'.$extension)){
+				//if(file_exists(JPATH_ROOT.DS.$image_dir.$old_name.'.'.$extension)){
+				if(file_exists($imagePathRoot.$old_name.'.'.$extension)){
 					$j = 2;
-					while (file_exists(JPATH_ROOT.DS.$image_dir.$old_name.'-'.$j.".".$extension)){
+					//while (file_exists(JPATH_ROOT.DS.$image_dir.$old_name.'-'.$j.".".$extension)){
+					while (file_exists($imagePathRoot.$old_name.'-'.$j.".".$extension)){
 						$j = $j + 1;
 					}
 					$new_name = $old_name . "-" . $j;
 				}else{
 					$new_name = $old_name;
 				}
-				
+
 				//replace spaces by underscores
 				$new_name = str_replace(' ', '_', $new_name);
-				
+
 				//upload image
-				$prod_img = JPATH_ROOT.DS.$image_dir.$new_name.'.'.$extension;
-				//exit($prod_img);
+				//$imagePathRoot
+				//$prod_img = JPATH_ROOT.DS.$image_dir.$new_name.'.'.$extension;
+				$prod_img = $imagePathRoot.$new_name.'.'.$extension;
 				if(!move_uploaded_file($userfile_tmp, $prod_img)){
 					//die('Problem uploading image. File is too big. Try making the image smaller with an image-editor (like Photoshop or Gimp) and try again.');
+					$error_message = PagesAndItemsHelperFile::file_upload_error_message($_FILES[$image]['error']);
+					return array('error'=>'Problem uploading image. '.$error_message);
+					// File is too big. Try making the image smaller with an image-editor (like Photoshop or Gimp) and try again.');
 				}
-				
+
 				//get sizes and ratio
 				$sizes = getimagesize($prod_img);
-				$aspect_ratio = $sizes[1]/$sizes[0]; 
-				
-				
-				
-				//resize uploaded image  
+				$aspect_ratio = $sizes[1]/$sizes[0];
+
+
+
+				//resize uploaded image
 				if (($sizes[0] > $max_width || $sizes[1] > $max_height) && $resize){
-					
-					$widthratio = $sizes[0]/$max_width; 			
-					$heightratio = $sizes[1]/$max_height; 			
-		
-					$imgnewwidth = $max_width; 
-					$imgnewheight = $max_height; 
-		
-					if($widthratio <= $heightratio){ 
-						$imgnewwidth = $sizes[0]/$heightratio; 					
-						$newwidth = round($imgnewwidth); 
-						$newheight = round($imgnewheight); 					
-						 
-					}else{ 
+
+					$widthratio = $sizes[0]/$max_width;
+					$heightratio = $sizes[1]/$max_height;
+
+					$imgnewwidth = $max_width;
+					$imgnewheight = $max_height;
+
+					if($widthratio <= $heightratio){
+						$imgnewwidth = $sizes[0]/$heightratio;
+						$newwidth = round($imgnewwidth);
+						$newheight = round($imgnewheight);
+
+					}else{
 						$imgnewheight = $sizes[1]/$widthratio;
-						$newwidth = round($imgnewwidth); 
-						$newheight = round($imgnewheight); 					
+						$newwidth = round($imgnewwidth);
+						$newheight = round($imgnewheight);
 					}
-					
+
 					//ini_set('memory_limit', '120M');
 					$imgnew = imagecreatetruecolor($newwidth,$newheight);
 					if($extension=='jpg'){
@@ -407,13 +458,13 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			$src = $new_name.'.'.$extension;
 		}else{
 			//nothing has been uploaded
-			
+
 			$source_bits = explode('/',$src);
 			$source_bits = array_reverse($source_bits);
 			$src = $source_bits[0];
-			
+
 		}
-		
+
 		$alt = addslashes(JRequest::getVar($value_name.'_alt'));
 		if($auto_alt && $alt=='')
 		{
@@ -429,11 +480,11 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		}
 		return $value;
 	}
-	
+
 	function item_delete($item_id, $type_id, $field){
-		
+
 		$field_id = $field->id;
-		
+
 		//get value of image
 		$this->db->setQuery("SELECT value "
 		."FROM #__pi_custom_fields_values "
@@ -448,20 +499,20 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$src_part = $value_array[0];
 		$src_array = explode('=-',$src_part);
 		$src = $src_array[1];
-		
+
 		//get image dir
 		$image_dir = $this->get_field_param($field->params, 'image_dir');
-		
+
 		//delete image
 		if(file_exists(JPATH_ROOT.DS.$image_dir.$src)){
 			unlink(JPATH_ROOT.DS.$image_dir.$src);
 		}
 	}
-	
+
 	function field_delete($field){
-	
+
 		$field_id = $field->id;
-		
+
 		//get values of images
 		$this->db->setQuery("SELECT value "
 		."FROM #__pi_custom_fields_values "
@@ -474,10 +525,10 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 			$src_part = $value_array[0];
 			$src_array = explode('=-',$src_part);
 			$src = $src_array[1];
-			
+
 			//get image dir
 			$image_dir = $this->get_field_param($field->params, 'image_dir');
-			
+
 			//delete image
 			if(file_exists(JPATH_ROOT.DS.$image_dir.$src)){
 				unlink(JPATH_ROOT.DS.$image_dir.$src);

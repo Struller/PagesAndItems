@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,38 +22,56 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 	protected $item;
 	protected $form;
 	protected $state;
-	
+
 	function display( $tpl = null )
 	{
-		//dump('display');
-		//dump($tpl);
 		//		PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_MANAGERS').': ['.JText::_('COM_PAGESANDITEMS_EXTENSION_INSTALLER').']</small>');
-		PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_MANAGERS').': '.JText::_('COM_PAGESANDITEMS_EXTENSIONS').' ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
+		/*
+		$sub_task = JRequest::getVar('sub_task','');
+		if($sub_task=='new')
+		{
+			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG').': ['.JText::_('COM_PAGESANDITEMS_NEW').']</small>');
+		}
+		else
+		{
+			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG').': ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
+		}
+		*/
+		$app = JFactory::getApplication();
+		$option = JRequest::getVar('option');
+		$refer = $app->getUserState( $option.'.refer');
+		if($refer != '' && $refer)
+		{
+			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CONFIG').' '.JText::_('COM_PAGESANDITEMS_ITEMTYPE').': ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
+		}
+		else
+		{
+			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_MANAGERS').': '.JText::_('COM_PAGESANDITEMS_EXTENSIONS').' ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
+		}
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
 		if($joomlaVersion >= '1.6') // && $vLayout == 'edit')
 		{
-			
+
 			//$model = & $this->getModel('formextension','PI_Pages_And_ItemsModel'); //,'PagesAndItemsModel');
 			// set the form path
 			JForm::addFormPath(realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'models'.DS.'forms'));
-			
-			//print_r(realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'models'.DS.'forms'));
+
 			//$model = & $this->getModel('extension');
 			$model = & $this->getModel();
-			//print_r($model);
-			//dump($model);
-			//dump($model->option);
+
 			$this->state	= $model->getState();
 			$this->item		= $model->getItem();
-			
-			//dump($this->item);
+
 			$this->form		= $model->getForm();
-			//print_r($this->form);
-			//dump($this->form->getInput('type'));
+			if(!$this->form)
+			{
+				//TODO error message and redirect
+			}
 			$extension = 'com_plugins';
 			$lang = &JFactory::getLanguage();
-			$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+			//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+			$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 			JHtml::_('behavior.formvalidation');
 			/*
 			???
@@ -61,12 +79,12 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 			{
 				$this->languageItems = $model->getLanguageItems($this->item);
 			}
-			
+
 			*/
 		}
 		else
 		{
-		
+
 			$option = JRequest::getVar('option');
 
 			$db		=& JFactory::getDBO();
@@ -75,7 +93,7 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 		$client = JRequest::getWord( 'client', 'site' );
 		$cid 	= JRequest::getVar( 'cid', array(0), '', 'array' );
 		JArrayHelper::toInteger($cid, array(0));
-		
+
 		/*
 		$model = & $this->getModel('manageextension','PagesAndItemsModel');
 		$model->setState('manageextension.extension_id',$cid[0]);
@@ -86,20 +104,17 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 		*/
 		/*
 		on $model->getForm(); error cannot load component com_pagesanditems
-		
+
 		*/
-		//dump($this->item,'item');
 		//$fieldSets = $this->form->getFieldsets('params');
-		//dump($this->form->getInput('type'));
-		//dump($fieldSets);
-		
+
 
 
 		$lists 	= array();
-		
+
 		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 		$row 	=& JTable::getInstance('piextension','PagesAndItemsTable');
-		
+
 		// load the row from the db table
 		$row->load( $cid[0] );
 
@@ -154,7 +169,7 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 			require_once($path.DS.'includes'.DS.'extensions'.DS.$row->type.'helper.php');
 			$extensionHelper = 'Extension'.ucfirst($row->type).'Helper';
 			$extension = $extensionHelper::importExtension($row->folder, $row->element,true,null,true);
-			
+
 			if($extension && is_object($extension))
 			{
 				$params = $extension->getParams();
@@ -174,7 +189,7 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 			$data = JApplicationHelper::parseXMLInstallFile(JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.$path. DS .$row->element. DS . $row->element .'.xml');
 
 			$row->description = $data['description'];
-			
+
 
 		}
 		else
@@ -186,26 +201,26 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 			$row->description 	= '';
 		}
 		$lists['published'] = JHTML::_('select.booleanlist',  'published', 'class="inputbox"', $row->enabled );
-		
+
 		$this->assignRef('lists',		$lists);
 		$this->assignRef('plugin',		$row);
 		/*
 		here we use at this moment JParameter in J1.6 is JParameter deprecated
 		for get/set we can use JRegistry
-		and for output 
+		and for output
 		*/
 		$this->assignRef('params',		$params);
 		}
 		parent::display($tpl);
 		$this->addToolbar();
 	}
-	
+
 	protected function addToolbar()
 	{
 		JRequest::setVar('hidemainmenu', true);
-		JToolBarHelper::save('piextension.save', 'COM_PAGESANDITEMS_SAVE');
-		JToolBarHelper::apply('piextension.apply', 'COM_PAGESANDITEMS_APPLY');
+		JToolBarHelper::apply('piextension.apply');//, 'COM_PAGESANDITEMS_APPLY');
+		JToolBarHelper::save('piextension.save');//, 'COM_PAGESANDITEMS_SAVE');
 		JToolBarHelper::divider();
-		JToolBarHelper::cancel('piextension.cancel', 'COM_PAGESANDITEMS_CANCEL');
+		JToolBarHelper::cancel('piextension.cancel');//, 'COM_PAGESANDITEMS_CANCEL');
 	}
 }

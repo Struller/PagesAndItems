@@ -10,9 +10,9 @@
 		<icon type="text" name="delete" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_delete.png"></icon>
 		<icon type="text" name="edit" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_edit.png"></icon>
 		<icon type="text" name="no_access" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_no_access.png"></icon>
-		<icon type="text" name="item_default" folder="article" pi_icons="1" folder_type="pi_icons" image="icon-16-article.png"></icon>
-		<icon type="text" name="item_new" folder="article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_new.png"></icon>
-		<icon type="text" name="item_edit" folder="article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_edit.png"></icon>
+		<icon type="text" name="item_default" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article.png"></icon>
+		<icon type="text" name="item_new" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_new.png"></icon>
+		<icon type="text" name="item_edit" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-article_edit.png"></icon>
 		<icon type="text" name="featured_default" folder="components/content/article" pi_icons="1" folder_type="pi_icons" image="icon-16-content_article_featured.png"></icon>
 
 	</icons>

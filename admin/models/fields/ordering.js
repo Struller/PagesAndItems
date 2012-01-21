@@ -1,6 +1,6 @@
 /**
 * @package Pages-and-Items (com_pagesanditems)
-* @version 2.0.0
+* @version 2.1.0
 * @copyright Copyright (C) 2009-2010 Michael Struller. All rights reserved.
 * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author http://gecko.struller.de

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -15,7 +15,7 @@ class piExtensions
 	function createTable()
 	{
 		$database = JFactory::getDBO();
-		$query = 
+		$query =
 		"CREATE TABLE IF NOT EXISTS `#__pi_extensions` "
 		."("
 		."`extension_id` int(11) NOT NULL auto_increment, "
@@ -47,8 +47,8 @@ class piExtensions
 		$database->setQuery($query);
 		$database->query();
 	}
-	
-	
+
+
 	function installLanguage($parent)
 	{
 		$version = new JVersion();
@@ -56,23 +56,24 @@ class piExtensions
 		$componentPath = $parent->getPath('extension_administrator');
 		$extension = 'com_installer';
 		$lang = &JFactory::getLanguage();
-		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
-	
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+
 		require_once( $componentPath.DS.'includes'.DS.'installer'.DS.'installerhelper.php' );
 		require_once( $componentPath.DS.'includes'.DS.'installer'.DS.'installer.php');
 		jimport('joomla.filesystem.folder');
 		JTable::addIncludePath($componentPath.DS.'tables');
-		
+
 		$piinstaller = new PagesAndItemsInstaller();
 		/*
 		$files = JFolder::files($componentPath.DS.'includes'.DS.'installer'.DS.'adapters','.php$');
 		foreach($files as $file)
 		{
-			$name = JFile::getName($file); 
+			$name = JFile::getName($file);
 			$name = JFile::stripExt($file);
 			require_once($componentPath.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php'));
 			$class = 'PiInstaller'.ucfirst($name);
-			if (class_exists($class)) 
+			if (class_exists($class))
 			{
 				//$adapter = null;
 				$adapter = new $class($piinstaller);
@@ -82,15 +83,13 @@ class piExtensions
 					$adapter->parent = $piinstaller;
 				}
 				$piinstaller->setAdapter($name, $adapter);
-				//var_dump(get_class($adapter));
-				//dump($adapter);
 			}
 		}
 		*/
 		$piinstaller->setPath('source',$parent->getPath('source').DS.'admin');
 		$piinstaller->addLanguage($parent->getManifest());
 	}
-	
+
 	function installExtensions($parent)
 	{
 
@@ -99,28 +98,29 @@ class piExtensions
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion(); //can be '1.6.3'
 		$joomlaVersionRELEASE = $version->RELEASE;//can be '1.6'
-		
+
 		$componentPath = $parent->getPath('extension_administrator');
 		$extension = 'com_installer';
 		$lang = &JFactory::getLanguage();
-		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
-	
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+
 		require_once( $componentPath.DS.'includes'.DS.'installer'.DS.'installerhelper.php' );
 		require_once( $componentPath.DS.'includes'.DS.'installer'.DS.'installer.php');
-		
+
 		//$installer = PagesAndItemsInstaller::getInstance();
 		//we need the files from adapter
 		jimport('joomla.filesystem.folder');
 		JTable::addIncludePath($componentPath.DS.'tables');
-		
+
 		/*
 		foreach($files as $file)
 		{
-			$name = JFile::getName($file); 
+			$name = JFile::getName($file);
 			$name = JFile::stripExt($file);
 			require_once($componentPath.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php'));
 			$class = 'PiInstaller'.ucfirst($name);
-			if (class_exists($class)) 
+			if (class_exists($class))
 			{
 				$adapter = new $class($installer);
 				if( $joomlaVersion < '1.6')
@@ -133,7 +133,7 @@ class piExtensions
 		*/
 		defined('COM_PAGESANDITEMS_INSTALLER_PATH') or define('COM_PAGESANDITEMS_INSTALLER_PATH', $componentPath.DS.'extensions');
 		define('COM_PAGESANDITEMS_COMPONENT_INSTALL',1);
-		
+
 		//here we will load from an xml file all piextensions to install
 		$file = $componentPath.DS.'install'.DS.'install.piextensions.xml';
 		$xml = simplexml_load_file($file);
@@ -147,7 +147,7 @@ class piExtensions
 					$type = (string)$installExtension->type;
 					$folder = (string)$installExtension->folder;
 					$extension_installed = false;
-					
+
 					if(isset($folder) && $folder != '')
 					{
 						$pathfolder = $type.'s'.DS.$folder.DS.$name;
@@ -168,14 +168,12 @@ class piExtensions
 						$adapterFiles = JFolder::files($componentPath.DS.'includes'.DS.'installer'.DS.'adapters','.php$');
 						foreach($adapterFiles as $adapterFile)
 						{
-							$adapterName = JFile::getName($adapterFile); 
+							$adapterName = JFile::getName($adapterFile);
 							$adapterName = JFile::stripExt($adapterFile);
 							require_once($componentPath.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($adapterName.'.php'));
 							$installerClass = 'PiInstaller'.ucfirst($adapterName);
-							//var_dump($class.'<br />');
-							if (class_exists($installerClass)) 
+							if (class_exists($installerClass))
 							{
-								//var_dump('exist'.'<br />');
 								$adapter = null;
 								$adapter = new $installerClass($extensionInstaller); //,$parent);
 								if( $joomlaVersion < '1.6')
@@ -184,8 +182,7 @@ class piExtensions
 								}
 								$extensionInstaller->setAdapter($adapterName, $adapter);
 								//problem: all adapters are pilanguage why?
-								//var_dump(get_class($adapter));
-								
+
 								$dateihandle = fopen("output_adapter.txt", "a");
 								fwrite($dateihandle,"*******\n\r");
 								$out = var_export(get_class($adapter), true);
@@ -196,12 +193,12 @@ class piExtensions
 								fwrite($dateihandle, "\n\r********ENDE");
 								fwrite($dateihandle, "\n\r");
 								fclose($dateihandle);
-								
+
 							}
-//							
+//
 						}
 						*/
-						if (!$extensionInstaller->install($src.DS.'admin'.DS.'extensions'.DS.$pathfolder)) 
+						if (!$extensionInstaller->install($src.DS.'admin'.DS.'extensions'.DS.$pathfolder))
 						{
 							// There was an error installing the package
 							//$msg = JText::_('COM_PAGESANDITEMS_INSTALLEXT_FAILED');
@@ -210,13 +207,10 @@ class piExtensions
 						}
 						else
 						{
-							//var_dump('test');
 							$extension_installed = true;
 							// Package installed sucessfully
 							//$msg = JText::_('COM_PAGESANDITEMS_INSTALLEXT_SUCCESS');
 							//$message = $extensionInstaller->message;
-							//var_dump($extensionInstaller->message);
-							//var_dump('<br />');
 							//$extension_message = $extensionInstaller->get('extension.message');
 						}
 
@@ -289,7 +283,7 @@ class piExtensions
 			$query .= '(311, \'Copy (Pages and Items Html)\', \'html\', \'copy\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:4:"copy";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:68:"\n		html Copy for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 2, 1),';
 			$query .= '(312, \'Delete (Pages and Items Html)\', \'html\', \'delete\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:6:"delete";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:70:"\n		html Delete for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'""\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 7, 1),';
 			$query .= '(313, \'Move (Pages and Items Html)\', \'html\', \'move\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:4:"move";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:68:"\n		html Move for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 3, 1),';
-			$query .= '(314, \'Publish (Pages and Items Html)\', \'html\', \'publish\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:7:"publish";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:81:"\n		html Publish for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 1, 1),';			
+			$query .= '(314, \'Publish (Pages and Items Html)\', \'html\', \'publish\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:7:"publish";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:81:"\n		html Publish for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 1, 1),';
 			$query .= '(315, \'Trash (Pages and Items Html)\', \'html\', \'trash\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:5:"trash";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:69:"\n		html Trash for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 6, 1),';
 			$query .= '(318, \'Content_archive (Pages and Items Html)\', \'html\', \'content_archive\', \'page_childs\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:15:"content_archive";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:80:"\n		html Content_archive for pageItems in view page in childs (Pages and Items)\n	";s:6:"folder";s:11:"page_childs";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 9, 1),';
 			$query .= '(319, \'Content_article (Pages and Items Html)\', \'html\', \'content_article\', \'page_childs\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:15:"content_article";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:80:"\n		html Content_article for pageItems in view page in childs (Pages and Items)\n	";s:6:"folder";s:11:"page_childs";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 1, 1),';
@@ -304,16 +298,16 @@ class piExtensions
 			$query .= '(332, \'Unpublish (Pages and Items Html)\', \'html\', \'unpublish\', \'page_items\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:7:"unpublish";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:81:"\n		html unpublish for pageItems in view page in items (Pages and Items)\n	";s:6:"folder";s:10:"page_items";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 2, 1),';
 			$query .= '(401, \'Trash (Pages and Items Manager)\', \'manager\', \'trash\', \'\', \'integrated\', \'\', \'		Manager Trash for Pages and Items\r\n	\', 0, 1, 1, 0, \'a:10:{s:4:"type";s:7:"manager";s:4:"name";s:5:"trash";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:38:"\n		Manager Trash for Pages and Items\n	";s:6:"folder";s:0:"";}\', \'{}\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 2, 1);
 			';
-			
+
 
 			$database->setQuery($query);
 			$database->query();
-			
+
 			/*
 			pagetype for J1.5 and J1.6
 			*/
-			
-			
+
+
 			$query = 'INSERT INTO `#__pi_extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `version`, `required_version`, `description`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES ';
 			$query .= '(200, \'Component (Pages and Items pagetype)\', \'pagetype\', \'component\', \'\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:8:"pagetype";s:4:"name";s:9:"component";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:41:"\n		pagetype Component (Pages and Items)\n	";s:6:"folder";s:0:"";}\', \'""\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 1, 1),';
 			$query .= '(201, \'ContentArchive (Pages and Items pagetype)\', \'pagetype\', \'content_archive\', \'\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:8:"pagetype";s:4:"name";s:15:"content_archive";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:46:"\n		pagetype ContentArchive (Pages and Items)\n	";s:6:"folder";s:0:"";}\', \'""\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 2, 1),';
@@ -332,7 +326,7 @@ class piExtensions
 				/*
 				pagetype for J1.5
 				*/
-			
+
 				$query = 'INSERT INTO `#__pi_extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `version`, `required_version`, `description`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES ';
 				$query .= '(203, \'ContentArticleForm (Pages and Items pagetype)\', \'pagetype\', \'content_article_form\', \'\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:8:"pagetype";s:4:"name";s:20:"content_article_form";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:50:"\n		pagetype ContentArticleForm (Pages and Items)\n	";s:6:"folder";s:0:"";}\', \'""\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 4, 1),';
 				$query .= '(206, \'ContentFrontpage (Pages and Items pagetype)\', \'pagetype\', \'content_frontpage\', \'\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:8:"pagetype";s:4:"name";s:17:"content_frontpage";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:48:"\n		pagetype ContentFrontpage (Pages and Items)\n	";s:6:"folder";s:0:"";}\', \'""\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 7, 1),';
@@ -347,8 +341,8 @@ class piExtensions
 				/*
 				page_childs for J1.5
 				*/
-				
-	
+
+
 				$query = 'INSERT INTO `#__pi_extensions` (`extension_id`, `name`, `type`, `element`, `folder`, `version`, `required_version`, `description`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`) VALUES ';
 				$query .= '(320, \'Content_article_form (Pages and Items Html)\', \'html\', \'content_article_form\', \'page_childs\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:20:"content_article_form";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:85:"\n		html Content_article_form for pageItems in view page in childs (Pages and Items)\n	";s:6:"folder";s:11:"page_childs";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 8, 1),';
 				$query .= '(322, \'Content_frontpage (Pages and Items Html)\', \'html\', \'content_frontpage\', \'page_childs\', \'integrated\', \'\', \'\', 0, 1, 0, 0, \'a:10:{s:4:"type";s:4:"html";s:4:"name";s:17:"content_frontpage";s:12:"creationdate";s:13:"December 2010";s:6:"author";s:13:"Carsten Engel";s:9:"copyright";s:50:"(Copyright (C) 2009 Engelweb. All rights reserved.";s:11:"authorEmail";s:1:"-";s:9:"authorUrl";s:23:"www.pages-and-items.com";s:7:"version";s:10:"integrated";s:11:"description";s:82:"\n		html Content_frontpage for pageItems in view page in childs (Pages and Items)\n	";s:6:"folder";s:11:"page_childs";}\', \'\', \'\', \'\', 0, \'0000-00-00 00:00:00\', 4, 1),';

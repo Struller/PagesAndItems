@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -45,10 +45,19 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 		$row =& JTable::getInstance('piextension','PagesAndItemsTable');
 		$row->bind(JRequest::get('post'));
 		$row->checkin();
-		//http://127.0.0.1:4001/administrator/index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionType=manager&extensionFolder=&extension_sub_task=display&view=extensions
-		//$this->setRedirect( JRoute::_( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extension_task=display&view=extensions', false ) );
-		//dump('cancel');
-		$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions' );
+		
+		$app = JFactory::getApplication();
+		$option = JRequest::getVar('option');
+		$refer = $app->getUserState( $option.'.refer');
+		if($refer != '' && $refer)
+		{
+			$url = 'index.php?option=com_pagesanditems'.$refer;
+		}
+		else
+		{
+			$url =  'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions';
+		}
+		$this->setRedirect( $url );
 	}
 
 
@@ -62,14 +71,13 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 		$db = & JFactory::getDBO();
 		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 		$row =& JTable::getInstance('piextension','PagesAndItemsTable');
-		
+
 		$task = JRequest::getVar('extensionTask','save');
-		//dump(JRequest::get());
 		//$task = $this->getTask();
 		$client = JRequest::getWord( 'filter_client', 'site' );
-		
-		
-		
+
+
+
 		//who we handle jform
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
@@ -88,7 +96,7 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 			{
 				$post = JRequest::get('post');
 			}
-			
+
 		}
 		/*
 		if(isset($post['jform']))
@@ -96,10 +104,10 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 			$post = $post['jform'];
 		}
 		*/
-		
-		
-		
-		if (!$row->bind($post)) 
+
+
+
+		if (!$row->bind($post))
 		{
 			JError::raiseError(500, $row->getError() );
 		}
@@ -121,19 +129,19 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 		$row->reorder( 'type = '.$db->Quote($row->type).' AND folder = '.$db->Quote($row->folder).' AND ordering > -10000 AND ordering < 10000 AND ( '.$where.' )' );
 		/*
 		we will trigger onAfterParamsSave
-		
+
 		*/
 		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
 		//ExtensionHelper::importExtension($row->type,$row->folder, $row->element,true,null,true);
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.$row->type.'helper.php');
-		//$extensions = 
-		
+		//$extensions =
+
 		$extensionHelper = 'Extension'.ucfirst($row->type).'Helper';
 		//$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
 		$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
-		
-		
+
+
 		//$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
 		$dispatcher = &JDispatcher::getInstance();
 		//$params = $row->params;
@@ -141,17 +149,15 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 			$param string the extension name
 		*/
 		$dispatcher->trigger('onAfterParamsSave',array(&$row->params,$row->element));
-		
+
 		/*
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
 		$extensionHelper = 'Extension'.ucfirst('manager').'Helper';
 		$extensionHelper::importExtension(null, 'extensions',true,null,true);
 		*/
-		
+
 		//PagesAndItemsHelper::loadExtensionLanguage('extensions','manager');
-		//dump(JText::sprintf( 'PI_EXTENSION_MANAGER_EXTENSIONS_APPLY_EXTENSION', $row->name ));
 		//$dispatcher->trigger('loadLanguage');
-		//dump(JText::_('PI_EXTENSION_MANAGER_EXTENSIONS_VIEW_INSTALL_NAME'));
 		/*
 		//$fieldParams = $params;
 		*/
@@ -161,15 +167,25 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 				$msg = JText::sprintf( 'PI_EXTENSION_MANAGER_EXTENSIONS_APPLY_EXTENSION', $row->name );
 				//$msg = JText::_('PI_EXTENSION_MANAGER_EXTENSIONS_APPLY');
 				//the lang is load but the JText not
-				$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextension&client='. $client .'&sub_task=edit&cid[]='. $row->extension_id.'&layout=edit&extension_id='. $row->extension_id, $msg );
+				$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextension&client='. $client .'&sub_task=edit&cid[]='. $row->extension_id.'&layout=edit&extension_id='. $row->extension_id, $msg );
 				//$this->setRedirect( 'index.php?option=com_pagesanditems&view=manageextension&client='. $client .'&task=edit&cid[]='. $row->extension_id.'&extension_id='. $row->extension_id, $msg );
 				break;
 
 			case 'save':
 			default:
 				$msg = JText::sprintf( 'PI_EXTENSION_MANAGER_EXTENSIONS_SAVE_EXTENSION', $row->name );
-				$this->setRedirect( 'index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions' , $msg );
-				//$this->setRedirect( 'index.php?option=com_pagesanditems&view=manage&client='. $client, $msg );
+				$app = JFactory::getApplication();
+				$option = JRequest::getVar('option');
+				$refer = $app->getUserState( $option.'.refer');
+				if($refer != '' && $refer)
+				{
+					$url = 'index.php?option=com_pagesanditems'.$refer;
+				}
+				else
+				{
+					$url =  'index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=piextensions';
+				}
+				$this->setRedirect( $url , $msg );
 				break;
 		}
 	}

@@ -1,14 +1,14 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
 
  // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' ); 
+defined( '_JEXEC' ) or die( 'Restricted access' );
 //echo '123';
 //require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_installer'.DS.'views'.DS.'install'.DS.'tmpl'.DS.'default_form.php');
 
@@ -19,7 +19,7 @@ if($joomlaVersion < '1.6')
 {
 	//joomla 1.5.x
 	//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_installer'.DS.'views'.DS.'install'.DS.'view.php');
-?>	
+?>
 <script language="javascript" type="text/javascript">
 <!--
 	function submitbutton3(pressbutton) {
@@ -66,7 +66,7 @@ if($joomlaVersion < '1.6')
 			<input class="input_box" id="install_package" name="install_package" type="file" size="57" />
 			<?php
 			//$path = str_replace(DS,'/',str_replace(JPATH_SITE,'',JPATH_COMPONENT_ADMINISTRATOR));
-			
+
 			/*
 			**********************
 			* Button upload-file *
@@ -112,12 +112,12 @@ if($joomlaVersion < '1.6')
 			echo $button->makeButton();
 			/*
 			<input type="button" class="button" value="<?php echo JText::_( 'Install' ); ?>" onclick="submitbutton3()" />
-			
+
 			*/
 			?>
-			
-			
-			
+
+
+
 		</td>
 	</tr>
 	</table>
@@ -147,7 +147,7 @@ if($joomlaVersion < '1.6')
 			echo $button->makeButton();
 			/*
 			<input type="button" class="button" value="<?php echo JText::_( 'Install' ); ?>" onclick="submitbutton4()" />
-			
+
 			*/
 			?>
 		</td>
@@ -159,8 +159,8 @@ if($joomlaVersion < '1.6')
 	<input type="hidden" name="task" value="install.install" />
 	<input type="hidden" name="option" value="<?php echo $option; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
-</form>	
-	
+</form>
+
 <?php
 }
 else
@@ -168,14 +168,14 @@ else
 //joomla 1.6.x
 	//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_installer'.DS.'views'.DS.'install'.DS.'view.html.php');
 ?>
-	
-	
+
+
 	<script type="text/javascript">
 	Joomla.submitbutton = function(pressbutton)
 	{
 		Joomla.submitform( pressbutton, document.getElementById('adminForm' ));
 	}
-	
+
 	Joomla.submitbutton3 = function(pressbutton) {
 		var form = document.getElementById('adminForm');
 
@@ -213,7 +213,7 @@ else
 			<input class="input_box" id="install_package" name="install_package" type="file" size="57" />
 			<?php
 			//$path = str_replace(DS,'/',str_replace(JPATH_SITE,'',JPATH_COMPONENT_ADMINISTRATOR));
-			
+
 			/*
 			**********************
 			* Button upload-file *
@@ -237,7 +237,7 @@ else
 			<legend><?php echo JText::_('COM_INSTALLER_INSTALL_FROM_DIRECTORY'); ?></legend>
 			<label for="install_directory"><?php echo JText::_('COM_INSTALLER_INSTALL_DIRECTORY'); ?></label>
 			<input type="text" id="install_directory" name="install_directory" class="input_box" size="70" value="<?php echo $this->state->get('install.directory'); ?>" />
-			
+
 			<?php
 			/*
 			**********************
@@ -253,10 +253,10 @@ else
 			echo $button->makeButton();
 			/*
 			<input type="button" class="button" value="<?php echo JText::_('COM_INSTALLER_INSTALL_BUTTON'); ?>" onclick="Joomla.submitbutton3()" />
-			
+
 			*/
 			?>
-			
+
 		</fieldset>
 		<div class="clr"></div>
 		<fieldset class="uploadform">
@@ -280,18 +280,18 @@ else
 			<input type="button" class="button" value="<?php echo JText::_('COM_INSTALLER_INSTALL_BUTTON'); ?>" onclick="Joomla.submitbutton4()" />
 			*/
 			?>
-			
+
 		</fieldset>
 		<input type="hidden" name="type" value="" />
 		<input type="hidden" name="installtype" value="upload" />
 		<input type="hidden" id="task" name="task" value="extension.doExecute" />
-		<input type="hidden" id="extension" name="extension" value="extensions" />
+		<input type="hidden" id="extensionName" name="extensionName" value="extensions" />
 		<input type="hidden" id="extensionTask" name="extensionTask" value="install.install" />
 		<input type="hidden" id="extensionType" name="extensionType" value="manager" />
 		<input type="hidden" id="extensionFolder" name="extensionFolder" value="" />
 		<input type="hidden" id="view" name="view" value="install" />
-		
-		
+
+
 		<input type="hidden" name="option" value="<?php echo $option; ?>" />
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
@@ -301,6 +301,6 @@ else
 
 ?>
 <?php
-//echo $this->loadTemplate('footer'); 
+//echo $this->loadTemplate('footer');
 //require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
 ?>

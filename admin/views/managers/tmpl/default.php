@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -16,6 +16,8 @@ if(!defined('_JEXEC'))
 JHTML::_('behavior.tooltip');
 $managers =& $this->managers;
 ?>
+<!-- begin id="form_content" need for css-->
+<div id="form_content">
 <form action="index.php" method="post" name="adminForm">
 	<div id="cpanel">
 	<?php
@@ -42,6 +44,8 @@ $managers =& $this->managers;
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="view" value="managers" />
 </form>
+<!-- end id="form_content" need for css-->
+</div>
 <?php
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
 ?>

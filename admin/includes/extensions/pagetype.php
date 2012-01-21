@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -15,6 +15,14 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 {
 	var $componentId = null;
 	var $subject = null;
+
+
+	//move the next 4 to an own class underlayingCategories
+	private $_parent = null;
+	private $_items = null;
+	private $_item = null;
+	private $_maxLevelcat = null;
+
 	/**
 	 * Constructor
 	 *
@@ -26,13 +34,13 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		//$this->subject = $subject;
 		parent::__construct($subject, $config);
 	}
-	
-	
+
+
 	function getName()
 	{
 		return $this->_name;
 	}
-	
+
 	function onDetach($pageType)
 	{
 		if($this->_name != $pageType)
@@ -41,15 +49,15 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		}
 		return true;
 	}
-	
+
 	function onGetPagetype($name,$pageType)
 	{
 		$name = $this->_name;
 		return true;
 	}
-	
+
 	//function getUnknowIcon($identifier)
-	function getUnknowIcon($component)
+	function getUnknowIcon($component,$section = null)
 	{
 		$identifier = '';
 		$version = new JVersion();
@@ -65,19 +73,36 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 			$query .=' WHERE `component_id` = "'.$this->db->getEscaped($component->id).'"';
 			$query .=' AND (`menutype` = \'main\' OR `menutype` = \'menu\')';
 			$query .= ' AND `level` = 1';
-			$this->db->setQuery( $query );
-			if($identifier = $this->db->loadResult())
+			$query1 = $query;
+			
+			if($section)
 			{
-				
+				$query = 'SELECT `img`';
+				$query .= ' FROM `#__menu`';
+				$query .=' WHERE `title` = "'.$this->db->getEscaped($component->option).'_'.$this->db->getEscaped($section).'"';
+				$query .=' AND (`menutype` = \'main\' OR `menutype` = \'menu\')';
+			}
+			
+			$this->db->setQuery( $query );
+			if(!$identifier = $this->db->loadResult())
+			{
+				if($section)
+				{
+					$this->db->setQuery( $query1 );
+					if(!$identifier = $this->db->loadResult())
+					{
+					
+					}
+				}
 			}
 
 		}
 		//$css = null;
-		if (substr($identifier, 0, 6) == 'class:') 
+		if (substr($identifier, 0, 6) == 'class:')
 		{
 			// We were passed a class name
 			$class = substr($identifier, 6);
-			
+
 			$class = 'class:icon-16-'.$class;
 			return $class;
 		}
@@ -85,14 +110,14 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		{
 			// We were passed an image path... is it a themeoffice one?
 			//if in J1.6 also?
-			if (substr($identifier, 0, 15) == 'js/ThemeOffice/') 
+			if (substr($identifier, 0, 15) == 'js/ThemeOffice/')
 			{
-				
+
 				return null;
 			}
 			else
 			{
-				if ($identifier == null) 
+				if ($identifier == null)
 				{
 					return null;
 				}
@@ -108,10 +133,10 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		/*
 		here we get the icons from the pagetypes
 		we can work with path and images or class:
-		
+
 		and we can make in config an option for use the core icons?
 		so we ignore the icons from the pagetype config.xml?
-		
+
 		ore we make as theme?
 		like
 		option PagesAndItems
@@ -121,24 +146,32 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		//realpath
 		$componentId = 0;
 		$component = 0;
+		$section = 0;
 		if($option)
 		{
+			$parts = explode('.', $option);
+			$option = (strpos($parts[0],'com_') !== false) ? strtolower($parts[0]) : 'com_'.strtolower($parts[0]);
+			$section = count($parts) > 1 ? $parts[1] : '';
+			
 			$componentId = $this->getComponentId($option);
 			$component = $this->getComponent($option);
+			
 		}
-		
+
 		if(file_exists($path.DS.$this->_name.DS.'config.xml') && $this->_name != 'component')
 		{
 			$dom =  new DOMDocument();
 			$dom->load($path.DS.$this->_name.DS.'config.xml');
 			$items = $dom->getElementsByTagName('icon');
-			foreach($items as $item) 
+			foreach($items as $item)
 			{
 				$name = $item->getAttribute('name');
+				$class = false;
 				foreach ($item->attributes as $attrName => $attrNode)
 				{
 					$icons->$name->$attrName = $item->getAttribute($attrName);
 				}
+				
 				if(isset($icons->$name->pi_icons) && $icons->$name->pi_icons == '1')
 				{
 					if(isset($icons->$name->folder) && $icons->$name->folder != '')
@@ -154,14 +187,27 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 				{
 					$icons->$name->imageUrl = $icons->$name->folder;
 				}
+				elseif(isset($icons->$name->pi_icons) && $icons->$name->pi_icons == 'class')
+				{
+					$icons->$name->imageUrl = $icons->$name->image;
+					$class= true;
+				}
 				else
 				{
 					$icons->$name->imageUrl = '';
 				}
-				if(isset($icons->$name->image) && $icons->$name->image != '')
+				
+				if(isset($icons->$name->image) && $icons->$name->image != '' && !$class)
 				{
 					$icons->$name->imageUrl .= '/'.$icons->$name->image;
 				}
+				/*
+				elseif(isset($icons->$name->image) && $icons->$name->image != '' && $class)
+				{
+					$icons->$name->imageUrl .= $icons->$name->image;
+				}
+				*/
+				
 				$icons->$name->imageUrl = str_replace('//','/',str_replace(DS,'/',$icons->$name->imageUrl));
 			}
 		}
@@ -172,13 +218,13 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 
 			//$component =& JTable::getInstance( 'component');
 			//$component->load($componentId);
-			
+
 			if(file_exists($path.DS.'component'.DS.'config.xml'))
 			{
 				$dom =  new DOMDocument();
 				$dom->load($path.DS.'component'.DS.'config.xml');
 				$items = $dom->getElementsByTagName('icon');
-				foreach($items as $item) 
+				foreach($items as $item)
 				{
 					$name = $item->getAttribute('name');
 					foreach ($item->attributes as $attrName => $attrNode)
@@ -213,9 +259,9 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 			}
 
 
-			
+
 			//if($this->getUnknowIcon($component->admin_menu_img))
-			if($menu_img = $this->getUnknowIcon($component))
+			if($menu_img = $this->getUnknowIcon($component,$section))
 			{
 				if($menu_img != 'class:icon-16-component')
 				{
@@ -229,10 +275,11 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 					$icons->items->imageUrl = $component->admin_menu_img;
 					$icons->pagepropertys->imageUrl = $component->admin_menu_img;
 					*/
-					//dump($menu_img);
 					$icons->default->imageUrl = $menu_img;
 					$icons->items->imageUrl = $menu_img;
 					$icons->pagepropertys->imageUrl = $menu_img;
+					//$icons->new->imageUrl = $menu_img;
+					//$icons->edit->imageUrl = $menu_img;
 				}
 			}
 			//ADD m: 22.03.2011
@@ -240,7 +287,7 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 			{
 				/* com_users have not defined an menu img
 				so we create here the standard icon for com_users
-				
+
 				but i think we will make an pagetype for com_useres with own icons
 				but then we must create each for each view
 				*/
@@ -264,7 +311,7 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 				$dom =  new DOMDocument();
 				$dom->load($path.DS.$this->_name.DS.'config.xml');
 				$items = $dom->getElementsByTagName('icon');
-				foreach($items as $item) 
+				foreach($items as $item)
 				{
 					$name = $item->getAttribute('name');
 					foreach ($item->attributes as $attrName => $attrNode)
@@ -309,7 +356,7 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 
 		return $icons;
 	}
-	
+
 	function setComponentId($component)
 	{
 		$query = 'SELECT `id`' .
@@ -318,9 +365,9 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 			' AND `parent` = 0' .
 			' AND `option` = "'.$this->db->getEscaped($component).'"';
 		$this->db->setQuery( $query );
-		$this->componentId = $this->db->loadResult();	
+		$this->componentId = $this->db->loadResult();
 	}
-	
+
 	function getComponentId($option)
 	{
 		//$version = new JVersion();
@@ -333,12 +380,10 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 			' AND `parent` = 0' .
 			' AND `option` = "'.$this->db->getEscaped($option).'"';
 		$this->db->setQuery( $query );
-		
+
 		$component_id = $this->db->loadResult();
 		*/
-		//var_dump($component_id);
-		//dump($component_id); 
-		
+
 		// Determine the component id.
 		/*
 		$query	= $this->db->getQuery(true);
@@ -347,24 +392,20 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 		$query->where('`type` = '.$this->db->quote('component'));
 		$query->where('`element` = '.$this->db->quote($component));
 		$this->db->setQuery($query);
-		//var_dump($component);
 		$component = $this->db->loadObject();
 		*/
-		//var_dump($component->id);
 		$component = JComponentHelper::getComponent($option);
-		//var_dump($component);
-		
-		if (isset($component->id)) 
+
+		if (isset($component->id))
 		{
 			//$component_id = $component->id;
-			//var_dump($component->id);
 			return $component->id;
 		}
-		
+
 		return null;
 
-		
-		
+
+
 		//if(!$this->componentId)
 		//{
 		$this->setComponentId($component);
@@ -375,13 +416,15 @@ abstract class PagesAndItemsExtensionPagetype extends PagesAndItemsExtension
 	{
 		$component = JComponentHelper::getComponent($option);
 		return $component;
-		if (isset($component->id)) 
+		
+		
+		if (isset($component->id))
 		{
 			//$component_id = $component->id;
-			//var_dump($component->id);
 			return $component->id;
 		}
-		
+
+		return false;
 		return $component_id;
 	}
 }

@@ -2,15 +2,13 @@
 <extension version="1.5" type="manager"  method="upgrade">
 	<name>Extensions (Pages and Items Manager)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		Manager Extensions for Pages and Items
-	</description>
+	<description>Extensions (Manager for the Pages-and-Items framework)</description>
 	<extensionslanguage folder="language">
 		<language tag="af-ZA">af-ZA/af-ZA.pi_extension_manager_extensions.ini</language>
 		<language tag="ar-EG">ar-EG/ar-EG.pi_extension_manager_extensions.ini</language>

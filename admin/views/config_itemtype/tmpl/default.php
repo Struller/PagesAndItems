@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -13,16 +13,23 @@ if(!defined('_JEXEC')){
 }
 
 //if($this->model->user_type!='Super Administrator' && !$this->pagesAndItemsModel->isSuperAdmin)
-if(!$this->model->isSuperAdmin)
+if(!PagesAndItemsHelper::getIsSuperAdmin())
 {
 	echo "<script> alert('you need to be logged in as a super administrator to edit the Pages-and-Items config.'); window.history.go(-1); </script>";
 	exit();
 }
 //<link rel="stylesheet" type="text/css" href="components/com_pagesanditems/css/pagesanditems.css" />
+// TODO CHECK 	echo '<link href<script src="../includes/js/overlib_mini.js" language="JavaScript" type="text/javascript"></script>
 ?>
-<script src="../includes/js/overlib_mini.js" language="JavaScript" type="text/javascript"></script>
+
 
 <script language="JavaScript" type="text/javascript">
+
+//function submitbutton(pressbutton)
+<?php
+if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
+{
+?>
 function submitbutton(pressbutton) {
 	if (pressbutton == 'itemtype.config_itemtype_save') {
 		submitform('itemtype.config_itemtype_save');
@@ -35,6 +42,28 @@ function submitbutton(pressbutton) {
 		document.location.href = 'index.php?option=com_pagesanditems&view=config';
 	}
 }
+
+<?php
+}
+else
+{
+?>
+Joomla.submitbutton = function(pressbutton)
+	if (pressbutton == 'itemtype.config_itemtype_save') {
+		Joomla.submitform('itemtype.config_itemtype_save',document.getElementById('adminForm')
+	}
+	if (pressbutton == 'itemtype.config_itemtype_apply') {
+		document.getElementById('sub_task').value = 'apply';
+		Joomla.submitform('itemtype.config_itemtype_save',document.getElementById('adminForm')
+	}
+	if (pressbutton == 'itemtype.cancel') {
+		document.location.href = 'index.php?option=com_pagesanditems&view=config';
+	}
+}
+
+<?php
+}
+?>
 </script>
 <?php
 //give headers in Joomla 1.5 a bit more spunk
@@ -54,11 +83,11 @@ $item_type = JRequest::getVar('item_type');
 		*/
 		?>
 		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?></a>
-		<?php echo $this->model->translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?>
-		<h2><?php echo $this->model->translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?></h2>
-		<?php 
+		<?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?>
+		<h2><?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?></h2>
+		<?php
 		/*
-		
+
 		//COMMENT this moment only the integrated itemtypes will display
 		*/
 		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
@@ -66,18 +95,18 @@ $item_type = JRequest::getVar('item_type');
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
 		$itemtype = ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
-		
+
 		$dispatcher = &JDispatcher::getInstance();
 		$itemtypeHtml = & new JObject();
 		$itemtypeHtml->text = '';
 
 		$results = $dispatcher->trigger('onItemtypeDisplay_config_form', array(&$itemtypeHtml,$item_type));
 		echo $itemtypeHtml->text;
-		
-		
+
+
 		if($item_type=='text')
 		{
-			
+
 			//$plugin_name = JText::_('COM_PAGESANDITEMS_ITEMTYPETEXT');
 		}
 		elseif($item_type=='html')
@@ -86,7 +115,7 @@ $item_type = JRequest::getVar('item_type');
 		}
 		elseif($item_type=='content')
 		{
-			
+
 			//$plugin_name = 'content'; //ADD to see if not an pi item
 		}
 		elseif($item_type=='other_item')
@@ -99,11 +128,11 @@ $item_type = JRequest::getVar('item_type');
 			//$pi_lang_plugin = $this->controller->get_itemtype_language($item_type);
 			//get pluginspecific configuration
 			/*
-			
+
 			TODO rewrite ?
 			$pi_plugin_config = $this->controller->get_itemtype_config($item_type);
 			include($this->controller->pathPluginsItemtypes.'/'.$item_type.'/admin/config.php');
-			
+
 			*/
 		}
 		?>
@@ -111,5 +140,5 @@ $item_type = JRequest::getVar('item_type');
 </form>
 <?php
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'views'.DS.'default'.DS.'tmpl'.DS.'default_footer.php');
-//  $this->model->display_footer(); 
+//  $this->model->display_footer();
 ?>

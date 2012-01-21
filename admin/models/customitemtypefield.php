@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -11,13 +11,13 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
-require_once(dirname(__FILE__).DS.'base.php');
+//require_once(dirname(__FILE__).DS.'base.php');
 /**
 
  */
- 
 
-class PagesAndItemsModelCustomItemtypeField extends PagesAndItemsModelBase
+
+class PagesAndItemsModelCustomItemtypeField extends JModel //PagesAndItemsModelBase
 {
 	function get_field_value($values_string, $property)
 	{
@@ -33,21 +33,22 @@ class PagesAndItemsModelCustomItemtypeField extends PagesAndItemsModelBase
 		}
 		return $html;
 	}
-	
+
 	function get_field_param($values_string, $property)
 	{
 		return $this->get_field_value($values_string, $property);
 	}
-	
+
 	function reorder_fields($type_id)
 	{
-		$this->db->setQuery("SELECT id FROM #__pi_custom_fields WHERE type_id='$type_id' ORDER BY ordering ASC" );
-		$rows = $this->db->loadObjectList();
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT id FROM #__pi_custom_fields WHERE type_id='$type_id' ORDER BY ordering ASC" );
+		$rows = $db->loadObjectList();
 		$counter = 1;
 		foreach($rows as $row){
 			$id = $row->id;
-			$this->db->setQuery( "UPDATE #__pi_custom_fields SET ordering='$counter' WHERE id='$id'");
-			$this->db->query();
+			$db->setQuery( "UPDATE #__pi_custom_fields SET ordering='$counter' WHERE id='$id'");
+			$db->query();
 			$counter = $counter + 1;
 		}
 		return $counter;

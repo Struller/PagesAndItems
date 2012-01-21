@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -26,84 +26,176 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$this->helper = new PagesAndItemsHelper();
 
 		parent::__construct($default);
+		$this->registerTask( 'item_apply', 'item_save' );
+		$this->registerTask( 'item_checkin', 'item_save' );
+		
 	}
+
+	function item_edit()
+	{
+		//$app = JFactory::getApplication();
+		//$option = JRequest::getVar('option');
+		//$type = JRequest::getVar( 'type', '');
+		//$app->setUserState( $option.'.page.type', $type);
+		
+		//$app->setUserState( $option.'.page.pageType', $pageType);
+		//$pageTypeType = JRequest::getVar( 'pageTypeType', '');
+		//$app->setUserState( $option.'.page.pageTypeType', $pageTypeType);
+		//$app->setUserState( $option.'.page.task', 'page.page_new');
+		//$task = '&task=page.page_new';
+		//TODO checkout
+		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		$pageType = JRequest::getVar( 'pageType', '');
+		$menutype = JRequest::getVar('menutype', '' );
+		$menutype = $menutype ? '&menutype='.$menutype : '';
+		$pageId = JRequest::getVar('pageId', 0 );
+		$pageId = $pageId ? '&pageId='.$pageId : '';
+		$categoryId = JRequest::getVar('categoryId', 0 );
+		$categoryId = $categoryId ? '&categoryId='.$categoryId : '';
+		$itemId = JRequest::getVar('itemId', 0 );
+		$itemId = $itemId ? '&itemId='.$itemId : '';
+		$sub_task = '&sub_task=edit';
+
+		$url = 'index.php?option=com_pagesanditems&view=item'.$sub_task.$itemId.$menutype.$pageId.$categoryId;
+		$this->setRedirect(JRoute::_($url, false));
+	}
+
 
 	function item_new()
 	{
-		$model = &$this->getModel('Item','PagesAndItemsModel');
-		$config = $model->getConfig();
+		//$model = &$this->getModel('Item','PagesAndItemsModel');
 		$pageId = JRequest::getVar('pageId',0);
-		$item_type = JRequest::getVar('item_type', '', 'post');
-		$item_id = JRequest::getVar('item_id', '', 'post');
-		$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&pageId='.$pageId.'&item_type='.$item_type;
-		$model->redirect_to_url( $url);
+		$item_type = JRequest::getVar('select_itemtype', ''); //, 'post');
+		$categoryId = JRequest::getVar('categoryId',1);
+		$pageType = JRequest::getVar('pageType',1);
+		$menutype = JRequest::getVar('menutype',1);
+		
+		//$item_id = JRequest::getVar('item_id', '', 'post');
+		
+		if(!$pageId && !$menutype && $categoryId)
+		{
+			//$url = 'index.php?option=com_pagesanditems&view=categorie&sub_task=edit&categoryId='.$categoryId;
+			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&item_type='.$item_type.'&categoryId='.$categoryId;
+		}
+		elseif($menutype && $pageId)
+		{
+			//$url = "index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype=".$menutype."&pageId=".$pageId;
+			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&item_type='.$item_type.'&pageId='.$pageId.'&menutype='.$menutype.'&pageType='.$pageType;
+		}
+		elseif($menutype)
+		{
+			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&item_type='.$item_type.'&menutype='.$menutype;
+			//$url = "index.php?option=com_pagesanditems&view=page&layout=root&menutype=".$menutype;
+		}
+		else
+		{
+			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&item_type='.$item_type;
+			//$url = "index.php?option=com_pagesanditems&view=page&layout=root";
+		}
+		//$url = 'index.php?option=com_pagesanditems&view=item&sub_task=new&pageId='.$pageId.'&item_type='.$item_type.'&categoryId='.$categoryId;
+		
+		$this->setRedirect(JRoute::_($url, false));
+		//$model->redirect_to_url( $url);
 	}
 
+	
 	function item_save(){
 
-		// Check for request forgeries 
+		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
-
-		$database = JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$app = JFactory::getApplication();
 
 		//here we need the model page or item
 		$model = &$this->getModel('Item','PagesAndItemsModel');
-		$config = $model->getConfig();
+		$config = PagesAndItemsHelper::getConfig();
 
 		$item_id = JRequest::getVar('id', '', 'post');
 		$item_type = JRequest::getVar('item_type', '', 'post');
 		$show_title_item = intval(JRequest::getVar('show_title_item'));
+		$message = '';
 
 		//get new or edit
 		$new_or_edit = 'edit';
 		if(!$item_id){
 			$new_or_edit = 'new';
-		}		
-		
+		}
+
 		//get data
-		$data = JRequest::getVar('jform', array(), 'post', 'array');		
-		
+		$data = JRequest::getVar('jform', array(), 'post', 'array');
+
 		//get category_id
 		$cat_id = 0;
-		$database->setQuery("SELECT catid "
+		$created_by = 0;
+		$db->setQuery("SELECT * "
 		." FROM #__content "
 		." WHERE id='$item_id' "
 		." LIMIT 1 "
 		);
-		$rows = $database->loadObjectList();
+		/*
+		$rows = $db->loadObjectList();
 		foreach($rows as $row){
 			$cat_id = $row->catid;
-		}		
+		}
+		*/
+		$row = $db->loadObject();
+		if($row)
+		{
+			$cat_id = $row->catid;
+			$created_by = $row->created_by;
+		}
 
-		$canDo_delete = 0;					
+		$canDo_delete = 0;
 		if($new_or_edit=='edit'){
+			//get Joomla ACL for this article
+			//include com_content helper
+			//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
+			//$ContentHelper = new ContentHelper;
+			//$canDo = ContentHelper::getActions($cat_id, $item_id);
+			
+			$canDoContent = PagesAndItemsHelper::canDoContent($cat_id, $item_id);
+			$user		= JFactory::getUser();
+			$userId		= $user->get('id');
+			$canEdit	= $canDoContent->get('core.edit'); //$user->authorise('core.edit',			'com_content.article.'.$row->id);
+			$canEditOwn	= $canDoContent->get('core.edit.own') && $created_by == $userId;
+			
+			//if(!$canDo->get('core.edit'))
+			if((!$canEdit && !$canEditOwn))
+			{
+				echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_TO_EDIT_THIS_ITEM');
+				exit;
+			}
+
+			if($canDoContent->get('core.delete')){
+				$canDo_delete = 1;
+			}
+		}
+		/*
+		//ms: replace for PI ACL?
+		else
+		{
 			//get Joomla ACL for this article
 			//include com_content helper
 			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
 			$ContentHelper = new ContentHelper;
 			$canDo = ContentHelper::getActions($cat_id, $item_id);
-
-			if(!$canDo->get('core.edit')){
-				echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_TO_EDIT_THIS_ITEM');
+			if(!$canDo->get('core.create')){
+				echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_CREATE_NEW_ITEM');
 				exit;
 			}
-
-			if($canDo->get('core.delete')){
-				$canDo_delete = 1;
-			}
 		}
-
+		*/
+		//ms: ???
 		//PI ACL
 		if(!$item_id){
 			//new item
-			$this->helper->die_when_no_permission('3');
+			PagesAndItemsHelper::die_when_no_permission('3');
 		}else{
 			//edit item
-			$this->helper->die_when_no_permission('4');
+			PagesAndItemsHelper::die_when_no_permission('4');
 		}
 
-		
+
 
 		//workaround to get past validation in com_content
 		$text = $data['articletext'];
@@ -115,16 +207,16 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$alias = $data['alias'];
 		if($alias=='')
 		{
-			$alias = $model->make_alias($data['title']);
+			$alias = PagesAndItemsHelper::make_alias($data['title']);
 		}else{
-			$alias = $model->make_alias($alias);
+			$alias = PagesAndItemsHelper::make_alias($alias);
 		}
 		$alias = addslashes($alias);
 
 		//make alias unique
 		if($config['make_article_alias_unique'])
 		{
-			$alias = $model->make_alias_unique($alias, 'content', $item_id);
+			$alias = PagesAndItemsHelper::make_alias_unique($alias, 'content', $item_id);
 		}
 		$data['alias'] = $alias;
 
@@ -147,58 +239,151 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		//get the com_content model (controller?) and save the article
 		//then update later if the article is a CCK
 		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'models'.DS.'article.php');
+
+		//ms: ADD Begin
+		// set the form path
+		JForm::addFormPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'models'.DS.'forms');
 		$ContentModelArticle = new ContentModelArticle();
-		$ContentModelArticle->save($data);
+		// Validate the posted data.
+		// Sometimes the form needs some posted data, such as for plugins and modules.
+		
+		
+		$recordId	= JRequest::getInt('id');
+		// Populate the row id from the session.
+		$data['id'] = $recordId;
+		
+		$form = $ContentModelArticle->getForm($data, false);
+
+		if (!$form) {
+			$app->enqueueMessage($ContentModelArticle->getError(), 'error');
+			//TODO ms: ??
+			//return false;
+		}
+
+		// Test whether the data is valid.
+		$validData = $ContentModelArticle->validate($form, $data);
+
+		// Check for validation errors.
+		if ($validData === false) {
+			// Get the validation messages.
+			$errors	= $ContentModelArticle->getErrors();
+
+			// Push up to three validation messages out to the user.
+			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+			{
+				if (JError::isError($errors[$i])) {
+					$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+				}
+				else {
+					$app->enqueueMessage($errors[$i], 'warning');
+				}
+			}
+
+			// Save the data in the session.
+			//$app->setUserState($context.'.data', $data);
+
+			// Redirect back to the edit screen.
+			//TODO ms: ??
+			//$this->setRedirect(JRoute::_('index.php?option='.$this->option.'&view='.$this->view_item.$this->getRedirectToItemAppend($recordId, $key), false));
+
+			//return false;
+		}
+
+		$data = $validData;
+		//ms: ADD End
+		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		if($useCheckedOut)
+		{
+			//$context	= 'com_content.edit.item';
+			//$recordId	= JRequest::getInt('id');
+			/*
+			TODO
+			if(JRequest::getVar('edit_from_frontend', '', 'post'))
+			{
+			//redirect to item in full view
+				$url = 'index.php?option=com_content&amp;view=article&amp;id='.$item_id.'&amp;catid='.$cat_id.'&amp;Itemid='.$pageId;
+			}
+			else
+			{
+				$pageId = JRequest::getVar('pageId', null, 'post');
+				$menutype = JRequest::getVar('menutype', null, 'post');
+				$pageType = JRequest::getVar('pageType', null, 'post');
+				$categoryId = JRequest::getVar('categoryId', '' );
+				$url = 'index.php?option=com_pagesanditems&view=item&sub_task=edit'.($pageId ? '&pageId='.$pageId : '').'&itemId='.$item_id.($categoryId ? '&categoryId='.$categoryId : '');
+			}
+			
+			*/
+			
+			if (!$ContentModelArticle->save($data))
+			{
+				$app->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $ContentModelArticle->getError()), 'warning');
+				/*
+				$app->redirect(JRoute::_($url, false));
+				*/
+			}
+			/*
+			if ($ContentModelArticle->checkin($data['id']) === false)
+			{
+				// Check-in failed, go back to the row and display a notice.
+				$this->setMessage(JText::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $ContentModelArticle->getError()), 'warning');
+				//$this->setRedirect(JRoute::_('index.php?option='.$this->option.'&view='.$this->view_item.$this->getRedirectToItemAppend($recordId), false));
+				//$app->redirect(JRoute::_($url, false));
+			}
+			*/
+		}
+		else
+		{
+			$ContentModelArticle->save($data);
+		}
 
 
 
-
-		if($new_or_edit=='new'){			
+		if($new_or_edit=='new'){
 
 			$article = $ContentModelArticle->getItem();
 			$item_id = $article->id;
-			
+
 			//get cat_id
-			$cat_id = $data['catid'];			
-			
+			$cat_id = $data['catid'];
+
 			//get the order of the last article in the category
 			if($cat_id){
-				$database->setQuery("SELECT ordering FROM #__content WHERE catid='$cat_id' ORDER BY ordering DESC LIMIT 1 ");
-				$rows = $database->loadObjectList();
+				$db->setQuery("SELECT ordering FROM #__content WHERE catid='$cat_id' ORDER BY ordering DESC LIMIT 1 ");
+				$rows = $db->loadObjectList();
 				$new_order = 0;
 				foreach($rows as $row){
-					$new_order = $row->ordering+1;					
-				}				
-				
-				$database->setQuery( "UPDATE #__content SET ordering='$new_order' WHERE id='$item_id' ");
-				$database->query();
+					$new_order = $row->ordering+1;
+				}
+
+				$db->setQuery( "UPDATE #__content SET ordering='$new_order' WHERE id='$item_id' ");
+				$db->query();
 			}
 
 			//insert new item in item index
-			$database->setQuery( "INSERT INTO #__pi_item_index SET item_id='$item_id', itemtype='$item_type', show_title='$show_title_item'");
-			$database->query();
+			$db->setQuery( "INSERT INTO #__pi_item_index SET item_id='$item_id', itemtype='$item_type', show_title='$show_title_item'");
+			$db->query();
 		}
 
 		if($new_or_edit=='edit'){
 
 			//check if item has a entry in item-index (if so, its been created or editted with PI before) if not, make a new index row
-			$database->setQuery("SELECT id FROM #__pi_item_index WHERE item_id='$item_id' LIMIT 1");
-			$rows = $database->loadObjectList();
+			$db->setQuery("SELECT id FROM #__pi_item_index WHERE item_id='$item_id' LIMIT 1");
+			$rows = $db->loadObjectList();
 			$id = 0;
 			foreach($rows as $row){
 				$id = $row->id;
 			}
 			if(!$id){
-				$database->setQuery( "INSERT INTO #__pi_item_index SET item_id='$item_id', itemtype='$item_type', show_title='$show_title_item'");
-				$database->query();
+				$db->setQuery( "INSERT INTO #__pi_item_index SET item_id='$item_id', itemtype='$item_type', show_title='$show_title_item'");
+				$db->query();
 			}else{
-				$database->setQuery( "UPDATE #__pi_item_index SET itemtype='$item_type', show_title='$show_title_item' WHERE id='$id' ");
-				$database->query();
+				$db->setQuery( "UPDATE #__pi_item_index SET itemtype='$item_type', show_title='$show_title_item' WHERE id='$id' ");
+				$db->query();
 			}
 
 			//'featured' stuff
-			$database->setQuery("SELECT content_id FROM #__content_frontpage WHERE content_id='$item_id' LIMIT 1");
-			$rows_frontpage = $database->loadObjectList();
+			$db->setQuery("SELECT content_id FROM #__content_frontpage WHERE content_id='$item_id' LIMIT 1");
+			$rows_frontpage = $db->loadObjectList();
 			$is_on_frontpage = false;
 			foreach($rows_frontpage as $row_frontpage){
 				$is_on_frontpage = $row_frontpage->content_id;
@@ -217,6 +402,10 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 		//update assets properly
 		//only at admin
+		/*
+		ms: without will save corect
+		ms: user with core.admin have not the $data['rules'] in the view
+		and $this->clean_rules work not correct
 		if($app->isAdmin()){
 			//just making this json does not take the empties out!!
 			$rules = $data['rules'];
@@ -225,10 +414,11 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			$rules_edit_state = $this->clean_rules($rules['core.edit.state']);
 			$rules_string = '{"core.delete":'.$rules_delete.',"core.edit":'.$rules_edit.',"core.edit.state":'.$rules_edit_state.'}';
 			$asset_name = 'com_content.article.'.$item_id;
-			$database->setQuery( "UPDATE #__assets SET rules='$rules_string' WHERE name='$asset_name' ");
-			$database->query();
+			$db->setQuery( "UPDATE #__assets SET rules='$rules_string' WHERE name='$asset_name' ");
+			$db->query();
 		}
-
+		
+		*/
 
 		$path = realpath(dirname(__FILE__).DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
@@ -237,16 +427,18 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			/*
 				here we will load the itemtype custom
 			*/
-			$itemtype = ExtensionItemtypeHelper::importExtension(null, 'custom',true,null,true);
+			//$itemtype =
+			ExtensionItemtypeHelper::importExtension(null, 'custom',true,null,true);
 		}
 		else
 		{
 			/*
-				here we will load all the other 
+				here we will load all the other
 				content, text, html and other_item are integrated
 				also itemtype there are in old PI called plugin (plugins/pages_and_items/itemtypes)
 			*/
-			$itemtype = ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
+			//$itemtype = 
+			ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
 		}
 		$dispatcher = &JDispatcher::getInstance();
 
@@ -255,7 +447,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$delete_item = intval(JRequest::getVar('delete_item',null));
 		if($delete_item && $canDo_delete){
 			//ms: comment all trigger are in the helper
-			$this->helper->item_state($item_id, 'delete');
+			PagesAndItemsHelper::item_state($item_id, 'delete');
 		}
 
 		if(!$delete_item)
@@ -281,8 +473,10 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$model->clean_cache_content();
 
 		$pageId = JRequest::getVar('pageId', null, 'post');
+		$menutype = JRequest::getVar('menutype', null, 'post');
 		$pageType = JRequest::getVar('pageType', null, 'post');
-
+		$manager = JRequest::getVar('manager',0);
+		//$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		//redirect
 		if(JRequest::getVar('edit_from_frontend', '', 'post'))
 		{
@@ -307,7 +501,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 				//redirect to refer
 				$referer = JRequest::getString('return', base64_encode(JURI::base()));
 				$referer = base64_decode($referer);
-				if (JURI::isInternal($referer)) 
+				if (JURI::isInternal($referer))
 				{
 					$url = $referer;
 				}
@@ -320,23 +514,63 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		else
 		{
 			//backend
+			$categoryId = JRequest::getVar('categoryId', '' );
+			
+			
+			
+			if($useCheckedOut)
+			{
+				//item_checkin same as apply
+				//
+				//
+				//$task = $this->task(); 
+				//JRequest::getVar('task', '', 'post');
+				//$task = JRequest::getVar('task', '');
+				$task = JRequest::getVar('task', '');
+				
+				//$sub_task = JRequest::getVar('sub_task', '', 'post');
+				//$stringsub_task = $sub_task ? '&sub_task='.$sub_task;
+				if($task == 'item_apply')
+				{
+					$url = 'index.php?option=com_pagesanditems&view=item&sub_task=edit'.($pageId ? '&pageId='.$pageId : '').'&itemId='.$item_id.($categoryId ? '&categoryId='.$categoryId : ''); //.'&manager='.$manager;
+				}
+				elseif($task == 'item_checkin')
+				{
+					$url = 'index.php?option=com_pagesanditems&view=item'.($pageId ? '&pageId='.$pageId : '').'&itemId='.$item_id.($categoryId ? '&categoryId='.$categoryId : ''); //.'&manager='.$manager;
+					$ContentModelArticle->checkin($item_id);
+				}
+				else
+				{
+					$url = PagesanditemsHelper::toogleViewPageCategories('index.php?option=com_pagesanditems&view=page&pageId='.$pageId.'&menutype='.$menutype.'&categoryId='.$categoryId);
+					$ContentModelArticle->checkin($item_id);
+				}
+			}
+			else
+			{
+				$url = PagesanditemsHelper::toogleViewPageCategories('index.php?option=com_pagesanditems&view=page&sub_task=edit&pageId='.$pageId.'&menutype='.$menutype.'&categoryId='.$categoryId);
+			}
+			
+			//$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&pageId='.$pageId;
+
+			/*
 			$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&pageId='.$pageId;
+			*/
 		}
 
 
 		if($pageId && $pageType && $item_id && $pageType == 'content_article' && $new_or_edit =='new')
 		{
-			$model->db->setQuery("SELECT link FROM #__menu WHERE id='$pageId' ");
-			$menu = $model->db-> loadObject();
+			$db->setQuery("SELECT link FROM #__menu WHERE id='$pageId' ");
+			$menu = $db-> loadObject();
 			$link = $menu->link;
 			if (is_string($link))
 			{
 				$args = array();
-				if (strpos($link, 'index.php') === 0) 
+				if (strpos($link, 'index.php') === 0)
 				{
 					parse_str(parse_url(htmlspecialchars_decode($link), PHP_URL_QUERY), $args);
 				}
-				else 
+				else
 				{
 					parse_str($link, $args);
 				}
@@ -351,8 +585,8 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			}
 
 			$link = 'index.php?'.http_build_query($link,'','&');
-			$model->db->setQuery("UPDATE #__menu SET link='$link' WHERE id='$pageId' ");
-			$model->db->query();
+			$db->setQuery("UPDATE #__menu SET link='$link' WHERE id='$pageId' ");
+			$db->query();
 
 		}
 		else
@@ -360,13 +594,15 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 		}
 
-		$mesage = JText::_('COM_PAGESANDITEMS_ITEM_SAVED');
+		$message = JText::_('COM_PAGESANDITEMS_ITEM_SAVED');
 		$apply = JRequest::getVar('item_apply', '', 'post');
-		if($apply)
+		if($apply && !$useCheckedOut)
 		{
-			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=edit&pageId='.$pageId.'&itemId='.$item_id;
+			$categoryId = JRequest::getVar('categoryId', '' );
+			$url = 'index.php?option=com_pagesanditems&view=item&sub_task=edit&pageId='.$pageId.'&itemId='.$item_id.'&categoryId='.$categoryId; //.'&manager='.$manager;
 		}
-		$model->redirect_to_url( $url, $mesage);
+		//$model->redirect_to_url( $url, $mesage);
+		$this->setRedirect(JRoute::_($url, false), $message);
 	}
 
 
@@ -374,51 +610,163 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 	{
 		$model = &$this->getModel('Item','PagesAndItemsModel');
 		$pageId = JRequest::getVar('pageId', 0);
-		if(!$pageId)
+		$itemId = JRequest::getVar('itemId', 0);
+		$menutype = JRequest::getVar('menutype');
+		$sub_task = JRequest::getVar('sub_task');
+		$categoryId = JRequest::getVar('categoryId', 0 );
+		
+		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		if($useCheckedOut)
+		{
+			$pk = JRequest::getVar('itemId',0);
+			$user = JFactory::getUser();
+
+			// Get an instance of the row to checkin.
+			$table = JTable::getInstance('content'); //, $prefix, $config); //'content';
+			if (!$table->load($pk)) {
+				//$this->setError($table->getError());
+				//return false;
+			}
+
+			// Check if this is the user having previously checked out the row.
+			if ($table->checked_out > 0 && $table->checked_out != $user->get('id') && !$user->authorise('core.admin', 'com_checkin')) {
+				//$this->setError(JText::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'));
+				//return false;
+			}
+
+			// Attempt to check the row in.
+			if (!$table->checkin($pk)) {
+				//$this->setError($table->getError());
+				//return false;
+			}
+		}
+		
+		if(JRequest::getVar('edit_from_frontend', '', 'post'))
+		{
+			//frontend
+			$model = &$this->getModel('Item','PagesAndItemsModel');
+			$config = PagesAndItemsHelper::getConfig();
+			$pageId = JRequest::getVar('pageId', 0, 'post');
+			
+			if($config['item_save_redirect']=='category_blog'){
+				//redirect to categroy blog
+				if($pageId){
+					$url = $model->get_url_from_menuitem($pageId);
+				}else{
+					$url = 'index.php';
+				}
+			}elseif($config['item_save_redirect']=='url'){
+				//redirect to custom url
+				$url = $config['item_save_redirect_url'];
+			}
+			elseif($config['item_save_redirect']=='current'){
+			
+				//redirect to refer
+				$referer = JRequest::getString('return', base64_encode(JURI::base()));
+				$referer = base64_decode($referer);
+				if (JURI::isInternal($referer))
+				{
+					$url = $referer;
+				}
+				if(!$url)
+				{
+					$app = JFactory::getApplication();
+					$app->redirect('index.php');
+					//$url = 'index.php';
+				}
+			
+			}
+			else{
+				//redirect to item in full view
+				$url = 'index.php?option=com_content&amp;view=article&amp;id='.$item_id.'&amp;catid='.$cat_id.'&amp;Itemid='.$pageId;
+			}
+			
+		}
+		else
+		{
+			//backend
+		
+		$subTask = $useCheckedOut ? '' : '&sub_task=edit';
+		if($useCheckedOut && $sub_task == 'edit')
+		{
+			$url = 'index.php?option=com_pagesanditems&view=item'.($pageId ? '&pageId='.$pageId : '').($itemId ? '&itemId='.$itemId : '').($categoryId ? '&categoryId='.$categoryId : '').($menutype ? '&menutype='.$menutype : '');
+		}
+		elseif(!$pageId && !$menutype && $categoryId)
+		{
+			$url = 'index.php?option=com_pagesanditems&view=category'.$subTask.'&categoryId='.$categoryId;
+		}
+		elseif($menutype && $pageId)
+		{
+			$url = 'index.php?option=com_pagesanditems&view=page'.$subTask.'&menutype='.$menutype.'&pageId='.$pageId;
+		}
+		elseif($menutype)
+		{
+			$url = "index.php?option=com_pagesanditems&view=page&layout=root&menutype=".$menutype;
+		}
+		else
+		{
+			$url = "index.php?option=com_pagesanditems&view=page&layout=root";
+		}
+		}
+		
+
+		
+		//dump($url);
+		//dump('cancel');
+		//$model->redirect_to_url($url, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
+		$this->setRedirect(JRoute::_($url, false), JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
+		/*
+		
+		*/
+		/*
+		if(!$pageId || !$menutype)
 		{
 			$model->redirect_to_url("index.php?option=com_pagesanditems&view=page&layout=root", JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
 		}
 		else
 		{
-			$model->redirect_to_url("index.php?option=com_pagesanditems&view=page&sub_task=edit&pageId=".$pageId, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
+			$model->redirect_to_url("index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype=".$menutype."&pageId=".$pageId, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
 		}
+		*/
+		
+		
 	}
 
 	function put_item_on_frontpage($item_id){
 
-		$database = JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		//do the insert
-		$database->setQuery( "INSERT INTO #__content_frontpage SET content_id='$item_id', ordering='1'");
-		$database->query();
+		$db->setQuery( "INSERT INTO #__content_frontpage SET content_id='$item_id', ordering='1'");
+		$db->query();
 
 		//first get the current order
-		$database->setQuery("SELECT content_id, ordering FROM #__content_frontpage ORDER BY ordering ASC");
-		$rows = $database-> loadObjectList();
+		$db->setQuery("SELECT content_id, ordering FROM #__content_frontpage ORDER BY ordering ASC");
+		$rows = $db-> loadObjectList();
 		$counter = 2;
 		foreach($rows as $row){
 			//reorder to make sure all is well
 			$rowContentId = $row->content_id;
-			$database->setQuery( "UPDATE #__content_frontpage SET ordering='$counter' WHERE content_id='$rowContentId'"	);
-			$database->query();
+			$db->setQuery( "UPDATE #__content_frontpage SET ordering='$counter' WHERE content_id='$rowContentId'"	);
+			$db->query();
 			$counter = $counter + 1;
 		}
 
 		//do update of article
-		$database->setQuery( "UPDATE #__content SET featured='1' WHERE id='$item_id'"	);
-		$database->query();
+		$db->setQuery( "UPDATE #__content SET featured='1' WHERE id='$item_id'"	);
+		$db->query();
 
 	}
 
 	function take_item_off_frontpage($item_id){
 
-		$database = JFactory::getDBO();
-		$database->setQuery("DELETE FROM #__content_frontpage WHERE content_id='$item_id'");
-		$database->query();
+		$db = JFactory::getDBO();
+		$db->setQuery("DELETE FROM #__content_frontpage WHERE content_id='$item_id'");
+		$db->query();
 
 		//do update of article
-		$database->setQuery( "UPDATE #__content SET featured='0' WHERE id='$item_id'"	);
-		$database->query();
+		$db->setQuery( "UPDATE #__content SET featured='0' WHERE id='$item_id'"	);
+		$db->query();
 	}
 
 	//called from item-edit page with toolbar buttons
@@ -429,8 +777,10 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$item_id = JRequest::getVar('item_id');
 		$menutype = JRequest::getVar('menutype');
 		$sub_task = JRequest::getVar('sub_task');
-
-		switch($sub_task)
+		$subsub_task = JRequest::getVar('subsub_task');
+		$pageType = JRequest::getVar('pageType', '', 'post');
+		
+		switch($subsub_task)
 		{
 			case 'delete':
 				$message = JText::_('COM_PAGESANDITEMS_ITEM_DELETED');
@@ -454,14 +804,31 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			break;
 		}
 
-		$helper->item_state($item_id, $new_state);
+		PagesAndItemsHelper::item_state($item_id, $new_state);
 
 		//redirect
-		$page_id = JRequest::getVar('page_id', 0);
-		if(!$page_id){
+		$pageId = JRequest::getVar('pageId', 0);
+		$categoryId = JRequest::getVar('categoryId', 0 );
+		if(!$pageId && !$menutype && $categoryId)
+		{
+			//$url = PagesanditemsHelper::toogleViewPageCategories('index.php?option=com_pagesanditems&view=page&categoryId='.$categoryId);
+			$sub_task = $sub_task ? '&sub_task='.$sub_task : '';
+			//$categoryExtension = JRequest::getVar('categoryExtension', 'com_content');
+			//$categoryExtension = $categoryExtension ? '&categoryExtension='.$categoryExtension : '';
+			$url = 'index.php?option=com_pagesanditems&view=category'.$sub_task.'&categoryId='.$categoryId;//.$categoryExtension;
+		}
+		elseif(!$pageId && $menutype)
+		{
+			$url = 'index.php?option=com_pagesanditems&view=page&layout=root&menutype='.$menutype;
+		}
+		elseif(!$pageId)
+		{
 			$url = 'index.php?option=com_pagesanditems&view=page&layout=root';
-		}else{
-			$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype='.$menutype.'&pageId='.$page_id;
+		}
+		else{
+			//$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+			$sub_task = $sub_task ? '&sub_task='.$sub_task : '';
+			$url = 'index.php?option=com_pagesanditems&view=page'.$sub_task.'&menutype='.$menutype.'&pageId='.$pageId.'&pageType='.$pageType;
 		}
 		$this->setRedirect(JRoute::_($url, $message));
 	}
@@ -475,15 +842,15 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 	function item_move($item_id, $new_menu_id, $old_cat_id){
 
-		$database = JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		//find category corresponding to page from where item is moving towards
-		$database->setQuery("SELECT link, menutype "
+		$db->setQuery("SELECT link, menutype "
 		." FROM #__menu "
 		." WHERE id='$new_menu_id' "
 		." LIMIT 1 "
 		);
-		$rows = $database->loadObjectList();
+		$rows = $db->loadObjectList();
 		foreach($rows as $row){
 			$new_cat_id = str_replace('index.php?option=com_content&view=category&layout=blog&id=','',$row->link);
 			$menutype = $row->menutype;
@@ -494,16 +861,36 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		}
 
 		//reorder new category to make sure moved item ends up last
-		$new_order = $this->helper->reorderItemsCategory($new_cat_id);
+		$new_order = PagesAndItemsHelper::reorderItemsCategory($new_cat_id);
 
 		//update item
-		$database->setQuery( "UPDATE #__content SET catid='$new_cat_id', ordering='$new_order' WHERE id='$item_id'"	);
-		$database->query();
+		$db->setQuery( "UPDATE #__content SET catid='$new_cat_id', ordering='$new_order' WHERE id='$item_id'"	);
+		$db->query();
 
 		//reorder old category so as to leave things nicely
-		$this->helper->reorderItemsCategory($old_cat_id);
+		PagesAndItemsHelper::reorderItemsCategory($old_cat_id);
 
+		$categoryId = JRequest::getVar('categoryId', 0 );
+		
+		//$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		//$subTask = $useCheckedOut ? '' : '&sub_task=edit';
+		$sub_task = $sub_task ? '&sub_task='.$sub_task : '';
+		if($categoryId)
+		{
+			//
+			$url = 'index.php?option=com_pagesanditems&view=item'.$sub_task.'&categoryId='.$new_cat_id.'&itemId='.$item_id;
+		}
+		else
+		{
+			//we move the article and edit so we will back to view item edit
+			//
+			$url = 'index.php?option=com_pagesanditems&view=item'.$sub_task.'&menutype='.$menutype.'&pageId='.$new_menu_id.'&itemId='.$item_id;
+			//$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype='.$menutype.'&pageId='.$new_menu_id.'&itemId='.$item_id;
+		}
+
+		/*
 		$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype='.$menutype.'&pageId='.$new_menu_id;
+		*/
 		$this->setRedirect(JRoute::_($url, false), JText::_('COM_PAGESANDITEMS_ITEM_MOVED'));
 
 	}
@@ -516,22 +903,24 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$pageId = JRequest::getVar('pageId', '', 'post');
 		$menutype = JRequest::getVar('menutype', '', 'post');
 		$cid = JRequest::getVar('itemCid', array(), 'post', 'array');
-
+		$pageType = JRequest::getVar('pageType', '', 'post');
+		
 		$sub_task = JRequest::getVar('sub_task');
-
-		if($sub_task=='delete'){
+		$subsub_task = JRequest::getVar('subsub_task');
+		
+		if($subsub_task=='delete'){
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_DELETED');
 			$new_state = 'delete';
-		}elseif($sub_task=='trash'){
+		}elseif($subsub_task=='trash'){
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_TRASHED');
 			$new_state = '-2';
-		}elseif($sub_task=='archive'){
+		}elseif($subsub_task=='archive'){
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_ARCHIVED');
 			$new_state = '2';
-		}elseif($sub_task=='publish'){
+		}elseif($subsub_task=='publish'){
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_PUBLISHED');
 			$new_state = '1';
-		}elseif($sub_task=='unpublish'){
+		}elseif($subsub_task=='unpublish'){
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_UNPUBLISHED');
 			$new_state = '0';
 		}
@@ -540,7 +929,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			//there are items
 			foreach($cid as $item_id){
 				//delete items
-				$helper->item_state($item_id, $new_state);
+				PagesAndItemsHelper::item_state($item_id, $new_state);
 				/*
 				we can set another way for message
 				make sure $app is defined
@@ -553,7 +942,18 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			$message = JText::_('COM_PAGESANDITEMS_NO_ITEMS_SELECTED');
 		}
 
-		$url = 'index.php?option=com_pagesanditems&view=page&sub_task=edit&menutype='.$menutype.'&pageId='.$pageId;
+		$categoryId = JRequest::getVar('categoryId', 0 );
+		$sub_task = $sub_task ? '&sub_task='.$sub_task : '';
+		if($categoryId)
+		{
+			//$categoryExtension = JRequest::getVar('categoryExtension', 'com_content');
+			//$categoryExtension = $categoryExtension ? '&categoryExtension='.$categoryExtension : '';
+			$url = 'index.php?option=com_pagesanditems&view=category'.$sub_task.'&categoryId='.$categoryId;//.$categoryExtension;
+		}
+		else
+		{
+			$url = 'index.php?option=com_pagesanditems&view=page'.$sub_task.'&menutype='.$menutype.'&pageId='.$pageId.'&pageType='.$pageType;
+		}
 		$this->setRedirect(JRoute::_($url, false), $message);
 
 	}

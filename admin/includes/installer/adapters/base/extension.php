@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -38,9 +38,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 	protected $name = null;
 	protected $scriptElement = null;
 	protected $oldFiles = null;
-	
+
 	//protected $parentParent = null;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -54,6 +54,84 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$this->parent = & $parent;
 		//$this->parentParent = & $parentParent;
 	}
+
+
+		/**
+	 * Custom loadLanguage method
+	 *
+	 * @param   string  $path the path where to find language files
+	 * @since   11.1
+	 */
+	public function loadLanguage($path=null)
+	{
+		$source = $this->parent->getPath('source');
+		if (!$source) 
+		{
+			$pathExtensions = realpath(dirname(__FILE__).'/../../../../extensions');
+			if(isset($this->parent->extension->folder) && $this->parent->extension->folder)
+			{
+				$path = str_replace('/',DS,$this->parent->extension->folder);
+				$this->parent->setPath('source', $pathExtensions.DS.$this->parent->extension->type.'s'.DS.$this->parent->extension->folder.DS.$this->parent->extension->element);
+			}
+			else
+			{
+				$this->parent->setPath('source', $pathExtensions.DS.$this->parent->extension->type.'s'.DS.$this->parent->extension->element);
+			}
+		}
+		
+		$this->manifest = $this->parent->getManifest();
+		$element = $this->manifest->files;
+		if ($element)
+		{
+			$folder = strtolower((string)$this->manifest->attributes()->folder);
+			$type = strtolower((string)$this->manifest->attributes()->type);
+			$name = '';
+			if (count($element->children()))
+			{
+				foreach ($element->children() as $file)
+				{
+					if ((string)$file->attributes()->$type)
+					{
+						$name = strtolower((string)$file->attributes()->$type);
+						break;
+					}
+				}
+			}
+			if ($name)
+			{
+				$pathExtensions = realpath(dirname(__FILE__).'/../../../../extensions');
+				if($folder)
+				{
+					//en-GB.pi_extension_piplugin_indicator_codemirror.ini
+					$extension = "pi_extension_${type}_${folder}_${name}";
+					$source = $path ? $path : $pathExtensions . "/$type".s."/$folder/$name";
+				}
+				else
+				{
+					$extension = "pi_extension_${type}_${name}";
+					$source = $path ? $path : $pathExtensions. "/$type".s."/$name";
+				}
+				$lang = JFactory::getLanguage();
+				
+				
+				$folder = (string)$element->attributes()->folder;
+				if ($folder && file_exists("$path/$folder"))
+				{
+					$source = "$path/$folder";
+				}
+				$lang->load($extension . '.sys', $source, null, false, false)
+					||	$lang->load($extension . '.sys', JPATH_ADMINISTRATOR, null, false, false)
+					||	$lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
+					||	$lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $lang->getDefault(), false, false)||
+				$lang->load($extension, $source, null, false, false)
+					||	$lang->load($extension, JPATH_ADMINISTRATOR, null, false, false)
+					||	$lang->load($extension, $source, $lang->getDefault(), false, false)
+					||	$lang->load($extension, JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+			}
+		}
+	}
+
+
 	/**
 	 * Custom install method
 	 *
@@ -64,22 +142,21 @@ class PiInstallerExtension extends InstallerExtension //JObject
 	 */
 	function install()
 	{
-		
-		//dump('extension');
+
 		// Get a database connector object
 		$db = & $this->parent->getDBO();
 		// Get the extension manifest object
 
 		$this->manifest = $this->parent->getManifest();
 		$xml = $this->manifest;
-		
+
 		/**
 		 * ---------------------------------------------------------------------------------------------
 		 * Manifest Document Setup Section
 		 * ---------------------------------------------------------------------------------------------
 		 */
 
-		
+
 		/*
 		J1.6 use not JSimpleXMLElement it use SimpleXML
 		// Set the extensions name
@@ -89,9 +166,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 
 		// Get the component description
 
-		
+
 		*/
-		
+
 		// Set the extensions name
 		/*
 		old use
@@ -109,33 +186,33 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		old use
 		$description = & $this->manifest->getElementByPath('description');
 		$description = JFilterInput::clean($description->data(), 'string');
-		if ($description != '') 
+		if ($description != '')
 		{
-			
+
 			$this->parent->set('message', $description);
-			
-		} 
-		else 
+
+		}
+		else
 		{
 			$this->parent->set('message', '' );
 		}
 		*/
 		$description = trim((string)$xml->description);
-		if ($description) 
+		if ($description)
 		{
 			$this->parent->set('message', JText::_($description));
 		}
-		else 
+		else
 		{
 			$this->parent->set('message', '');
 		}
-		
+
 		//$type = $this->manifest->attributes('type');
 		$type = (string)$xml->attributes()->type;
-		
+
 		//$folder = $this->manifest->attributes('folder');
 		$folder = (string)$xml->attributes()->folder;
-		
+
 		/*
 		$version = & $this->manifest->getElementByPath('version');
 		if($version)
@@ -148,7 +225,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		}
 		*/
 		$version = (string)$xml->version;
-		
+
 		/*
 		if($version)
 		{
@@ -162,16 +239,24 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$required_version = (string)$xml->required_version;
 		/*
 		$required_version = & $this->manifest->getElementByPath('required_version');
+		*/
+		//ms: add 14.11.2011
 		if($required_version)
 		{
-			$required_version = JFilterInput::clean($required_version->data(), 'string');
+			//here we check the $required_version
+			if(PagesAndItemsHelper::getPagesAndItemsVersion() < $required_version)
+			{
+				$this->parent->abort('Extension Install: '.JText::_('COM_PAGESANDITEMS_EXTENSION_VERSION_NOT_OK').$required_version);
+				return false;
+			}
 		}
 		else
 		{
-			$required_version = '';
+			//$required_version = '';
 		}
+		/*
 		*/
-		
+
 		// Set the installation path
 		/*
 		$element =& $this->manifest->getElementByPath('files');
@@ -199,8 +284,8 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				}
 			}
 		}
-		
-		if (! empty($type) && !empty($pname)) 
+
+		if (! empty($type) && !empty($pname))
 		{
 			if(isset($folder))
 			{
@@ -212,13 +297,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				$this->parent->setPath('extension_root', COM_PAGESANDITEMS_INSTALLER_PATH.DS.$type.'s'.DS.$pname);
 			}
 		}
-		else 
+		else
 		{
 			$this->parent->abort('Extension Install: '.JText::_('No type file specified'));
 			return false;
 		}
-		
-		
+
+
 		/*
 		We want that only core extensions can have an version == 'integrated'
 		and only if install from component install
@@ -228,7 +313,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$this->parent->abort('Extension Install: '.JText::_('COM_PAGESANDITEMS_NO_CORE'));
 			return false;
 		}
-		
+
 		/**
 		 * ---------------------------------------------------------------------------------------------
 		 * Filesystem Processing Section
@@ -236,9 +321,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 */
 		// If the extension directory does not exist, lets create it
 		$created = false;
-		if (!file_exists($this->parent->getPath('extension_root'))) 
+		if (!file_exists($this->parent->getPath('extension_root')))
 		{
-			if (!$created = JFolder::create($this->parent->getPath('extension_root'))) 
+			if (!$created = JFolder::create($this->parent->getPath('extension_root')))
 			{
 				$this->parent->abort($type.' Install: '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_root').'"');
 				return false;
@@ -253,7 +338,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$this->parent->setOverwrite(true);
 			$upgrade = true;
 			break;
-			
+
 			default:
 			$this->parent->setOverwrite(false);
 			$upgrade = false;
@@ -264,28 +349,28 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 * have to roll back the installation, lets add it to the installation
 		 * step stack
 		 */
-		if ($created) 
+		if ($created)
 		{
 			$this->parent->pushStep( array ('type'=>'folder', 'path'=>$this->parent->getPath('extension_root')));
 		}
-		
-		
+
+
 		// Copy all necessary files
 		//$files = & $this->manifest->getElementByPath('files');
 		$files = $this->manifest->files;
-		if ($this->parent->parseFiles($files, -1) === false) 
+		if ($this->parent->parseFiles($files, -1) === false)
 		{
 			// Install failed, roll back changes
 			$this->parent->abort(JText::_($type).' '.JText::_('Install').': '.JText::_('Could not copy extensions files.'));
 			return false;
 		}
 		// Parse optional tags -- language files for plugins
-		
+
 		$this->parent->addLanguage($this->manifest); //,$this->parentParent);
-		
+
 		//$this->parent->parseLanguages($this->manifest->languages);
 		//$this->parent->parseLanguages($this->manifest->administration->languages, 1);
-		
+
 		//how we install the extension language?
 		/*
 			$package = Array();
@@ -298,9 +383,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			{
 				$name = JFile::stripExt($file);
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php'));
-				
+
 				$class = 'JInstaller'.ucfirst($name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
 					$adapter = new $class($tmpInstaller);
 					$tmpInstaller->setAdapter($name, $adapter);
@@ -311,15 +396,15 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				//$this->parent->abort(JText::sprintf('JLIB_INSTALLER_ABORT_PACK_INSTALL_ERROR_EXTENSION', JText::_('JLIB_INSTALLER_'. strtoupper($this->route)), basename($file)));
 				//return false;
 			}
-		
-		ore over 
+
+		ore over
 		$this->parent->addLanguage($xml); //?
 		*/
-		
+
 		// If there is an install file, lets copy it.
 		//$installScriptElement = & $this->manifest->getElementByPath('installfile');
 		$installScriptElement = (string)$this->manifest->installfile;
-		//if (is_a($installScriptElement, 'JSimpleXMLElement') || is_a($installScriptElement, 'JXMLElement')) 
+		//if (is_a($installScriptElement, 'JSimpleXMLElement') || is_a($installScriptElement, 'JXMLElement'))
 		if($installScriptElement)
 		{
 			// Make sure it hasn't already been copied (this would be an error in the xml install file)
@@ -342,17 +427,17 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		// If there is an uninstall file, lets copy it.
 		$uninstallfileScriptElement = (string)$this->manifest->uninstallfile;
 		//$uninstallScriptElement = & $this->manifest->getElementByPath('uninstallfile');
-		//if (is_a($uninstallScriptElement, 'JSimpleXMLElement') || is_a($uninstallScriptElement, 'JXMLElement')) 
-		if ($uninstallfileScriptElement) 
+		//if (is_a($uninstallScriptElement, 'JSimpleXMLElement') || is_a($uninstallScriptElement, 'JXMLElement'))
+		if ($uninstallfileScriptElement)
 		{
 			// Make sure it hasn't already been copied (this would be an error in the xml install file)
 			//if (!file_exists($this->parent->getPath('extension_root').DS.$uninstallScriptElement->data()))
-			if (!file_exists($this->parent->getPath('extension_root').DS.$uninstallScriptElement))
+			if (!file_exists($this->parent->getPath('extension_root').DS.$uninstallfileScriptElement))
 			{
 				//$path['src'] = $this->parent->getPath('source').DS.$uninstallScriptElement->data();
 				//$path['dest'] = $this->parent->getPath('extension_root').DS.$uninstallScriptElement->data();
-				$path['src'] = $this->parent->getPath('source').DS.$uninstallScriptElement;
-				$path['dest'] = $this->parent->getPath('extension_root').DS.$uninstallScriptElement;
+				$path['src'] = $this->parent->getPath('source').DS.$uninstallfileScriptElement;
+				$path['dest'] = $this->parent->getPath('extension_root').DS.$uninstallfileScriptElement;
 				if (!$this->parent->copyFiles( array ($path))) {
 					// Install failed, rollback changes
 					$this->parent->abort(JText::_($type).' '.JText::_('Install').': '.JText::_('Could not copy PHP uninstall file.'));
@@ -375,7 +460,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		.' AND type='.$db->Quote($type)
 		;
 		$db->setQuery($query);
-		if (!$db->Query()) 
+		if (!$db->Query())
 		{
 			// Install failed, roll back changes
 			$this->parent->abort($type.' Install: '.$db->stderr(true));
@@ -383,22 +468,40 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		}
 		$id = $db->loadResult();
 		$row = & JTable::getInstance('piextension', 'PagesAndItemsTable');
-		if ($id) 
+		if ($id)
 		{
-			if (!$this->parent->getOverwrite()) 
+			if (!$this->parent->getOverwrite())
 			{
 				// Install failed, roll back changes
 				$this->parent->abort($type.' Install: '.JText::_($type).' "'.$pname.'" '.JText::_('already exists!'));
 				return false;
-			} 
-			else 
+			}
+			else
 			{
-				
+
 				$row->load($id);
 				if(!$row->params)
 				{
 					//$row->params = $this->getParams();
 					$row->params = $this->parent->getParams();
+				}
+				else
+				{
+					$row_params = json_decode($row->params);
+					$params = json_decode($this->parent->getParams());
+					$change = false;
+					foreach($params as $key => $value)
+					{
+						if(!isset($row_params->$key))
+						{
+							$row_params->$key = $value;
+							$change = true;
+						}
+					}
+					if($change)
+					{
+						$row->params = json_encode($row_params);
+					}
 				}
 				// before we have change a plugin item, we add it to the installation step stack
 				// so that if we have to rollback the changes we can undo it.
@@ -413,14 +516,14 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$row->ordering = $row->getNextOrder($where);
 			//$row->params = $this->getParams();
 			$row->params = $this->parent->getParams();
-			
-			// here we will set an id 
+
+			// here we will set an id
 			if($version == 'integrated' && defined('COM_PAGESANDITEMS_COMPONENT_INSTALL'))
 			{
 				//$where = 'folder = '.$db->Quote($folder). ' AND type = '.$db->Quote($type). ' And version = '.$db->Quote('integrated');
 				$where = 'type = '.$db->Quote($type). ' And version = '.$db->Quote('integrated');
 				$row_extension_id = $row->getNextTypeId($where,$type);
-				
+
 				$db->setQuery( "INSERT INTO #__pi_extensions SET extension_id='$row_extension_id' ");
 				if(!$db->query())
 				{
@@ -430,11 +533,11 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				}
 				$row->extension_id = $row_extension_id;
 			}
-			
-			
-			
+
+
+
 		}
-		
+
 		$row->name = $name;
 		$row->folder = $folder;
 		$row->element = $pname;
@@ -442,8 +545,8 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$row->required_version = $required_version;
 		$row->description = $description;
 		$row->type = $type;
-		
-		
+
+
 		//$row->manifest_cache = $this->generateManifestCache(); //??
 		$row->manifest_cache = $this->parent->generateManifestCache(); //??
 		/*
@@ -451,7 +554,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$this->parent->extension->manifest_cache = serialize($manifest_details);
 		*/
 		//TODO row->params and row->params_fields
-		if (!$row->store()) 
+		if (!$row->store())
 		{
 			// Install failed, roll back changes
 			$this->parent->abort($type.' Install: '.$db->stderr(true));
@@ -472,14 +575,14 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		{
 			$this->parent->pushStep( array ('type'=>$type, 'id'=>$row->extension_id));
 		}
-		 
+
 		/**
 		 * ---------------------------------------------------------------------------------------------
 		 * Finalization and Cleanup Section
 		 * ---------------------------------------------------------------------------------------------
 		 */
 		// Lastly, we will copy the manifest file to its appropriate place.
-		if (!$this->parent->copyManifest(-1)) 
+		if (!$this->parent->copyManifest(-1))
 		{
 			// Install failed, rollback changes
 			$this->parent->abort($type.' Install: '.JText::_('Could not copy setup file'));
@@ -491,13 +594,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 * method to the installation message.
 		 */
 
-		if ($this->get('install.script')) 
+		if ($this->get('install.script'))
 		{
 			if (is_file($this->parent->getPath('extension_root').DS.$this->get('install.script'))) {
 				ob_start();
 				ob_implicit_flush(false);
 				require_once ($this->parent->getPath('extension_root').DS.$this->get('install.script'));
-				if (function_exists($type.'_install')) 
+				if (function_exists($type.'_install'))
 				{
 					$type_install = $type.'_install';
 					if($type_install() === false)
@@ -508,26 +611,26 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				}
 				$msg = ob_get_contents();
 				ob_end_clean();
-				if ($msg != '') 
+				if ($msg != '')
 				{
 					$this->parent->set('extension.message', $msg);
 				}
 			}
 		}
-		
-		
+
+		//TODO ms: remove if getItemtypes changed
+		/*
 		if(!$id && $type == 'itemtype')
 		{
 			// if($type == 'itemtype') we must add in pi_config
 			$componentPath = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'helpers'.DS.'pagesanditems.php');
-			//print_r('refreshManifestCache'.$componentPath);
 			if(file_exists($componentPath))
 			{
 				require_once ($componentPath);
 				PagesAndItemsHelper::changeConfigItemtype(null, $row->element, 'add');
 			}
 		}
-		//var_dump($type.'<br />');
+		*/
 		return true;
 	}
 
@@ -553,13 +656,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$row->load((int)$id);
 		// Get the plugin folder so we can properly build the plugin path
 		/*
-		if (trim($row->folder) == '') 
+		if (trim($row->folder) == '')
 		{
 			JError::raiseWarning(100, 'Fieldtype Uninstall: '.JText::_('Plugin field empty, cannot remove files'));
 			return false;
 		}
 		*/
-		
+
 		// Set the plugin root path
 		// TODO CHECK
 		if($row->folder)
@@ -573,14 +676,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$this->parent->setPath('extension_root',COM_PAGESANDITEMS_INSTALLER_PATH.DS.$path.DS.$row->element);//.DS.$row->element;
 		//$this->parent->setPath('extension_root', JPATH_ADMINISTRATOR.DS.'components'.DS.'com_ginkgo'.DS.'plugins'.DS.$row->name);
 		$manifestFile = $this->parent->getPath('extension_root').DS.$row->element.'.xml';
-		//dump($manifestFile);
 		if (file_exists($manifestFile))
 		{
 			libxml_use_internal_errors(true);
-			
+
 			//$xml = & JFactory::getXMLParser('Simple');
 			// If we cannot load the xml file return null
-			//if (!$xml->loadFile($manifestFile)) 
+			//if (!$xml->loadFile($manifestFile))
 			if (!$xml = simplexml_load_file($manifestFile))
 			{
 				JError::raiseWarning(100, $row->type.' Uninstall: '.JText::_('Could not load manifest file'));
@@ -594,7 +696,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			//$type = (string)$xml->attributes()->type;
 			$root = & $xml->document;
 			/*
-			if ($root->name() != 'extension' && $root->name() != 'install') 
+			if ($root->name() != 'extension' && $root->name() != 'install')
 			{
 				JError::raiseWarning(100, $row->type.' Uninstall: '.JText::_('Invalid manifest file'));
 				return false;
@@ -606,20 +708,20 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				unset($xml);
 				return false;
 			}
-			
+
 			// Remove the plugin files
 			//$this->parent->removeFiles($root->getElementByPath('files'), -1);
 			$this->parent->removeFiles($xml->files,-1);
 			JFile::delete($manifestFile);
 			// Remove all media and languages as well
 			//$this->parent->removeFiles($root->getElementByPath('languages'), 0);
-			
-			
+
+
 			//$this->parent->removeFiles($xml->languages, 0);
-			//TODO remove language 
+			//TODO remove language
 			$this->parent->removeLanguage($xml);
-			
-			
+
+
 			/**
 			 * ---------------------------------------------------------------------------------------------
 			 * Custom Uninstallation Script Section
@@ -631,18 +733,18 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$uninstallfileScriptElement = (string)$root->uninstallfile;
 			if ($uninstallfileScriptElement)
 			{
-				
+
 				// Element exists, does the file exist?
-				//if (is_file($this->parent->getPath('extension_root').DS.$uninstallfileElement->data())) 
-				if (is_file($this->parent->getPath('extension_root').DS.$uninstallfileElement)) 
+				//if (is_file($this->parent->getPath('extension_root').DS.$uninstallfileElement->data()))
+				if (is_file($this->parent->getPath('extension_root').DS.$uninstallfileElement))
 				{
 					ob_start();
 					ob_implicit_flush(false);
 					//require_once ($this->parent->getPath('extension_root').DS.$uninstallfileElement->data());
 					require_once ($this->parent->getPath('extension_root').DS.$uninstallfileElement);
-					if (function_exists($row->type.'_uninstall')) 
+					if (function_exists($row->type.'_uninstall'))
 					{
-						if (com_uninstall() === false) 
+						if (com_uninstall() === false)
 						{
 							JError::raiseWarning(100, JText::_($row->type).' '.JText::_('Uninstall').': '.JText::_('Custom Uninstall routine failure'));
 							$retval = false;
@@ -657,23 +759,23 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			}
 
 			/*// Get the plugin description
-			
+
 			$description = $root->getElementByPath('description');
-			if (is_a($description, 'JSimpleXMLElement') || is_a($description, 'JXMLElement')) 
+			if (is_a($description, 'JSimpleXMLElement') || is_a($description, 'JXMLElement'))
 			{
 				$this->parent->set('message', $description->data());
 			}
-			else 
+			else
 			{
 				$this->parent->set('message', '');
 			}
 			*/
 			$description = (string)$root->description;
-			if ($description) 
+			if ($description)
 			{
 				$this->parent->set('message', JText::_($description));
 			}
-			else 
+			else
 			{
 				$this->parent->set('message', '');
 			}
@@ -681,7 +783,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$row->delete($row->extension_id);
 			unset ($row);
 		}
-		else 
+		else
 		{
 			JError::raiseWarning(100, 'Plugin Uninstall: Manifest File invalid or not found. Plugin entry removed from database.');
 			$row->delete($row->extension_id);
@@ -694,6 +796,8 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			JFolder::delete($this->parent->getPath('extension_root'));
 		}
 		
+		//TODO ms: remove if getItemtypes changed
+		/*
 		if($row->type == 'itemtype')
 		{
 			if(file_exists(realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'helpers'.DS.'pagesanditems.php')))
@@ -702,6 +806,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				PagesAndItemsHelper::changeConfigItemtype(null, $row->element, 'remove');
 			}
 		}
+		*/
 		return $retval;
 	}
 
@@ -730,7 +835,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 
 	public function XXXgenerateManifestCache()
 	{
-		
+
 		return serialize($this->parseXMLInstallFile($this->parent->getPath('manifest')));
 	}
 
@@ -739,7 +844,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 	{
 		// Read the file to see if it's a valid component XML file
 		$xml = simplexml_load_file($path);
-		
+
 		if (!$xml)
 		{
 			unset($xml);
@@ -754,7 +859,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$data = array();
 		$type = (string)$xml->attributes()->type;
 		$data['type'] = $type;
-		
+
 		if (count($xml->files->children()))
 		{
 			foreach ($xml->files->children() as $file)
@@ -805,21 +910,21 @@ class PiInstallerExtension extends InstallerExtension //JObject
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 			// Get the manifest document root element
 			$root = $this->manifest;//& $this->_manifest->document;
 			// Get the element of the tag names
 			$element =& $root->getElementByPath('params');
-			if (!is_a($element, 'JSimpleXMLElement') || !count($element->children())) 
+			if (!is_a($element, 'JSimpleXMLElement') || !count($element->children()))
 			{
 				// Either the tag does not exist or has no children therefore we return zero files processed.
 				return null;
 			}
 			// Get the array of parameter nodes to process
 			$params = $element->children();
-			if (count($params) == 0) 
+			if (count($params) == 0)
 			{
 				// No params to process
 				return null;
@@ -827,13 +932,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			// Process each parameter in the $params array.
 			//$ini = null;
 			$ini = array();
-			foreach ($params as $param) 
+			foreach ($params as $param)
 			{
-				if (!$name = $param->attributes('name')) 
+				if (!$name = $param->attributes('name'))
 				{
 					continue;
 				}
-				if (!$value = $param->attributes('default')) 
+				if (!$value = $param->attributes('default'))
 				{
 					continue;
 				}
@@ -845,7 +950,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		{
 			//Joomla 1.6
 			// Validate that we have a param to use
-			if(!isset($this->manifest->params->param)) 
+			if(!isset($this->manifest->params->param))
 			{
 				return '{}';
 			}
@@ -856,9 +961,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$ini = array();
 
 			// Iterating through the fieldsets:
-			foreach($fieldsets as $fieldset) 
+			foreach($fieldsets as $fieldset)
 			{
-				if( ! count($fieldset->children())) 
+				if( ! count($fieldset->children()))
 				{
 					// Either the tag does not exist or has no children therefore we return zero files processed.
 					return null;
@@ -870,12 +975,12 @@ class PiInstallerExtension extends InstallerExtension //JObject
 					// Modified the below if statements to check against the
 						// null value since default values like "0" were casuing
 					// entire parameters to be skipped.
-					if (($name = $field->attributes()->name) === null) 
+					if (($name = $field->attributes()->name) === null)
 					{
 						continue;
 					}
 
-					if (($value = $field->attributes()->default) === null) 
+					if (($value = $field->attributes()->default) === null)
 					{
 						continue;
 					}
@@ -907,7 +1012,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		// Get the extension manifest object
 		$this->manifest = $this->parent->getManifest();
 		$xml = $this->manifest;
-		
+
 		*/
 		/**
 		 * ---------------------------------------------------------------------------------------------
@@ -915,7 +1020,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 * ---------------------------------------------------------------------------------------------
 		 */
 
-		
+
 		/*
 		J1.6 use not JSimpleXMLElement it use SimpleXML
 		// Set the extensions name
@@ -931,25 +1036,25 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		else {
 			$this->parent->set('message', '');
 		}
-		
+
 		*/
-		
+
 		// Set the extensions name
 		$name =& $this->manifest->getElementByPath('name');
 		$name = JFilterInput::clean($name->data(), 'string');
 		$this->set('name', $name);
 		$this->parent->set('name', $name);
 		// Get the component description
-		
+
 		$description = & $this->manifest->getElementByPath('description');
 		$description = JFilterInput::clean($description->data(), 'string');
-		if ($description != '') 
+		if ($description != '')
 		{
-			
+
 			$this->parent->set('message', $description);
-			
-		} 
-		else 
+
+		}
+		else
 		{
 			$this->parent->set('message', '' );
 		}
@@ -968,6 +1073,8 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		if($required_version)
 		{
 			$required_version = JFilterInput::clean($required_version->data(), 'string');
+			
+			//abort
 		}
 		else
 		{
@@ -985,9 +1092,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				}
 			}
 		}
-		
+
 		$files = & $this->manifest->getElementByPath('files');
-		if (! empty($type) && !empty($pname)) 
+		if (! empty($type) && !empty($pname))
 		{
 			if(isset($folder))
 			{
@@ -999,7 +1106,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				$this->parent->setPath('extension_root', COM_PAGESANDITEMS_INSTALLER_PATH.DS.$type.'s'.DS.$pname);
 			}
 		}
-		else 
+		else
 		{
 			$this->parent->abort('Extension Install: '.JText::_('No fieldtype file specified'));
 			return false;
@@ -1011,9 +1118,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 */
 		// If the extension directory does not exist, lets create it
 		$created = false;
-		if (!file_exists($this->parent->getPath('extension_root'))) 
+		if (!file_exists($this->parent->getPath('extension_root')))
 		{
-			if (!$created = JFolder::create($this->parent->getPath('extension_root'))) 
+			if (!$created = JFolder::create($this->parent->getPath('extension_root')))
 			{
 				$this->parent->abort($type.' Install: '.JText::_('Failed to create directory').': "'.$this->parent->getPath('extension_root').'"');
 				return false;
@@ -1027,7 +1134,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$this->parent->setOverwrite(true);
 			$upgrade = true;
 			break;
-			
+
 			default:
 			$this->parent->setOverwrite(false);
 			$upgrade = false;
@@ -1038,12 +1145,12 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 * have to roll back the installation, lets add it to the installation
 		 * step stack
 		 */
-		if ($created) 
+		if ($created)
 		{
 			$this->parent->pushStep( array ('type'=>'folder', 'path'=>$this->parent->getPath('extension_root')));
 		}
 		// Copy all necessary files
-		if ($this->parent->parseFiles($files, -1) === false) 
+		if ($this->parent->parseFiles($files, -1) === false)
 		{
 			// Install failed, roll back changes
 			$this->parent->abort();
@@ -1053,7 +1160,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$this->parent->parseLanguages($this->manifest->getElementByPath('languages'), 0);
 		// If there is an install file, lets copy it.
 		$installScriptElement = & $this->manifest->getElementByPath('installfile');
-		if (is_a($installScriptElement, 'JSimpleXMLElement') || is_a($installScriptElement, 'JXMLElement')) 
+		if (is_a($installScriptElement, 'JSimpleXMLElement') || is_a($installScriptElement, 'JXMLElement'))
 		{
 			// Make sure it hasn't already been copied (this would be an error in the xml install file)
 			if (!file_exists($this->parent->getPath('extension_root').DS.$installScriptElement->data()))
@@ -1070,7 +1177,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		}
 		// If there is an uninstall file, lets copy it.
 		$uninstallScriptElement = & $this->manifest->getElementByPath('uninstallfile');
-		if (is_a($uninstallScriptElement, 'JSimpleXMLElement') || is_a($uninstallScriptElement, 'JXMLElement')) 
+		if (is_a($uninstallScriptElement, 'JSimpleXMLElement') || is_a($uninstallScriptElement, 'JXMLElement'))
 		{
 			// Make sure it hasn't already been copied (this would be an error in the xml install file)
 			if (!file_exists($this->parent->getPath('extension_root').DS.$uninstallScriptElement->data()))
@@ -1099,7 +1206,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		.' AND type='.$db->Quote($type)
 		;
 		$db->setQuery($query);
-		if (!$db->Query()) 
+		if (!$db->Query())
 		{
 			// Install failed, roll back changes
 			$this->parent->abort($type.' Install: '.$db->stderr(true));
@@ -1107,17 +1214,17 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		}
 		$id = $db->loadResult();
 		$row = & JTable::getInstance('piextension', 'PagesAndItemsTable');
-		if ($id) 
+		if ($id)
 		{
-			if (!$this->parent->getOverwrite()) 
+			if (!$this->parent->getOverwrite())
 			{
 				// Install failed, roll back changes
 				$this->parent->abort($type.' Install: '.JText::_($type).' "'.$pname.'" '.JText::_('already exists!'));
 				return false;
-			} 
-			else 
+			}
+			else
 			{
-				
+
 				$row->load($id);
 				if(!$row->params)
 				{
@@ -1138,7 +1245,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			//$row->params_fields = json_encode($params_fields);
 			//$row->params = $this->parent->getParams();
 		}
-		
+
 		$row->name = $name;
 		$row->folder = $folder;
 		$row->element = $pname;
@@ -1146,15 +1253,15 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$row->required_version = $required_version;
 		$row->description = $description;
 		$row->type = $type;
-		
-		
+
+
 		$row->manifest_cache = $this->generateManifestCache(); //??
 		/*
 		$manifest_details = JApplicationHelper::parseXMLInstallFile($manifestPath);
 		$this->parent->extension->manifest_cache = serialize($manifest_details);
 		*/
 		//TODO row->params and row->params_fields
-		if (!$row->store()) 
+		if (!$row->store())
 		{
 			// Install failed, roll back changes
 			$this->parent->abort($type.' Install: '.$db->stderr(true));
@@ -1166,14 +1273,14 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		{
 			$this->parent->pushStep( array ('type'=>$type, 'id'=>$row->extension_id));
 		}
-		 
+
 		/**
 		 * ---------------------------------------------------------------------------------------------
 		 * Finalization and Cleanup Section
 		 * ---------------------------------------------------------------------------------------------
 		 */
 		// Lastly, we will copy the manifest file to its appropriate place.
-		if (!$this->parent->copyManifest(-1)) 
+		if (!$this->parent->copyManifest(-1))
 		{
 			// Install failed, rollback changes
 			$this->parent->abort($type.' Install: '.JText::_('Could not copy setup file'));
@@ -1185,13 +1292,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		 * method to the installation message.
 		 */
 
-		if ($this->get('install.script')) 
+		if ($this->get('install.script'))
 		{
 			if (is_file($this->parent->getPath('extension_root').DS.$this->get('install.script'))) {
 				ob_start();
 				ob_implicit_flush(false);
 				require_once ($this->parent->getPath('extension_root').DS.$this->get('install.script'));
-				if (function_exists($type.'_install')) 
+				if (function_exists($type.'_install'))
 				{
 					$type_install = $type.'_install';
 					if($type_install() === false)
@@ -1202,7 +1309,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				}
 				$msg = ob_get_contents();
 				ob_end_clean();
-				if ($msg != '') 
+				if ($msg != '')
 				{
 					$this->parent->set('extension.message', $msg);
 				}
@@ -1233,13 +1340,13 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$row->load((int)$id);
 		// Get the plugin folder so we can properly build the plugin path
 		/*
-		if (trim($row->folder) == '') 
+		if (trim($row->folder) == '')
 		{
 			JError::raiseWarning(100, 'Fieldtype Uninstall: '.JText::_('Plugin field empty, cannot remove files'));
 			return false;
 		}
 		*/
-		
+
 		// Set the plugin root path
 		// TODO CHECK
 		if($row->folder)
@@ -1290,9 +1397,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 					ob_start();
 					ob_implicit_flush(false);
 					require_once ($this->parent->getPath('extension_root').DS.$uninstallfileElement->data());
-					if (function_exists($row->type.'_uninstall')) 
+					if (function_exists($row->type.'_uninstall'))
 					{
-						if (com_uninstall() === false) 
+						if (com_uninstall() === false)
 						{
 							JError::raiseWarning(100, JText::_($row->type).' '.JText::_('Uninstall').': '.JText::_('Custom Uninstall routine failure'));
 							$retval = false;
@@ -1308,11 +1415,11 @@ class PiInstallerExtension extends InstallerExtension //JObject
 
 			// Get the plugin description
 			$description = $root->getElementByPath('description');
-			if (is_a($description, 'JSimpleXMLElement') || is_a($description, 'JXMLElement')) 
+			if (is_a($description, 'JSimpleXMLElement') || is_a($description, 'JXMLElement'))
 			{
 				$this->parent->set('message', $description->data());
 			}
-			else 
+			else
 			{
 				$this->parent->set('message', '');
 			}
@@ -1320,7 +1427,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 			$row->delete($row->extension_id);
 			unset ($row);
 		}
-		else 
+		else
 		{
 			JError::raiseWarning(100, 'Plugin Uninstall: Manifest File invalid or not found. Plugin entry removed from database.');
 			$row->delete($row->extension_id);
@@ -1337,7 +1444,7 @@ class PiInstallerExtension extends InstallerExtension //JObject
 	public function XgetParamsX()
 	{
 		// Validate that we have a param to use
-		if(!isset($this->manifest->params->param)) 
+		if(!isset($this->manifest->params->param))
 		{
 			return '{}';
 		}
@@ -1348,9 +1455,9 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		$ini = array();
 
 		// Iterating through the fieldsets:
-		foreach($fieldsets as $fieldset) 
+		foreach($fieldsets as $fieldset)
 		{
-			if( ! count($fieldset->children())) 
+			if( ! count($fieldset->children()))
 			{
 				// Either the tag does not exist or has no children therefore we return zero files processed.
 				return null;
@@ -1362,12 +1469,12 @@ class PiInstallerExtension extends InstallerExtension //JObject
 				// Modified the below if statements to check against the
 				// null value since default values like "0" were casuing
 				// entire parameters to be skipped.
-				if (($name = $field->attributes()->name) === null) 
+				if (($name = $field->attributes()->name) === null)
 				{
 					continue;
 				}
 
-				if (($value = $field->attributes()->default) === null) 
+				if (($value = $field->attributes()->default) === null)
 				{
 					continue;
 				}
@@ -1376,5 +1483,5 @@ class PiInstallerExtension extends InstallerExtension //JObject
 		}
 		return json_encode($ini);
 	}
-	
+
 }

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -16,7 +16,7 @@ defined('JPATH_BASE') or die();
 class PagesAndItemsTableCustom_fields extends JTable
 {
 	var $id = null;
-	var $name = null;	// 
+	var $name = null;	//
 	var $type_id = null;
 	var $plugin = null; //???
 	var $params = null;
@@ -25,25 +25,25 @@ class PagesAndItemsTableCustom_fields extends JTable
 /*
 	var $checked_out = null;
 	var $checked_out_time = null;
-*/	
+*/
 	/**
 	 * Contructor
 	 *
 	 * @access var
 	 * @param database A database connector object
 	 */
-	
-	function __construct(&$db) 
+
+	function __construct(&$db)
 	{
 		parent::__construct('#__pi_custom_fields', 'id', $db);
-		
-		
+
+
 	}
-	
+
 	function Xbind($array, $ignore = '')
 	{
 		//parent::bind($array, $ignore);
-		
+
 		if (is_array($array))
 		{
 			if (isset( $array['params']) )

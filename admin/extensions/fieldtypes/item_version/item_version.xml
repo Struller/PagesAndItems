@@ -2,15 +2,13 @@
 <extension version="1.5" type="fieldtype" method="upgrade">
 	<name>Item_version (Pages and Items fieldtype)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		fieldtype Item_version (Pages and Items)
-	</description>
+	<description>Item_version (fieldtype for custom itemtypes in the Pages-and-Items framework)</description>
 	<files>
 		<filename fieldtype="item_version">item_version.php</filename>
 		<filename >index.html</filename>

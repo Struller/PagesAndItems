@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -12,13 +12,15 @@ if(!defined('_JEXEC'))
 {
 	die('Restricted access');
 }
+
 require_once(dirname(__FILE__).'/../../../includes/extensions/itemtype.php');
+
 //CUSTOM
+
 class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtype
 {
-	
 	/*
-	add an 
+	add an
 	*/
 	function check_fields($fields,$type_id,$item_id)
 	{
@@ -30,7 +32,6 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		$temp_fields = $this->db->loadObjectList();
 		if(count($temp_fields) > count($fields))
 		{
-			//dump(count($temp_fields) , count($fields));
 			//we must add the field to custom_fields_values
 			foreach($temp_fields as $key => $temp_field)
 			{
@@ -42,14 +43,13 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					}
 				}
 			}
-			//dump($temp_fields);
 			foreach($temp_fields as $temp_field)
 			{
 				$dispatcher = &JDispatcher::getInstance();
 				$temp_field->item_id = $item_id;
 				$dispatcher->trigger('onField_save', array ($temp_field, 'insert'));
 			}
-			
+
 			$this->db->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id, f.id AS id "
 			. "\n FROM #__pi_custom_fields_values AS v "
 			. "\n LEFT JOIN #__pi_custom_fields AS f "
@@ -59,23 +59,23 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			. "\n AND f.id=v.field_id "
 			. "\n ORDER BY f.ordering ASC "
 			);
-			
+
 			$fields = $this->db->loadObjectList();
 		}
 		return $fields;
 	}
-	
-	
+
+
 	//in old save_custom_itemtype
 	function onItemtypeItemSave($item_type, $delete_item, $item_id, $new_or_edit)
 	{
-	
-				
+
+
 		if(strpos($item_type, 'ustom_') === false)
 		{
 			return false;
 		}
-		
+
 		jimport( 'joomla.application.component.model' );
 		$modelCustomItemtype =& JModel::getInstance('CustomItemtype', 'PagesAndItemsModel', array());
 		//state
@@ -83,21 +83,21 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 
 		//get other_item_id
 		$other_item_id = JRequest::getVar('other_item_id', '');
-		
+
 		$show_title_item = intval(JRequest::getVar('show_title_item'));
-		
+
 		$item_on_frontpage = intval(JRequest::getVar('frontpage'));
 
 		$delete_item = intval(JRequest::getVar('delete_item'));
-		
-		
+
+
 	//	$results = $dispatcher->trigger('onSave_custom_itemtype', array($item_type, $delete_item, $item_id));
-		
+
 		$pos = strpos($item_type, 'ustom_');
 		$type_id = substr($item_type, $pos+6, strlen($item_type));
-		
-		
-		
+
+
+
 		/*
 		here we get the fields if new we return without #__pi_custom_fields_values
 		else we get an merged #__pi_custom_fields and #__pi_custom_fields_values
@@ -134,7 +134,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			. "\n AND f.id=v.field_id "
 			. "\n ORDER BY f.ordering ASC "
 			);
-			
+
 			$fields = $this->db->loadObjectList();
 			if(empty($fields))
 			{
@@ -149,14 +149,13 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			{
 				$new_cit = false;
 			}
-			
-			
+
+
 			/*
 			if an field not in #__pi_custom_fields_values this field will not save
-			
+
 			*/
 		}
-		//dump($fields);
 		/*
 		old
 		//get fields
@@ -172,7 +171,6 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		. "\nORDER BY ordering ASC"
 		);
 		$fieldPlugins = $this->db->loadResultArray();
-		//dump($fieldPlugins);
 		/*
 		here we need the fieldtypes
 		*/
@@ -188,11 +186,11 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
 		ExtensionManagerHelper::importExtension(null,null,true,null,true);
 		$dispatcher = &JDispatcher::getInstance();
-		
+
 		//ms: if we have an field not in the custom_fields_value (an error on save or manuall delete the field in the rtable) the field will not save so i have add this
 		//$fields = $this->check_fields($fields,$type_id,$item_id);
-		
-		
+
+
 		/*
 			here we need nothing to return
 			we must not use $fieldHtml = & new JObject();
@@ -202,10 +200,10 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		{
 			//first call to the template manager
 			//$dispatcher->trigger('onTemplateItemDelete', array ( 'manager',$item_id,$type_id));
-			
+
 			// the next line is called in pagesanditemshelper
 			// $dispatcher->trigger('onManagerItemtypeItemDelete', array ( $item_type,$item_id,$type_id));
-			
+
 			//if fieldtype got a special function for DELET item do that
 			foreach($fields as $field)
 			{
@@ -218,30 +216,30 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			$this->db->query();
 		}
 		else
-		{ 
-			//save custom itemtype 
+		{
+			//save custom itemtype
 			/*
 			old
-			//get fields 
+			//get fields
 			$this->db->setQuery( "SELECT * "
 			."\nFROM #__pi_custom_fields "
 			."\nWHERE type_id='$type_id' "
 			);
 			$fields = $this->db->loadObjectList();
-			
+
 			//get data-fields
 			$this->db->setQuery( "SELECT id, field_id "
 			. "\nFROM #__pi_custom_fields_values "
 			. "\nWHERE item_id='$item_id' "
 			);
 			$data_fields = $this->db->loadObjectList();
-			
+
 			//make array of fields which have a data field and make fields-datafields array
 			// have we not the $new_or_edit for check ?
 			$new_cit = true;
 			$fields_datafields_array = array();
 			foreach($fields as $field)
-			{	
+			{
 				foreach($data_fields as $field_data)
 				{
 					if($field_data->field_id==$field->id)
@@ -255,10 +253,9 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			*/
 			foreach($fields as $field)
 			{
-				
+
 				//$field_id = $field->id;
 				$field->item_id = $item_id;
-				//dump($field);	
 				//if(!$fields_datafields_array[$field_id])
 				if($new_cit)
 				{
@@ -268,21 +265,21 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				}
 				else
 				{
-					//start update	
+					//start update
 					$dispatcher->trigger('onField_save', array ($field, 'update'));
 					//end update
 				}
 			}//end field loop
-			
+
 			//$modelCustomItemtype->update_content_table_from_custom_itemtype($item_id, $item_type,$new_cit);
 			//TODO
 			//first call Managers
 			//$dispatcher->trigger('onTemplateItemSave', array ('manager',$item_id,$type_id,$item_type,$fields,$new_cit));
 			// the next line is called in pagesanditemshelper
 			//$dispatcher->trigger('onManagerItemtypeItemSave', array ($item_type,$item_id,$type_id,$new_cit,$fields));
-			
+
 			$this->update_content_table_from_custom_itemtype($item_id, $item_type,$new_cit);
-			
+
 			foreach($fields as $field)
 			{
 				//$field_id = $field->id;
@@ -303,7 +300,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		return true;
 	}
 
-	//can we replace the view config_custom_itemtype WITH THIS?
+
 	function onItemtypeDisplay_config_form(&$itemtypeHtml,$item_type)
 	{
 		if($item_type != 'custom')
@@ -312,26 +309,39 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		}
 		$html = '';
 		//$this->getConfig();
-		$html .= 'onlyTest';
+		$html .= '1';
 		//$html .= $editor->display( 'text',  $text , '100%', '550', '85', '20' );
 		$itemtypeHtml->text = $html;
 		return true;
 	}
 
-	function onItemtypeDisplay_item_edit(&$itemtypeHtml,$item_type,$item_id,$text,$itemIntroText,$itemFullText)
+	
+	
+	function onItemtypeDisplay_item_edit(&$itemtypeHtml,$item_type,$item_id,$text,$itemIntroText,$itemFullText,$form)
 	{
 		if(strpos($item_type, 'ustom_') === false)
 		{
 			return false;
 		}
+		//$html = $this->showSlider($item_type,$item_id,$text,$itemIntroText,$itemFullText,$form);
+		$html = $this->displayItemEdit($item_type,$item_id,$text,$itemIntroText,$itemFullText,$form);
 		
+		$itemtypeHtml->text = $itemtypeHtml->text.$html;
+		return true;
+	}
+
+
+	function displayItemEdit($item_type,$item_id,$text,$itemIntroText,$itemFullText,$form)
+	{
+		//load css
+		$document =& JFactory::getDocument();
+		$path = PagesAndItemsHelper::getDirCSS(true);
+		$document->addStylesheet($path.'/customitemtype.css');
 		$html = '';
 		//custom itemtype
-		//$html .= JText::_('PI_EXTENSION_ITEMTYPE_CUSTOM'); //load language ok
-		
 		$pos = strpos($item_type, 'ustom_');
 		$type_id = substr($item_type, $pos+6, strlen($item_type));
-		
+
 		//get fields config
 		$this->db->setQuery( "SELECT * "
 		. "\nFROM #__pi_custom_fields "
@@ -339,7 +349,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		. "\nORDER BY ordering ASC"
 		);
 		$fields = $this->db->loadObjectList();
-		
+
 		//get fields plugin
 		$this->db->setQuery( "SELECT DISTINCT plugin "
 		. "\nFROM #__pi_custom_fields "
@@ -348,7 +358,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		);
 		//$fieldPlugins = $this->db->loadObjectList();
 		$fieldPlugins = $this->db->loadResultArray();
-		
+
 
 		//get fieldsvalues
 		$this->db->setQuery( "SELECT * "
@@ -356,27 +366,71 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		. "\nWHERE item_id='$item_id' "
 		);
 		$fields_data = $this->db->loadObjectList();
-		
+
 		$validation_array = array();
-		
-		
-		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
-		//$extensions = ExtensionHelper::importExtension('fieldtype',null, $fieldPlugins,true,null,true);
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
 		$extensionss = ExtensionFieldtypeHelper::importExtension(null, $fieldPlugins,true,null,true);
 		$dispatcher = &JDispatcher::getInstance();
-		
+
 		/*
 			here we need something to return
 			the fieldtypes will write it in $fieldHtml->text
 		*/
-		$fieldHtml = & new JObject();
+		//$fieldHtml = & new JObject();
+		$fieldHtml = new JObject();
 		$fieldHtml->text = '';
-
+		
+		
+		/*
+			here we set if we show the sliders
+			TODO add params to each custom in #__pi_customitemtypes?
+		*/
+		
+		$table = JTable::getInstance('customitemtypes', 'PagesAndItemsTable');
+		$paramsString ='{"useDefault":"1"}';
+		if($table->load($type_id))
+		{
+			$paramsString = $table->params;
+		}
+		//$params = json_decode()
+		$params = new JRegistry;
+		$params->loadJSON($paramsString);
+		if($params->get('useDefault'))
+		{
+			$configSliderType = $this->params->get('sliderType','3');
+			$configSliderTypeConditions = $this->params->get('sliderTypeConditions','-1');
+		
+			//$configShowSlider = $this->params->get('showSlider','-1');
+			//$configShowSliderField = $this->params->get('showSliderField','1');
+			$showIconField = $this->params->get('showIconField','1');
+			$sliderCookie = $this->params->get('sliderCookie','1');
+			$sliderOpen = $this->params->get('sliderOpen','1');
+		}
+		else
+		{
+			$configSliderType = $params->get('sliderType','3');
+			$configSliderTypeConditions = $params->get('sliderTypeConditions','-1');
+			
+			//$configShowSlider = $params->get('showSlider','-1');
+			//$configShowSliderField = $params->get('showSliderField','1');
+			$showIconField = $params->get('showIconField','1');
+			$sliderCookie = $params->get('sliderCookie','1');
+			$sliderOpen = $params->get('sliderOpen','1');
+		}
+		$counter = 0;
 		foreach($fields as $field)
 		{
+			$counter++;
+		}
 		
+		$showSliderType = !(int)$configSliderType ? 0 : (($counter && $counter > (int)$configSliderTypeConditions) || ((int)$configSliderTypeConditions == -1) ) ? 1 : 0 ;
+		//$showSlider = (int)$configShowSlider ? ((int)$configShowSlider == -1 ? (($counter) ? 1 : 0) : (($counter && $counter > (int)$configShowSlider) ) ? 1 : 0 ) : 0;
+		//$showSliderField = (int)$configShowSliderField ? ((int)$configShowSliderField == -1 ? (($counter) ? 1 : 0) : (($counter && $counter > (int)$configShowSliderField) ) ? 1 : 0 ) : 0;
+		
+		foreach($fields as $field)
+		{
+
 			//explode params
 			$field_params = '';
 			$temp = $field->params;
@@ -391,7 +445,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				}
 				$field_params[$var] = trim($value);
 			}
-				
+
 			//if the field got field data, get values
 			$field_values = '';
 			$new_field = 1;
@@ -405,7 +459,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					$temp = explode( '[;-)# ]', $field_value);
 					for($n = 0; $n < count($temp); $n++)
 					{
-						//list($var,$value) = split('-=-',$temp[$n]); 
+						//list($var,$value) = split('-=-',$temp[$n]);
 						//$field_values[$var] = trim($value);
 						$temp2 = explode('-=-',$temp[$n]);
 						$var = $temp2[0];
@@ -419,16 +473,16 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					break;
 				}
 			}
-			
+
 			$field_id = 'field_values_'.$field->id;
-				
+
 			//comment this come from the fieldtype not longer need ?
 			//get language for fieldtype plugin, defaults to english
 			//$this->controller->get_fieldtype_language($field->plugin);
-			
-			
+
+
 			$validation_type = 0;
-			
+
 			//check for validation param
 			if($this->check_if_field_param_is_present($field_params, 'validation'))
 			{
@@ -440,10 +494,10 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				$temp = array($field->plugin, $field_id, $validation_type, $alert_message, $field->name);
 				array_push($validation_array, $temp);
 			}
-				
+
 			$field->item_id = $item_id;
-				
-			$results = $dispatcher->trigger('onDisplay_item_edit', array (&$fieldHtml,$field, $field_params,$field_values,$field_value, $new_field, $field_id));
+
+			$results = $dispatcher->trigger('onDisplay_item_edit', array (&$fieldHtml,$field, $field_params,$field_values,$field_value, $new_field, $field_id,$showSliderType,$configSliderType,$showIconField,$sliderCookie,$sliderOpen));
 			/*
 			if($results[0] || $results[1] )
 			{
@@ -451,16 +505,89 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			*/
 		}//end loop fields
 		
-		/*
-		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
-		require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
-		ExtensionManagerHelper::importExtension(null,null,true,null,true);
-		$htmlelement->html = '';
-		$managerItemtypeItemEdit->html = '';
-		$dispatcher->trigger('onGetManagerItemtypeItemEdit',array(&$managerItemtypeItemEdit,$item_type,$type_id,$item_id,$text,$itemIntroText,$itemFullText));
-		$html .= $managerItemtypeItemEdit->html;
-		*/	
+		
+		//$showSlider must change to $showSliderType && $configSliderType != 2 //($configSliderType == 1 || $configSliderType == 3 || $configSliderType == 4
+		$html .= '<fieldset class="adminform'.(($showSliderType && ($configSliderType != 2 && $configSliderType != 4)) ? ' customItemtypeSlider' : '').'" id="pi_content_pane">';
+		
+		$description = JText::_($form->getFieldAttribute('articletext','label')).' ['.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE_1').': '.JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE').']';
+		
+		if(!$showSliderType || $configSliderType == 4)
+		{
+			$html .= '<legend id="toggle_content" class="hasTip" title="'.JText::_($form->getFieldAttribute('articletext','label')).'::'.JText::_($form->getFieldAttribute('articletext','description')).'">'.JText::_($form->getFieldAttribute('articletext','label'));
+			$html .= ' ['.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE_1').': '.JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE').']';
+			$html .= '</legend>';
+			if($configSliderType == 4)
+			{
+				$html .= JHtml::_('sliders.start','custom_sliders', ($sliderCookie ? array('useCookie'=>1) : array('useCookie'=>0,'startOffset'=>($sliderOpen ? 0 : -1))) );
+			}
+		}
+		else
+		{
+/*
+COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_ONE="Zeigt einen Reiter (Slider) um alle Felder."
+;<!-- one Slider around the fields only one panel-->
+;slider
+;	panel
+;		fields
+
+COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_TWO="Zeigt einen Reiter (Slider) um jedes einzelne Feld"
+;<!-- one Slider around each field and one Panel each Fields-->
+;each Field
+;slider
+;	panel
+; 		field
+
+COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_THREE="Zeigt einen Reiter (Slider) um alle Felder und einen Reiter (Slider) um jedes einzelne Feld"
+;<!-- one Slider around the fields and each fields and one Panel each Fields-->
+;slider
+;	panel
+;		each Field
+;		slider
+;			panel
+; 				field
+
+COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_FOUR="Zeigt einen Reiter (Slider) um alle Felder und eine Tafel (Panel) um jedes einzelne Feld. Immer nur eine Tafel (Panel) offen"
+;</option><!-- one Slider around the fields and one panel around each field -->
+;slider
+;	each Field
+;	panel
+;		field
+
+????
+COM_PAGESANDITEMS_CUSTOMITEMTYPE_SLIDER_TYPE_Five="Zeigt einen Reiter (Slider) und einen Reiter (Slider) um jedes einzelne Feld um alle Felder und eine Tafel (Panel) um jedes einzelne Feld. Immer nur eine Tafel (Panel) offen"
+;</option><!-- one Slider around the fields and one panel around each field -->
+;slider
+;	panel
+;		slider
+;		each Field
+;		panel
+;			field
+		*/			
+			if($configSliderType != 2)
+			{
+				$html .= JHtml::_('sliders.start','custom_sliders', ($sliderCookie ? array('useCookie'=>1) : array('useCookie'=>0,'startOffset'=>($sliderOpen ? 0 : -1))) );
+				//$html .= JHtml::_('sliders.start','custom_sliders', array('useCookie'=>0,'startOffset'=>($sliderOpen ? 0 : -1)) );
+			}
+				if($configSliderType == 1 || $configSliderType == 3)
+				{
+					$html .=  JHtml::_('sliders.panel',$description, 'customfields');
+				}
+
+		}
+
 		$html .= $fieldHtml->text;
+	
+		if($showSliderType && $configSliderType != 2)
+		{
+			$html .= JHtml::_('sliders.end');
+		}
+		
+		$html .= '</fieldset>';
+		
+
+		
+		
+		
 		//make javascript formvalidation script
 		$html .= "<script language=\"javascript\"  type=\"text/javascript\">\n";
 		$html .= "<!--\n";
@@ -496,10 +623,268 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		//close javascript
 		$html .= "//-->\n";
 		$html .= "</script>\n";
+
+		//$itemtypeHtml->text = $itemtypeHtml->text.$html;
+		return $html;
 		
 		$itemtypeHtml->text = $itemtypeHtml->text.$html;
 		return true;
 	}
+
+	//can remove
+	function oldShowSlider($item_type,$item_id,$text,$itemIntroText,$itemFullText,$form)
+	{
+		//load css
+		$document =& JFactory::getDocument();
+		$path = PagesAndItemsHelper::getDirCSS(true);
+		$document->addStylesheet($path.'/customitemtype.css');
+		$html = '';
+		//custom itemtype
+		//$html .= JText::_('PI_EXTENSION_ITEMTYPE_CUSTOM'); //load language ok
+
+		$pos = strpos($item_type, 'ustom_');
+		$type_id = substr($item_type, $pos+6, strlen($item_type));
+
+		//get fields config
+		$this->db->setQuery( "SELECT * "
+		. "\nFROM #__pi_custom_fields "
+		. "\nWHERE type_id='$type_id' "
+		. "\nORDER BY ordering ASC"
+		);
+		$fields = $this->db->loadObjectList();
+
+		//get fields plugin
+		$this->db->setQuery( "SELECT DISTINCT plugin "
+		. "\nFROM #__pi_custom_fields "
+		. "\nWHERE type_id='$type_id' "
+		. "\nORDER BY ordering ASC"
+		);
+		//$fieldPlugins = $this->db->loadObjectList();
+		$fieldPlugins = $this->db->loadResultArray();
+
+
+		//get fieldsvalues
+		$this->db->setQuery( "SELECT * "
+		. "\nFROM #__pi_custom_fields_values "
+		. "\nWHERE item_id='$item_id' "
+		);
+		$fields_data = $this->db->loadObjectList();
+
+		$validation_array = array();
+
+
+		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
+		//$extensions = ExtensionHelper::importExtension('fieldtype',null, $fieldPlugins,true,null,true);
+		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
+		require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
+		$extensionss = ExtensionFieldtypeHelper::importExtension(null, $fieldPlugins,true,null,true);
+		$dispatcher = &JDispatcher::getInstance();
+
+		/*
+			here we need something to return
+			the fieldtypes will write it in $fieldHtml->text
+		*/
+		//$fieldHtml = & new JObject();
+		$fieldHtml = new JObject();
+		$fieldHtml->text = '';
+		
+		
+		/*
+			here we set if we show the sliders
+			TODO add params to each custom in #__pi_customitemtypes?
+		*/
+		
+		//$type_id
+		//$params = 
+		$table = JTable::getInstance('customitemtypes', 'PagesAndItemsTable');
+		$paramsString ='{"useDefault":"1"}';
+		if($table->load($type_id))
+		{
+			$paramsString = $table->params;
+		}
+		//$params = json_decode()
+		$params = new JRegistry;
+		$params->loadJSON($paramsString);
+		if($params->get('useDefault'))
+		{
+			$configShowSlider = $this->params->get('showSlider','-1');
+			$configShowSliderField = $this->params->get('showSliderField','1');
+			$showIconField = $this->params->get('showIconField','1');
+			$sliderCookie = $this->params->get('sliderCookie','1');
+			$sliderOpen = $this->params->get('sliderOpen','1');
+		}
+		else
+		{
+			$configShowSlider = $params->get('showSlider','-1');
+			$configShowSliderField = $params->get('showSliderField','1');
+			$showIconField = $params->get('showIconField','1');
+			$sliderCookie = $params->get('sliderCookie','1');
+			$sliderOpen = $params->get('sliderOpen','1');
+		}
+		$counter = 0;
+		foreach($fields as $field)
+		{
+			$counter++;
+		}
+		
+		$showSlider = (int)$configShowSlider ? ((int)$configShowSlider == -1 ? (($counter) ? 1 : 0) : (($counter && $counter > (int)$configShowSlider) ) ? 1 : 0 ) : 0;
+		$showSliderField = (int)$configShowSliderField ? ((int)$configShowSliderField == -1 ? (($counter) ? 1 : 0) : (($counter && $counter > (int)$configShowSliderField) ) ? 1 : 0 ) : 0;
+		
+		foreach($fields as $field)
+		{
+
+			//explode params
+			$field_params = '';
+			$temp = $field->params;
+			$temp = explode( '[;-)# ]', $temp);
+			for($n = 0; $n < count($temp); $n++){
+				$temp2 = explode('-=-',$temp[$n]);
+				$var = $temp2[0];
+				$value = '';
+				if(count($temp2)==2)
+				{
+					$value = $temp2[1];
+				}
+				$field_params[$var] = trim($value);
+			}
+
+			//if the field got field data, get values
+			$field_values = '';
+			$new_field = 1;
+			$field_value = '';
+			foreach($fields_data as $field_data)
+			{
+				if($field_data->field_id==$field->id)
+				{
+					//explode values
+					$field_value = $field_data->value;
+					$temp = explode( '[;-)# ]', $field_value);
+					for($n = 0; $n < count($temp); $n++)
+					{
+						//list($var,$value) = split('-=-',$temp[$n]);
+						//$field_values[$var] = trim($value);
+						$temp2 = explode('-=-',$temp[$n]);
+						$var = $temp2[0];
+						$value = '';
+						if(count($temp2)==2){
+							$value = $temp2[1];
+						}
+						$field_values[$var] = trim($value);
+					}
+					$new_field = 0;
+					break;
+				}
+			}
+
+			$field_id = 'field_values_'.$field->id;
+
+			//comment this come from the fieldtype not longer need ?
+			//get language for fieldtype plugin, defaults to english
+			//$this->controller->get_fieldtype_language($field->plugin);
+
+
+			$validation_type = 0;
+
+			//check for validation param
+			if($this->check_if_field_param_is_present($field_params, 'validation'))
+			{
+				$validation_type = $field_params['validation'];
+			}
+			if($validation_type)
+			{
+				$alert_message = $field_params['alert_message'];
+				$temp = array($field->plugin, $field_id, $validation_type, $alert_message, $field->name);
+				array_push($validation_array, $temp);
+			}
+
+			$field->item_id = $item_id;
+
+			$results = $dispatcher->trigger('onDisplay_item_edit', array (&$fieldHtml,$field, $field_params,$field_values,$field_value, $new_field, $field_id,$showSlider,$showSliderField,$showIconField,$sliderCookie,$sliderOpen));
+			/*
+			if($results[0] || $results[1] )
+			{
+			}
+			*/
+		}//end loop fields
+		
+		
+		$html .= '<fieldset class="adminform'.($showSlider ? ' customItemtypeSlider' : '').'" id="pi_content_pane">';
+		
+		$description = JText::_($form->getFieldAttribute('articletext','label')).' ['.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE_1').': '.JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE').']';
+		
+		if(!$showSlider)
+		{
+			$html .= '<legend id="toggle_content" class="hasTip" title="'.JText::_($form->getFieldAttribute('articletext','label')).'::'.JText::_($form->getFieldAttribute('articletext','description')).'">'.JText::_($form->getFieldAttribute('articletext','label'));
+			$html .= ' ['.JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_ITEMTYPE_1').': '.JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE').']';
+			$html .= '</legend>';
+		}
+		
+		if($showSlider)
+		{
+			$html .= JHtml::_('sliders.start','custom_sliders', ($sliderCookie ? array('useCookie'=>1) : array('useCookie'=>0,'startOffset'=>($sliderOpen ? 0 : -1))) );
+				$html .=  JHtml::_('sliders.panel',$description, 'customfields');
+		}
+		
+		
+		$html .= $fieldHtml->text;
+	
+		if($showSlider)
+		{
+			$html .= JHtml::_('sliders.end');
+		}
+		
+		$html .= '</fieldset>';
+		
+
+		
+		
+		
+		//make javascript formvalidation script
+		$html .= "<script language=\"javascript\"  type=\"text/javascript\">\n";
+		$html .= "<!--\n";
+		$html .= "function validate_custom_itemtype_fields(){\n\n";
+		$html .= "is_valid = true;\n";
+		for($n = 0; $n < count($validation_array); $n++)
+		{
+			$html .= 'field_id=\''.$validation_array[$n][1].'\';'."\n";
+			$html .= 'field_name=\''.addslashes($validation_array[$n][4]).'\';'."\n";
+			$html .= 'alert_message=\''.addslashes($validation_array[$n][3]).'\';'."\n";
+			if(file_exists(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.$validation_array[$n][2].'.js'))
+			{
+				/*
+				must include other way
+				*/
+				$html .= JFile::read(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.$validation_array[$n][2].'.js');
+				//$html .= include(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.$validation_array[$n][2].'.js');
+			}
+			elseif(file_exists(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.'validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js'))
+			{
+				$html .= JFile::read(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.'validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js');
+				//$html .= include(dirname(__FILE__).'/../../fieldtypes'.DS.$validation_array[$n][0].DS.'validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js');
+			}
+			elseif(file_exists(JPATH_COMPONENT_ADMINISTRATOR.'/javascript/validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js'))
+			{
+				$html .= JFile::read(JPATH_COMPONENT_ADMINISTRATOR.'/javascript/validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js');
+				//$html .= include(JPATH_COMPONENT_ADMINISTRATOR.'/javascript/validation_'.$validation_array[$n][0].'_'.$validation_array[$n][2].'.js');
+			}
+			$html .= "\n\n";
+		}
+		$html .= "return is_valid;\n";
+		$html .= "};\n";
+		//close javascript
+		$html .= "//-->\n";
+		$html .= "</script>\n";
+
+		//$itemtypeHtml->text = $itemtypeHtml->text.$html;
+		return $html;
+		
+		$itemtypeHtml->text = $itemtypeHtml->text.$html;
+		return true;
+	}
+
+
+
+
 
 	//here we will set the $article_text if trigger, normally it comes from the fieldtype pi_fish
 	function onUpdate_content_table_from_custom_itemtype(&$article_text,$item_id, $item_type,$new_item=false,$row = false, $fields = false, $into=false, $language=false)
@@ -526,15 +911,15 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			$lang = &JFactory::getLanguage();
 			$lang->setLanguage($langDefault);
 		}
-		
+
 		//echo $article_text['introtext'];
 		return true;
-		
+
 	}
 
 	function update_content_table_from_custom_itemtype($item_id, $item_type,$new_item=false,$row = false, $fields = false, $into=false, $language=false)
 	{
-		
+
 		//get type_id
 		$pos = strpos($item_type, 'ustom_');
 		$type_id = substr($item_type, $pos+6, strlen($item_type));
@@ -557,7 +942,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		if(!$row){
 			//delete the item from the item_index
 			$database->setQuery("DELETE FROM #__pi_item_index WHERE item_id='$item_id'");
-			$database->query();			
+			$database->query();
 			//don't go any further
 			return true;
 		}
@@ -573,12 +958,12 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			. "\n ORDER BY f.ordering ASC "
 			);
 			$fields = $this->db->loadObjectList();
-			
+
 			//ms: if we have an field not in the custom_fields_value (an error on save or manuall delete the field in the table) the field will not save so i have add this
 			//$fields = $this->check_fields($fields,$type_id,$item_id);
 		}
 		//END CHANGE MS NOVEMBER 2010
-				
+
 		//get template
 		/*
 		$this->db->setQuery( "SELECT template_intro, template_full, read_more, editor_id, html_after, html_before "
@@ -591,18 +976,18 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		$template = $this->db->loadObject();
 		*/
 		/*
-		IDEA 
+		IDEA
 		we make an extensions/htmls/cci_template/templates who manage templates
 		if add an template first the standard template (is $template) will add with the field default = 1
 		all other become default = 0
-		
+
 		then we can all other make as in the normal config_customitemtype
 		after safe we add an special field to the $item_type or make an new extension type template
-		
-		this can work with conditions ore can result in item_edit with an select for the template_id/ name 
-		
+
+		this can work with conditions ore can result in item_edit with an select for the template_id/ name
+
 		and is this field avaible we make:
-		
+
 		first an check for the template_id
 		*/
 		/*
@@ -637,7 +1022,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			$dispatcher = &JDispatcher::getInstance();
 			//$dispatcher->trigger('onGetTemplate', array (&$template_id,'manager',$type_id));
 			$dispatcher->trigger('onGetManagerItemtypeTemplate', array (&$template,$type_id,$item_id, $item_type,$new_item,$row, $fields, $into, $language));
-			
+
 			/*
 			//get template
 			$this->db->setQuery( "SELECT * "
@@ -661,15 +1046,15 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			$template = $this->db->loadObject();
 		}
 
-		
-		
+
+
 		$template_intro = $template->template_intro;
 		$template_full = $template->template_full;
 		$read_more = $template->read_more;
 		$editor_id = $template->editor_id;
 		$html_after = $template->html_after;
 		$html_before = $template->html_before;
-		
+
 		//function render_html_from_custom_itemtype_template($template, $fields, $row, $intro_or_full, $readmore_type=0, $editor_id=0, $html_after='', $html_before='', $language = null )
 		$introtext = $this->render_html_from_custom_itemtype_template($template_intro, $fields, $row, 'intro', $read_more, $editor_id, $html_after, $html_before, $language);
 		//exit;
@@ -681,7 +1066,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			$fulltext_temp = $this->render_html_from_custom_itemtype_template($template_full, $fields, $row, 'full', 0, 0, '', '',$language);
 			$fulltext_temp2 = str_replace(' ','',$fulltext_temp);
 			$length_with_content = strlen($fulltext_temp2);
-			
+
 			$full_template_temp = $template_full;
 			$template_array = explode('{field_',$full_template_temp);
 			foreach($template_array as $template_chunk){
@@ -696,13 +1081,13 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					$full_template_temp2 .= $template_chunk;
 				}
 			}
-			
+
 			$full_template_temp2 = str_replace(' ','',$full_template_temp2);
 			$length_without_content = strlen($full_template_temp2);
-			
+
 			//if($length_with_content==$length_without_content){
 			if($length_with_content==$length_without_content || $length_without_content==0){
-				//there is no content in fulltext 
+				//there is no content in fulltext
 				$fulltext = '';
 			}else{
 				//there is content in fulltext
@@ -715,7 +1100,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			//normal read more
 			$fulltext = $this->render_html_from_custom_itemtype_template($template_full, $fields, $row, 'full', $read_more, 0, '', '',$language);
 		}
-		
+
 		//CHANGE MS NOVEMBER 2010
 		if(!$into)
 		{
@@ -731,8 +1116,8 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			return array("introtext"=>$introtext,"fulltext"=>$fulltext);
 		}
 		//END CHANGE MS NOVEMBER 2010
-		
-		
+
+
 		//ADD MS 18.09.2009
 //		$fields = $this->db->loadObjectList();
 		if(!$new_item && !$into){
@@ -762,7 +1147,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			/*
 			todo must rewrite
 			*/
-			
+
 			//get fields plugin
 			$this->db->setQuery( "SELECT DISTINCT plugin "
 			. "\nFROM #__pi_custom_fields "
@@ -788,7 +1173,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
 			$fieldtypes = ExtensionFieldtypeHelper::importExtension(null, $fieldPlugins,true,null,true);
 			$dispatcher = &JDispatcher::getInstance();
-			
+
 			foreach($fields as $field)
 			{
 				//start update
@@ -797,14 +1182,14 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		}
 		//end field loop MS
 		//ADD MS 18.09.2009 END
-		
+
 	}
-	
-	
+
+
 	function render_html_from_custom_itemtype_template($template, $fields, $row, $intro_or_full, $readmore_type=0, $editor_id=0, $html_after='', $html_before='', $language = null )
 	{
 		$read_more_link_defined = $this->check_for_read_more_link($fields, $editor_id);
-				
+
 		//no template specified, so render default template
 		if(!$template)
 		{
@@ -819,7 +1204,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					$template .= $class_object->template_special_output($fields);
 				}
 			}
-			
+
 			//if(!$template_spezial)
 			if(!$template)
 			{
@@ -835,7 +1220,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			//ADD MS
 			//}
 		}
-		
+
 		$html = addslashes($template);
 		//Deal with readmore type 3
 		if($readmore_type=='3')
@@ -922,12 +1307,12 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				}
 			}
 		}
-		
+
 		$replaceRegex=array();
 		$replaceValue=array();
 		/*
 		COMMENT MS do not know why but if the next line here in the fieldtype calendar the summertime will not calculate (only on render_field_output).
-		
+
 		if (! empty($row))
 		{
 			$replaceRegex[]='/{article_id}/is';
@@ -937,31 +1322,31 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			//$replaceRegex[]='/{article_link}/is';
 			//$replaceValue[]=JRoute::_('index.php?option=com_content&view=article&id='.$row->id);
 			$replaceRegex[]='/{article_created}/is';
-			
+
 			//format
 			$config = PagesAndItemsHelper::getConfig();
 			//$format = $config['date_format'];
-			
+
 			$format = 'Y-m-d H:i:s';
-			
+
 			$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 			require_once($path.DS.'includes'.DS.'date.php');
 			$app =& JFactory::getApplication();
 			//$offset = $app->getCfg('offset');
-			
-			
+
+
 			$date = new PagesAndItemsDate($row->created);
 			$offset = $app->getCfg('offset');
-		
+
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
 			{
 				$offset = $offset +1;
 			}
 			$date->setOffset($offset);
-			
+
 			$created = $date->format($format,true);
-			
+
 			$date = new PagesAndItemsDate($row->modified);
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
@@ -970,7 +1355,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			}
 			$date->setOffset($offset);
 			$modified = $date->format($format,true);
-			
+
 			$date = new PagesAndItemsDate($row->publish_up);
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
@@ -978,7 +1363,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				$offset = $offset +1;
 			}
 			$date->setOffset($offset);
-			
+
 			$publish_up = $date->format($format,true);
 			unset($date);
 			//$replaceValue[]=$row->created;
@@ -1011,13 +1396,15 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 				for ($n = 1; $n <= 5; $n++){
 					$field->size = $n;
 					$value=$this->get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type, $editor_id,$language);
-					$replaceRegex[]="/{".$field_tag." size=".$n."}/is"; 
+					$replaceRegex[]="/{".$field_tag." size=".$n."}/is";
 					$replaceValue[] = $value;
 					$field->output = 'alt';
 					$value=$this->get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type, $editor_id,$language);
-					$replaceRegex[]="/{".$field_tag." size=".$n." output=alt}/is"; 
+					$replaceRegex[]="/{".$field_tag." size=".$n." output=alt}/is";
 					$replaceValue[] = $value;
 				}
+				$replaceRegex[]="/{".$field_tag."}/is";
+				$replaceValue[] = $value;
 			}else{
 				$value=$this->get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type, $editor_id,$language);
 				if (empty($field->value)){
@@ -1031,12 +1418,12 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 					$replaceRegex[]="/{\/?if-not-empty_".$field_tag."}/is";
 					$replaceValue[] = '';
 				}
-				$replaceRegex[]="/{".$field_tag."}/is"; 
+				$replaceRegex[]="/{".$field_tag."}/is";
 				$replaceValue[] = $value;
-				
+
 			}
 		}
-		
+
 		if (! empty($row))
 		{
 			$replaceRegex[]='/{article_id}/is';
@@ -1046,37 +1433,37 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			//$replaceRegex[]='/{article_link}/is';
 			//$replaceValue[]=JRoute::_('index.php?option=com_content&view=article&id='.$row->id);
 			$replaceRegex[]='/{article_created}/is';
-			
+
 			//format
 			$config = PagesAndItemsHelper::getConfig();
 			//$format = $config['date_format'];
-			
+
 			$format = 'Y-m-d H:i:s';
-			
+
 			$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 			require_once($path.DS.'includes'.DS.'date.php');
 			$app =& JFactory::getApplication();
 			//$offset = $app->getCfg('offset');
-			
-			
+
+
 			$date = new PagesAndItemsDate($row->created);
 			$offset = $app->getCfg('offset');
-		
+
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
 			{
 				$offset = $offset +1;
 			}
 			$date->setOffset($offset);
-			
-			$created = $date->format($format,true);
-			
-			//$createdX = JHTML::_('date', $row->created, JText::_('DATE_FORMAT_LC2'),$offset);
-			
-			//$config =& JFactory::getConfig();
-			
 
-			
+			$created = $date->format($format,true);
+
+			//$createdX = JHTML::_('date', $row->created, JText::_('DATE_FORMAT_LC2'),$offset);
+
+			//$config =& JFactory::getConfig();
+
+
+
 			$date = new PagesAndItemsDate($row->modified);
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
@@ -1085,7 +1472,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			}
 			$date->setOffset($offset);
 			$modified = $date->format($format,true);
-			
+
 			$date = new PagesAndItemsDate($row->publish_up);
 			$summertime = date( 'I', $date->toUnix() );
 			if($summertime)
@@ -1094,7 +1481,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			}
 			$date->setOffset($offset);
 			$publish_up = $date->format($format,true);
-			
+
 			//$replaceValue[]=$row->created;
 			$replaceValue[]=$created;
 			$replaceRegex[]='/{article_modified}/is';
@@ -1117,12 +1504,12 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 			}
 			$replaceValue[] = $rating_ave;
 		}
-		
+
 		$html=preg_replace($replaceRegex, $replaceValue, $html);
-		
+
 		return $html;
 	}
-	
+
 	function check_for_read_more_link($fields, $editor_id)
 	{
 		$is_defined = 0;
@@ -1138,7 +1525,7 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		}
 		return $is_defined;
 	}
-	
+
 	function get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type=0, $editor_id=0,$language)
 	{
 		//explode params
@@ -1147,24 +1534,24 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		$temp = $field->params;
 		$temp = explode( '[;-)# ]', $temp);
 		for($n = 0; $n < count($temp)-1; $n++){
-			list($var,$value) = split('-=-',$temp[$n]); 
-			$field_params[$var] = trim($value); 
+			list($var,$value) = split('-=-',$temp[$n]);
+			$field_params[$var] = trim($value);
 		}
-					
+
 		//explode values
 		$temp = $field->value;
 		$temp = explode('[;-)# ]', $temp);
 		for($n = 0; $n < count($temp)-1; $n++){
-			list($var,$value) = split('-=-',$temp[$n]); 
-			$values[$var] = trim($value); 
+			list($var,$value) = split('-=-',$temp[$n]);
+			$values[$var] = trim($value);
 		}
-		
+
 		//get output
 		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
 		//$fieldtypes = ExtensionHelper::importExtension('fieldtype',null, $field->plugin,true,null,true);
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
-		
+
 		$fieldtypes = ExtensionFieldtypeHelper::importExtension(null, $field->plugin,true,null,true);
 
 		$dispatcher = &JDispatcher::getInstance();
@@ -1172,11 +1559,10 @@ class PagesAndItemsExtensionItemtypeCustom extends PagesAndItemsExtensionItemtyp
 		$results = $dispatcher->trigger('onRender_field_output', array (&$html,$field, $intro_or_full, $readmore_type, $editor_id,$language));
 		//fix old editors html
 		$html = str_replace('<br>','<br />', $html);
-		
-		
+
+
 		return $html;
-	}	
+	}
 
 }
-
 ?>

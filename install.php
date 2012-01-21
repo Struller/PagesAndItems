@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems
 * @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -38,8 +38,8 @@ if($max_memory){
 	}
 }
 ignore_user_abort(true);
-		
-		
+
+
 $version = new JVersion();
 $joomlaVersion = $version->getShortVersion();
 $JVersion = '1.5';
@@ -63,7 +63,7 @@ if(!isset($parent))
 /*
 // Joomla! 1.6
 // see install.script.php
-if( $joomlaVersion >= '1.6') && !defined('COM_PAGESANDITEMS_INSTALL') ) 
+if( $joomlaVersion >= '1.6') && !defined('COM_PAGESANDITEMS_INSTALL') )
 {
 	return;
 }
@@ -74,40 +74,9 @@ else
 }
 */
 
-//$nPaths = $this->_paths;
 $status = new JObject();
 
-//in the function com_install() we return nothing so we can all in function com_install() run here
-//function com_install()
-//{
-
 $database = JFactory::getDBO();
-
-	/*
-	//table for downloads
-	$database->setQuery("SHOW COLUMNS FROM #__pi_downloads ");
-	$columns = $database->loadResultArray();
-	if(!in_array('state', $columns))
-	{
-		$database->setQuery("ALTER TABLE #__pi_downloads ADD `state` TINYINT( 3 ) NOT NULL DEFAULT '1'");
-		$database->query();
-	}
-
-	
-	//table for downloads
-	$database->setQuery("CREATE TABLE IF NOT EXISTS #__pi_downloads (
-  `id` int(11) NOT NULL auto_increment,
-   `file_name` tinytext NOT NULL,
-  `access` tinyint(4) NOT NULL default '0',
-  `type` tinytext NOT NULL,
-  `hits` int(11) NOT NULL,
-  PRIMARY KEY  (`id`)
-)");
-	$database->query();
-
-	*/
-
-
 
 /*
 *********
@@ -122,19 +91,20 @@ $database = JFactory::getDBO();
   `read_more` varchar(1) NOT NULL,
   `template_intro` text NOT NULL,
   `template_full` text NOT NULL,
-  `editor_id` INT NOT NULL,  
+  `editor_id` INT NOT NULL,
   `html_after` text NOT NULL,
   `html_before` text NOT NULL,
   `checked_out` int(10) unsigned NOT NULL default '0',
   `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `state` TINYINT( 3 ) NOT NULL DEFAULT '1',
+  `params` TEXT NOT NULL ,
   PRIMARY KEY  (`id`)
 )");
-	
+
 	$database->query();
-	
+
 	$database->setQuery("SHOW COLUMNS FROM #__pi_customitemtypes");
-	$columns = $database->loadResultArray();	
+	$columns = $database->loadResultArray();
 	if(!in_array('editor_id', $columns)){
 		$database->setQuery("ALTER TABLE #__pi_customitemtypes ADD `editor_id` INT NOT NULL AFTER `template_full`");
 		$database->query();
@@ -157,13 +127,17 @@ $database = JFactory::getDBO();
 		$database->setQuery("ALTER TABLE #__pi_customitemtypes ADD `checked_out` int(10) unsigned NOT NULL default '0'");
 		$database->query();
 	}
-	
+
 	if(!in_array('checked_out_time', $columns))
 	{
 		$database->setQuery("ALTER TABLE #__pi_customitemtypes ADD `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00'");
 		$database->query();
 	}
-	
+	if(!in_array('params', $columns))
+	{
+		$database->setQuery("ALTER TABLE #__pi_customitemtypes ADD `params` text NOT NULL");
+		$database->query();
+	}
 /*
 * table for custom itemtypes
 *******
@@ -182,7 +156,7 @@ $database = JFactory::getDBO();
   `name` tinytext NOT NULL,
   `type_id` int(11) NOT NULL,
   `plugin` tinytext NOT NULL,
-  `ordering` int(11) NOT NULL,  
+  `ordering` int(11) NOT NULL,
   `params` text NOT NULL,
   `checked_out` int(10) unsigned NOT NULL default '0',
   `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -203,7 +177,7 @@ $database = JFactory::getDBO();
 		$database->setQuery("ALTER TABLE #__pi_custom_fields ADD `checked_out` int(10) unsigned NOT NULL default '0'");
 		$database->query();
 	}
-	
+
 	if(!in_array('checked_out_time', $columns))
 	{
 		$database->setQuery("ALTER TABLE #__pi_custom_fields ADD `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00'");
@@ -247,7 +221,7 @@ $database = JFactory::getDBO();
 		$database->setQuery("ALTER TABLE #__pi_custom_fields_values ADD `checked_out` int(10) unsigned NOT NULL default '0'");
 		$database->query();
 	}
-	
+
 	if(!in_array('checked_out_time', $columns))
 	{
 		$database->setQuery("ALTER TABLE #__pi_custom_fields_values ADD `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00'");
@@ -291,7 +265,7 @@ $database->query();
 		$database->setQuery("ALTER TABLE #__pi_item_index ADD `checked_out` int(10) unsigned NOT NULL default '0'");
 		$database->query();
 	}
-	
+
 	if(!in_array('checked_out_time', $columns))
 	{
 		$database->setQuery("ALTER TABLE #__pi_item_index ADD `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00'");
@@ -333,7 +307,7 @@ $database->query();
 		$database->setQuery("ALTER TABLE #__pi_item_other_index ADD `checked_out` int(10) unsigned NOT NULL default '0'");
 		$database->query();
 	}
-	
+
 	if(!in_array('checked_out_time', $columns))
 	{
 		$database->setQuery("ALTER TABLE #__pi_item_other_index ADD `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00'");
@@ -361,7 +335,7 @@ $database->query();
 	$database->setQuery("CREATE TABLE IF NOT EXISTS #__pi_config (
   `id` varchar(255) NOT NULL,
   `config` text NOT NULL,
-  PRIMARY KEY  (`id`)  
+  PRIMARY KEY  (`id`)
 )");
 	$database->query();
 
@@ -377,13 +351,38 @@ $database->query();
 	{
 		$pirow = $rows[0];
 		$pi_config = $pirow->id;
+		//$pi_config = $pirow->config; ??
 	}
-	
+
 	if($pi_config=='')
-	{		
-		$configuration = 'language=en-GB
+	{
+		/*
+		change for menu_types id
+		and set all avaible menutypes in pi config
+		*/
+			$database->setQuery("SELECT title, menutype,id FROM #__menu_types ORDER BY title ASC"  );
+			//$menutypesDb = $db->loadObjectList();
+			$menutypes = array();
+			foreach($database->loadObjectList() as $menutype)
+			{
+				$menutypes[] = $menutype->menutype.';'.$menutype->title; //.';'.$menutype->id;
+			
+			}
+			$menus = implode(',',$menutypes);
+		
+/*
+				$configuration = 'showSlider=-1
+enabled_view_category=false
 use_pi_frontend_editting=true
 menus=mainmenu;Main Menu
+*/		
+		
+		//language=en-GB
+		$configuration = 'useCheckedOut=false
+showSlider=-1
+enabled_view_category=false
+use_pi_frontend_editting=true
+menus='.$menus.'
 cit=1
 item_props_publish=true
 item_show_frontpage_option=true
@@ -474,27 +473,22 @@ page_props_browserNav=true
 page_props_home=true
 page_props_language=true
 page_props_template_style_id=true
-
 page_props_linktype_options=true
 page_props_link_title_attri=true
 page_props_link_css=true
 page_props_link_image=true
 page_props_add_title=true
-
 page_props_metadata_options=true
 page_props_meta_desc=true
 page_props_meta_keys=true
 page_props_robots=true
 page_props_secure=true
-
 page_props_page_display_options=true
 page_props_browser_page=true
 page_props_show_page_heading=true
 page_props_page_heading=true
 page_props_page_class=true
-
 page_props_modules=true
-
 page_props_required_settings=true
 page_props_category_options=true
 page_props_cat_title=true
@@ -547,16 +541,43 @@ page_new_publish_category=1
 page_new_publish_menu=true
 page_new_access_menu=0
 page_new_access_category=0
-itemtypes=html,other_item,text
+itemtypes=
 version_checker=true
-multigroup_access_requirement=one_group
-permissions=6_1,6_2,6_3,6_4,7_1,7_2,7_3,7_4,3_3,4_3,4_4,5_3,5_4,8_1,8_2,8_3,8_4
 page_trash_cat=
 page_trash_items=
 page_delete_cat=
 page_delete_items=
 ';
+//itemtypes=html,other_item,text is replace with itemtypes= only custem_* will add later
+
+		//make sure no empty lines
+		$configParams = array();
+		$configurationParams = explode( "\n", $configuration);
+		for($n = 0; $n < count($configurationParams); $n++)
+		{
+			$var = '';
+			$temp = explode('=',$configurationParams[$n]);
+			$var = trim($temp[0]);
+			$value = '';
+			if(count($temp)==2){
+				$value = trim($temp[1]);
+				if($value=='false'){
+					$value = false;
+				}
+				if($value=='true'){
+					$value = true;
+				}
+			}
+			if($var != '')
+			{
+				$configParams[] = $var.'='.$value;
+			}
+		}
 		
+		
+		$configuration = implode( "\n", $configParams);
+//multigroup_access_requirement=one_group
+//permissions=6_1,6_2,6_3,6_4,7_1,7_2,7_3,7_4,3_3,4_3,4_4,5_3,5_4,8_1,8_2,8_3,8_4
 		//insert fresh config
 		//QUESTION want use JSON?
 		//ce: maybe later, lets focus on getting everything working first.
@@ -565,14 +586,70 @@ page_delete_items=
 	}
 	else
 	{
-		
-		$config_needs_updating = 0;	
+
+		$config_needs_updating = 0;
 		$updated_config = $pirow->config;
-		
-		//added in version 2.0.0
-		if(!strpos($pirow->config, 'permissions=')){			
+
+
+		//added in version 2.1.0 | 2.0.2
+		/*
+		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'helpers'.DS.'pagesanditems.php')
+		$config = PagesAndItemsHelper::getConfig();
+		if(isset($config['menus']) && $config['menus'] != '')
+		{
+			$code_to_replace = $config['menus'];
+			$menus_needs_updating = 0;
+			$menutypes = array();
+			$temp_menus = explode(',',$config['menus']);
+			for($n = 0; $n < count($temp_menus); $n++)
+			{
+				$temp_menutype = explode(';',$temp_menus[$n]);
+				if(count($temp_menutype) == 2)
+				{
+					$menus_needs_updating = 1;
+					$config_needs_updating = 1;
+					$database->setQuery("SELECT title, menutype,id FROM #__menu_types WHERE menutype = '$temp_menutype[0]' ORDER BY title ASC"  );
+					$menutype = $database->loadObject();
+					$menutypes[] = $menutype->menutype.';'.$menutype->title; //.';'.$menutype->id;
+				}
+			}
+			if($menus_needs_updating)
+			{
+				$menus = implode(',',$menutypes);
+				$updated_config = str_replace($code_to_replace, $menus, $updated_config);
+			}
+		}
+		*/
+		if(strpos($pirow->config, 'useCheckedOut=') === false){
+			//added in version 2.1.0
 			$config_needs_updating = 1;
-			$updated_config .= 'version_checker=true
+			$updated_config .= '
+useCheckedOut=false
+';
+		}
+		
+		
+		if(strpos($pirow->config, 'showSlider=') === false){
+			//added in version 2.1.0
+			$config_needs_updating = 1;
+			$updated_config .= '
+showSlider=-1
+';
+		}
+		
+		if(strpos($pirow->config, 'enabled_view_category=') === false){
+			//added in version 2.1.0
+			$config_needs_updating = 1;
+			$updated_config .= '
+enabled_view_category=false
+';
+		}
+		
+		if(strpos($pirow->config, 'version_checker=') === false){
+			//added in version 2.0.0
+			$config_needs_updating = 1;
+			$updated_config .= '
+version_checker=true
 item_props_details=true
 item_props_title=true
 item_props_alias=true
@@ -704,21 +781,45 @@ page_props_art_unauthorised=true
 page_props_integration_options=true
 page_props_int_feed=true
 page_props_int_each=true
-multigroup_access_requirement=one_group
-permissions=6_1,6_2,6_3,6_4,7_1,7_2,7_3,7_4,3_3,4_3,4_4,5_3,5_4,8_1,8_2,8_3,8_4
 page_trash_cat=
 page_trash_items=
 page_delete_cat=
 page_delete_items=
 ';
-		}
-		
+//permissions=6_1,6_2,6_3,6_4,7_1,7_2,7_3,7_4,3_3,4_3,4_4,5_3,5_4,8_1,8_2,8_3,8_4
+//multigroup_access_requirement=one_group
+	}
+
 		if($config_needs_updating){
+			//make sure no empty lines
+			$configParams = array();
+			$configurationParams = explode( "\n", $updated_config);
+			for($n = 0; $n < count($configurationParams); $n++)
+			{
+				$var = '';
+				$temp = explode('=',$configurationParams[$n]);
+				$var = trim($temp[0]);
+				$value = '';
+				if(count($temp)==2){
+					$value = trim($temp[1]);
+					if($value=='false'){
+						$value = false;
+					}
+					if($value=='true'){
+						$value = true;
+					}
+				}
+				if($var != '')
+				{
+					$configParams[] = $var.'='.$value;
+				}
+			}
+			$updated_config = implode( "\n", $configParams);
 			$database->setQuery( "UPDATE #__pi_config SET config='$updated_config' WHERE id='pi' ");
 			$database->query();
 		}
-		
-		
+
+
 	}
 
 /*
@@ -739,16 +840,6 @@ page_delete_items=
 	}
 
 /*
-}
-//end function com_install()
-
-$version = new JVersion();
-$joomlaVersion = $version->getShortVersion();
-$database = JFactory::getDBO();
-*/
-
-
-/*
 *****************
 * PI EXTENSIONS *
 *****************
@@ -759,40 +850,16 @@ $piExtensions = new piExtensions();
 
 // table extensions
 $piExtensions->createTable();
-
-
-//
-/*
-ms: new
-*/
 $piExtensions->installLanguage($parent);
 
-/*
-*/
 // install extensions
-/*
-ms: another way to install the pi-extensions
-so we can add in future easy also new core pi-extensions by update the component
-if we use $piExtensions->insert_into(); is not run on update the component
-only on new install
-
-
-*/
-//$status->extensions = array();
-//$status->extensions = '';
 $status->extensions = $piExtensions->installExtensions($parent);
 
-
-//$piExtensions->installLanguage($parent);
-//or we write it direct in the db
-//$piExtensions->insert_into();
-//$status->extensions = false;
 /*
 *********************
 * END PI EXTENSIONS *
 *********************
 */
-
 
 /***********************************************************************************************
 * ---------------------------------------------------------------------------------------------
@@ -804,9 +871,7 @@ $install_plugins = new installPlugins();
 
 $status->plugins = array();
 $status->plugins = $install_plugins->installUseXML($parent);
-//or
-//$plugins->installUseDB($parent)
-//$status->plugins = false;
+
 /***********************************************************************************************
 * ---------------------------------------------------------------------------------------------
 * PLUGIN INSTALLATION SECTION
@@ -830,11 +895,11 @@ $rows = 0;
 	<p>
 		Check <a href="http://www.pages-and-items.com" target="_blank">www.pages-and-items.com</a> for:
 		<ul>
-			<li>updates</li>
-			<li>forum</li>
-			<li>documentation</li>
-			<li>email notification service for updates and new extensions</li>
-			<li>RSS feed notification of updates</li>
+			<li><a href="http://www.pages-and-items.com/extensions/pages-and-items" target="_blank">updates</a></li>
+			<li><a href="http://www.pages-and-items.com/extensions/pages-and-items/faqs" target="_blank">FAQs</a></li>
+			<li><a href="http://www.pages-and-items.com/forum/8-pages-and-items" target="_blank">forum</a></li>			
+			<li><a href="http://www.pages-and-items.com/component/comprofiler/registers" target="_blank">email notification service for updates and new extensions</a></li>
+			<li><a href="http://www.pages-and-items.com" target="_blank">RSS feed notification of updates</a></li>
 		</ul>
 	</p>
 	<p>
@@ -842,17 +907,10 @@ $rows = 0;
 	</p>
 	<p>
 		Follow us on <a href="http://www.twitter.com/PagesAndItems" target="_blank">Twitter</a> (update notifications).
-	</p>	
+	</p>
 </div>
 <?php
-/*
-ms: install and publish the plugins work?
 
-When we can enable the plugins via the Joomla installer and on component uninstall the plugins also get installed
-, the underneath code might be usefull
-, but untill then
-, plugin install and uninstall via the component install and uninstall functions.
-*/
 if(is_array($status->plugins))
 {
 ?>

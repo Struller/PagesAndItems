@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,7 +22,7 @@ require_once(dirname(__FILE__).'/../../../../includes/extensions/html.php');
 */
 class PagesAndItemsExtensionHtmlCci_templateInsert_other_code extends PagesAndItemsExtensionHtml
 {
-	
+
 	//function onGetHtmlelement(&$htmlelement,$htmlelementVars=null,$name = null, $template = 'intro', $fields = array())
 	//function onGetHtmlelement(&$htmlelement,$name = null, $template = 'intro', $fields = array())
 	function onGetHtmlelement(&$htmlelement,$name = null, $htmlOptions = null)
@@ -36,10 +36,10 @@ class PagesAndItemsExtensionHtmlCci_templateInsert_other_code extends PagesAndIt
 		{
 			$template = $htmlOptions->template;
 		}
-		
+
 		$html = '';
 		$html .= '<select name="pi_fields_other_'.$template.'" onchange="insert_in_textarea( this.value , this.form.pi_fields_other_'.$template.'.options[this.form.pi_fields_other_'.$template.'.selectedIndex].label,\'template_'.$template.'\' );this.options[0].selected=true;return false;" >';
-		
+
 			$html .= '<option value="" selected="selected" >- '.JText::_('COM_PAGESANDITEMS_INSERT_OTHER_CODE').' - </option>';
 			$html .= '<option value="{article_id}" label="">{article_id}</option>';
 			$html .= '<option value="{article_title}" label="">{article_title}</option>';

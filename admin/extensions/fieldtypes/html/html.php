@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -24,11 +24,21 @@ HTML
 class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtype
 {
 
-	
+
 	function display_config_form($plugin, $type_id, $name, $field_params, $field_id)
 	{
-		//description	
-		$html = $this->display_field_description($field_params);
+		if(!$field_id)
+		{
+			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0
+		}
+		
+		$html = '';
+		
+		//New show field name
+		$html .= $this->makeShowFieldName($field_id,$field_params);
+		//description
+		$html .= $this->display_field_description($field_params);
+		
 		//validation
 		$html .= $this->display_field_validation($field_params);
 		//validation_mesage
@@ -39,7 +49,7 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		$html .= $this->display_field($field_name, $field_content);
 		return $html;
 	}
-	
+
 	function params_save($params_string)
 	{
 		//$default_value = JRequest::getVar('default_value','','post','string', JREQUEST_ALLOWHTML);
@@ -54,7 +64,7 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		}
 		return $params_string;
 	}
-	
+
 
 	function display_item_edit($field, $field_params, $field_values, $field_value, $new_field, $field_id)
 	{
@@ -62,15 +72,15 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		{
 			$field_value = $field_params['default_value'];
 		}
-		
+
 		$html = '<div class="field_type_html fieldtype">';
 		$html .= '<div class="pi_form_wrapper">';
 		$html .= '<div class="pi_width20">';
-		
-		
-		
-		$html .= $field->name.':';
-		
+
+
+
+		$html .= '&nbsp;'; //$field->name.':';
+
 		
 		if($this->check_if_field_param_is_present($field_params, 'validation'))
 		{
@@ -82,9 +92,11 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		
 		$html .= '</div>';
 		$html .= '<div class="pi_width70">';
+		/*
 		if($field_params['description']){
 			$html .= '<div>'.$field_params['description'].'</div>';
 		}
+		*/
 		if(strpos($field_value, '</textarea>')){
 			$field_value = str_replace('</textarea>', '&lt;&#47;textarea&gt;', $field_value);
 		}
@@ -92,20 +104,20 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '</div>';
-		
+
 
 		return $html;
 	}
-	
+
 	function render_field_output($field, $intro_or_full, $readmore_type=0, $editor_id=0)
 	{
 		return addslashes($field->value);
 	}
-	
+
 	function field_save($field, $insert_or_update){
-		
+
 		$value_name = 'field_values_'.$field->id;
-		
+
 		//get vars
 		//$value = JRequest::getVar($value_name,'','post','string', JREQUEST_ALLOWHTML );
 		$value = JRequest::getVar($value_name,'','post','string', JREQUEST_ALLOWRAW);
@@ -113,7 +125,7 @@ class PagesAndItemsExtensionFieldtypeHtml extends PagesAndItemsExtensionFieldtyp
 		$value = str_replace('<br>','<br />', $value);
 		//$value = 'soep';
 		return $value;
-		
+
 	}
 }
 

@@ -22,7 +22,7 @@
 
 // Node object
 
-function Node(id, pid, name, url, title, target, icon, iconOpen, open) 
+function Node(id, pid, name, url, title, target, icon, iconOpen, open) //, nodeClass) 
 {
 //alert(id);
 	this.id = id;
@@ -40,6 +40,8 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open)
 	this.icon = icon;
 
 	this.iconOpen = iconOpen;
+
+	//this.nodeClass = nodeClass || false;
 
 	this._io = open || false;
 
@@ -63,23 +65,19 @@ function dTree(objName) {
 
 	this.config = {
 
-		target					: null,
-
-		folderLinks			: true,
-
-		useSelection		: true,
-
-		useCookies			: false,
-
-		useLines				: true,
-
-		useIcons				: true,
-
-		useStatusText		: false,
-
+		target		: null,
+		folderLinks	: true,
+		useSelection	: true,
+		useCookies	: false,
+		useLines	: true,
+		useIcons	: true,
+		useStatusText	: false,
 		closeSameLevel	: false,
-
-		inOrder					: false
+		inOrder		: false
+		//,
+		//nodeClass	: false
+		,
+		useNodeOnClick	: false
 
 	}
 
@@ -135,10 +133,10 @@ function dTree(objName) {
 
 // Adds a new node to the node array
 
-dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen, open) 
+dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen, open) //, nodeClass) 
 {
 	//alert(id);
-	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open);
+	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open); //, nodeClass);
 
 };
 
@@ -273,6 +271,7 @@ dTree.prototype.node = function(node, nodeId) {
 			//str += 'style="width:16px;background-repeat: no-repeat;" ';
 			//str += 'alt="" >';
 			str += '<a ';
+			str += 'id="i' + this.obj + nodeId + '" ';
 			str += 'class="icon ' + imgClass[1] + '" ';
 			//height:16px;width:16px;margin-left: 1px;
 			//str += 'style="padding-bottom: 1px;padding-top: 1px;" ';
@@ -303,15 +302,22 @@ dTree.prototype.node = function(node, nodeId) {
 	if (node.url) 
 	{
 
-		str += '<a id="s' + this.obj + nodeId + '" class="' + ((this.config.useSelection) ? ((node._is ? 'nodeSel' : 'node')) : 'node') + '" href="' + node.url + '"';
-
+		/*str += '<a id="s' + this.obj + nodeId + '" class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + (node.nodeClass ? node.nodeClass + ' ': '' ) + ((this.config.useSelection) ? 
+		((node._is ? 'nodeSel' : 'node')) : 'node') +  '" href="' + node.url + '"';
+		*/
+		str += '<a id="s' + this.obj + nodeId + '" class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + ((this.config.useSelection) ? 
+		((node._is ? 'nodeSel' : 'node')) : 'node') + ((!this.config.useNodeOnClick && node.url == '#') ? ' no_underline' : '') + '" href="' + node.url + '"';
 		if (node.title) str += ' title="' + node.title + '"';
 
 		if (node.target) str += ' target="' + node.target + '"';
 
 		if (this.config.useStatusText) str += ' onmouseover="window.status=\'' + node.name + '\';return true;" onmouseout="window.status=\'\';return true;" ';
 
-		if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
+		if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc) && !this.config.useNodeOnClick)
+		{
+			
+		}
+		else if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
 
 			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
 
@@ -320,14 +326,16 @@ dTree.prototype.node = function(node, nodeId) {
 	}
 	else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
 	{
-		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');" class="node"';
+		//str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');" class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + (node.nodeClass ? node.nodeClass + ' ': '' ) + 'node"';
+		str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');" class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + 'node"';
 		if (node.title) str += ' title="' + node.title + '"';
 		str += '>';
 	}
 	else if ((!this.config.folderLinks || !node.url) && node.title && !node._hc && node.pid != this.root.id)
 	{
 		//we will have an title 
-		str += '<a class="node" title="' + node.title + '" >';
+		//str += '<a class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + (node.nodeClass ? node.nodeClass + ' ': '' ) + 'node" title="' + node.title + '" >';
+		str += '<a class="' + ((node.pid == this.root.id) ? 'root ' : '' ) + 'node" title="' + node.title + '" >';
 	}
 	
 	str += node.name;
@@ -439,13 +447,17 @@ dTree.prototype.s = function(id) {
 
 			eOld = document.getElementById("s" + this.obj + this.selectedNode);
 
-			eOld.className = "node";
+			//eOld.className = ((this.selectedNode.pid == this.root.id) ? 'root ' : '' ) + (this.selectedNode.nodeClass ? this.selectedNode.nodeClass + ' ': '' ) + "node";
+			eOld.className = ((this.selectedNode.pid == this.root.id) ? 'root ' : '' ) + "node";
+			
+			
 
 		}
 
 		eNew = document.getElementById("s" + this.obj + id);
 
-		eNew.className = "nodeSel";
+		//eNew.className = ((cn.pid == this.root.id) ? 'root ' : '' ) + (cn.nodeClass ? cn.nodeClass + ' ': '' ) + "nodeSel";
+		eNew.className = ((cn.pid == this.root.id) ? 'root ' : '' ) + ((!this.config.useNodeOnClick && cn.url == '#') ? ' no_underline ' : '') +  "nodeSel";
 
 		this.selectedNode = id;
 
@@ -519,7 +531,8 @@ dTree.prototype.openTo = function(nId, bSelect, bFirst) {
 
 	var cn=this.aNodes[nId];
 
-	if (cn.pid==this.root.id || !cn._p) return;
+	//if (!cn || cn.pid==this.root.id || !cn._p) return;
+	if (!cn || cn.pid==this.root.id || !cn._p) return;
 
 	cn._io = true;
 
@@ -571,7 +584,7 @@ dTree.prototype.closeAllChildren = function(node) {
 
 			this.aNodes[n]._io = false;
 
-			this.closeAllChildren(this.aNodes[n]);		
+			this.closeAllChildren(this.aNodes[n]);
 
 		}
 
@@ -591,9 +604,37 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 
 	if (this.config.useIcons) {
 
+		
+		//class:
+		/*
+		
+		
+		
+		
+		*/
+		
 		eIcon	= document.getElementById('i' + this.obj + id);
-
-		eIcon.src = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		newIcon = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		
+		var imgClass = newIcon;
+		var imgClass = imgClass.split("class:");
+		if(imgClass.length == '2')
+		{
+			
+			//we have an class
+			eIcon.set('class','icon ' + imgClass[1]);
+			newIcon = '<a ';
+			newIcon += 'class="icon ' + imgClass[1] + '" ';
+			newIcon += 'alt="" >';
+			newIcon += '<span ';
+			newIcon += ' />';
+			newIcon += '</span>';
+			newIcon += '</a>';
+		}
+		else
+		{
+			eIcon.src = newIcon;
+		}
 
 	}
 

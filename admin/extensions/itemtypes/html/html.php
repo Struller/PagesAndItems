@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -19,7 +19,7 @@ class PagesAndItemsExtensionItemtypeHtml extends PagesAndItemsExtensionItemtype
 	/*
 	function onItemtypeDisplay_config_form(&$itemtypeHtml,$item_type)
 	{
-	
+
 	}
 	*/
 	function onGetTables(&$tables,$item_type,$item_id)
@@ -28,7 +28,7 @@ class PagesAndItemsExtensionItemtypeHtml extends PagesAndItemsExtensionItemtype
 		{
 			return false;
 		}
-		
+
 		//tables are:
 		$table->name = 'content';
 		$table->reference_id = 'id';
@@ -37,8 +37,8 @@ class PagesAndItemsExtensionItemtypeHtml extends PagesAndItemsExtensionItemtype
 		$table = null;
 		return true;
 	}
-	
-	
+
+
 	function onItemtypeDisplay_item_edit(&$itemtypeHtml,$item_type,$item_id,$text,$itemIntroText,$itemFullText)
 	{
 		if($item_type != 'html')

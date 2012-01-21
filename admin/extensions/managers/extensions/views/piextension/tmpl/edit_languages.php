@@ -1,11 +1,11 @@
 <?php
 /**
- * @version		1.6.2.2$Id: edit_options.php 20196 2011-01-09 02:40:25Z ian $
- * @package		Joomla.Administrator
- * @subpackage	com_plugins
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- */
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
+*/
 
 // No direct access.
 defined('_JEXEC') or die;
@@ -24,13 +24,13 @@ echo 'languages';
 here we add an table with all language files
 include the component language-files must search in the xml
 
-columns are: name, delete(an button), version (from xml or from ini), 
+columns are: name, delete(an button), version (from xml or from ini),
 
 
 
 $this->languageItems
 
-version and other informations: 
+version and other informations:
 */
 /*
 
@@ -42,7 +42,6 @@ rows:
 $tag = $item->element;
 
 */
-//dump($this->item);
 ?>
 	</fieldset>
 </div>

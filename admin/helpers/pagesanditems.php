@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 
 class PagesAndItemsHelper{
 
-	
+
 
 /*
 *******************
@@ -22,40 +22,45 @@ class PagesAndItemsHelper{
 ******************
 */
 
-	
-	public $app;
-	public $db;	
-	public $version = '2.0.0';
-	public $config;
-	public $itemtypes;
-	public $dirIcons;
-	public $pathPluginsItemtypes; //ms: this can remove
-	
-	
+
+	//public $app;
+	//public $db;
+	//public $version = '2.1.0';
+	//public $config;
+	//public $itemtypes;
+	//public $dirIcons;
+	//public $pathPluginsItemtypes; //ms: this can remove
+
+
 	function __construct(){
+		/*
 		$this->app = &JFactory::getApplication();
 		$this->db = JFactory::getDBO();
+		
+		
+		//remove
 		$this->config = $this->getConfig();
-		$this->dirIcons = $this->getDirIcons();
-		$this->pathPluginsItemtypes = JPATH_PLUGINS.DS.'pages_and_items'.DS.'itemtypes'; //ms: this can remove		
+		*/
+		//$this->dirIcons = $this->getDirIcons();
+		//$this->pathPluginsItemtypes = JPATH_PLUGINS.DS.'pages_and_items'.DS.'itemtypes'; //ms: this can remove
 	}
-	
-	
+
+
 	function getPathExtensions()
 	{
 		static $pathExtensions;
-		if (isset($pathExtensions)) 
+		if (isset($pathExtensions))
 		{
 			return $pathExtensions;
 		}
 		$pathExtensions = realpath(dirname(__FILE__).DS.'..'.DS.'extensions');
 		return $pathExtensions;
 	}
-	
+
 	function loadExtensionLanguage($name,$type,$folder = '')
 	{
 		$pathExtensions = self::getPathExtensions();
-		
+
 		if($folder && $folder != '')
 		{
 			$extension_folder = str_replace('/','_',$folder);
@@ -68,11 +73,11 @@ class PagesAndItemsHelper{
 		{
 			$prefix = $type;
 			$path = $pathExtensions.DS.$type.'s';
-			
+
 		}
 		$extension = 'pi_extension_'.$prefix.'_'.$name;
 		$path = $path.DS.$name;
-		
+
 		$lang = &JFactory::getLanguage();
 		$defaultLang = $lang->getDefault();
 		/*
@@ -81,26 +86,16 @@ class PagesAndItemsHelper{
 			$defaultLang = 'en-GB';
 		}
 		*/
-		
+
 		$lang->load(strtolower($extension), $path, null, false) //, false)
 		||	$lang->load(strtolower($extension), $pathExtensions, null, false) //ms: add)
 
 		||	$lang->load(strtolower($extension), $path, $defaultLang, false) //, false)
 		||	$lang->load(strtolower($extension), $pathExtensions, $defaultLang, false) //ms: add)
 		;
-		//dump($lang->getStrings());
-		//dump($lang->getPaths());
-		
 	}
-	
-	/*
-	function loadIconsCss()
-	{
-		$path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..')));
-		return '<link href="'.JURI::root(true).'/'.$path.'/css/pagesanditems_icons.css" rel="stylesheet" type="text/css" />'."\n";
-	}
-	*/
-	
+
+
 	function getdTreeIcons($dtree)
 	{
 		$html = "$dtree.icon = {";
@@ -119,29 +114,242 @@ class PagesAndItemsHelper{
 		$html .= "nlPlus	: '".PagesAndItemsHelper::getdirIcons()."nolines_plus.gif',\n";
 		$html .= "nlMinus	: '".PagesAndItemsHelper::getdirIcons()."nolines_minus.gif'\n";
 		$html .= "};\n";
-		
+
 		return $html;
 	}
-	
-	
+
+
 	function getApp()
 	{
 		static $app;
-		if (isset($app)) 
+		if (isset($app))
 		{
 			return $app;
 		}
 		$app = &JFactory::getApplication();
 		return $app;
 	}
-	
+
+	function getDb()
+	{
+		static $getDb;
+		if (isset($getDb))
+		{
+			return $getDb;
+		}
+		$getDb = JFactory::getDBO();
+		return $getDb;
+	}
+
 	function redirect_to_url($url, $message){
-		$this->app->redirect($url, $message);
-	}	
+		PagesAndItemsHelper::getApp()->redirect($url, $message);
+	}
+
+	function getJoomlaVersion()
+	{
+		static $joomlaVersion;
+		if (isset($joomlaVersion))
+		{
+			return $joomlaVersion;
+		}
+		$version = new JVersion();
+		$joomlaVersion = $version->getShortVersion();
+		return $joomlaVersion;
+	}
+	
+	function getPagesAndItemsVersion()
+	{
+		static $PagesAndItemsVersion;
+		if (isset($PagesAndItemsVersion))
+		{
+			return $PagesAndItemsVersion;
+		}
+		
+		require_once(realpath(dirname(__FILE__).DS.'..'.DS.'includes').DS.'version.php');
+		$version = new PagesAndItemsVersion();
+		return $PagesAndItemsVersion = $version->getVersionNr();
+		
+		//get from this is not an good idea an helper will not must __construct use PagesAndItemsHelper::
+	}
+	
+	
+	function checkPlugin($plugin)
+	{
+		
+		$enabled = 0;
+		$installed = 0;
+		//check if content plugin is installed
+		if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
+		{
+			$tableName = '#__plugins';
+			$where = '';
+		}
+		else
+		{
+			$tableName = '#__extensions';
+			$where = " AND type='plugin' ";
+		}
+
+		jimport('joomla.plugin.helper');
+		if(JPluginHelper::isEnabled( $plugin, 'pagesanditems' ))
+		{
+			$enabled = 2;
+		}
+		else
+		{
+			$db = & JFactory::getDBO();
+			$query = 'SELECT *'
+				. ' FROM '.$tableName
+				. " WHERE element ='pagesanditems' "
+				. " AND folder = 'content' "
+				. $where;
+			$db->setQuery($query);
+			$row = $db->loadObject();
+			if(!$row)
+			{
+				$installed = 0;
+				JError::raiseWarning( 100, JText::_('COM_PAGESANDITEMS_PLUGIN_CONTENT_NOT_INSTALLED') );
+			}
+			else
+			{
+				$installed = 1;
+			}
+		}
+		return $enabled ? $enabled : $installed;
+
+	}
+	
+	
+	function getIsJoomlaVersion($typ = '<',$version = '1.6')
+	{
+		$joomlaVersion = PagesAndItemsHelper::getJoomlaVersion();
+		switch($typ)
+		{
+			case '<':
+				return $joomlaVersion < $version;
+			break;
+			
+			case '>':
+				return $joomlaVersion > $version;
+			break;
+			
+			case '>=':
+				return $joomlaVersion >= $version;
+			break;
+			
+			case '<>':
+				return $joomlaVersion <> $version;
+			break;
+			
+			case '==':
+				return $joomlaVersion == $version;
+			break;
+			
+
+		}
+		
+		
+	}
+
+
+	//ms: add
+	function saveConfig($config = null)
+	{
+		if(!$config)
+		{
+			return false;
+		}
+
+		if(is_array($config))
+		{
+			if($config['menus'] && $config['menus'] != '')
+			{
+				$menus = array();
+				foreach($config['menus'] as $menu)
+				{
+					if($menu = implode(";",$menu))
+					{
+						if($menu != '')
+						$menus[] = $menu; //implode(";",$menu);
+					}
+				}
+				$config['menus'] = implode( ",", $menus);
+			}
+			if($config['itemtypes'] && $config['itemtypes'] != '')
+			{
+				$config['itemtypes'] = implode( ",", $config['itemtypes']);
+			}
+			$configuration = array();
+			foreach($config as $key => $value)
+			{
+				$configuration[] = $key.'='.$value;
+			}
+			
+			$configuration = implode("\n",$configuration);
+			//update config
+			$db = & JFactory::getDBO();
+			$db->setQuery( "UPDATE #__pi_config SET config='$configuration' WHERE id='pi' ");
+			$db->query();
+			
+		}
+		
+		return false;
+
+
+
+	}
+
+	function getUseCheckedOut()
+	{
+		static $useCheckedOut;
+		if (isset($useCheckedOut))
+		{
+			return $useCheckedOut;
+		}
+		$config = PagesAndItemsHelper::getConfigAsRegistry();
+		$useCheckedOut = $config->get('useCheckedOut',0);
+		return $useCheckedOut;
+	}
 
 	function getConfigAsRegistry()
 	{
+		static $configRegistry;
+		if (isset($configRegistry))
+		{
+			return $configRegistry;
+		}
+
 		$config = PagesAndItemsHelper::getConfig();
+		$menus = $config['menus'] ? $config['menus'] : '';
+		$temp1 = $menus ? explode( ",", $menus) : '';
+		if($temp1)
+		{
+			$temp2_2 = array();
+			foreach($temp1 as $temp1_1)
+			{
+				if($temp1_1 != '')
+				{
+					$temp3 = explode( ";", $temp1_1);
+					$temp2_2[$temp3[0]] = $temp3;
+				}
+			}
+			$config['menus'] = $temp2_2; 
+
+		}
+		$itemtypes = $config['itemtypes']  ? $config['itemtypes'] : '';
+		$temp4 = $itemtypes ? explode( ",", $itemtypes) : '';
+		if($temp4)
+		{
+			$temp6 = array();
+			foreach($temp4 as $temp5)
+			{
+				if($temp5 != '')
+				$temp6[$temp5] = $temp5;
+			}
+			
+			$config['itemtypes'] = $temp6;
+		}
+		
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
 		if($joomlaVersion < '1.6')
@@ -155,11 +363,11 @@ class PagesAndItemsHelper{
 			$params->loadArray($config);
 		}
 		return $params;
-
 	}
-	
-	
+
+
 	//ms: add
+	//TODO ms: remove if getItemtypes changed
 	function changeConfigItemtype($config = null, $itemtype = null, $change = 'add')
 	{
 		if(!$config && !$itemtype || !$itemtype)
@@ -196,7 +404,7 @@ class PagesAndItemsHelper{
 			PagesAndItemsHelper::changeConfig($config, 'itemtypes', $value);
 		}
 	}
-	
+
 	//ms: add
 	function changeConfig($config = null, $changeKey = null, $changeValue = null)
 	{
@@ -204,12 +412,12 @@ class PagesAndItemsHelper{
 		{
 			return;
 		}
-		
+
 		if(!$config)
 		{
 			$config = PagesAndItemsHelper::getConfig();
 		}
-		
+
 		$configtemp = array();
 		foreach($config as $key => $value)
 		{
@@ -221,72 +429,49 @@ class PagesAndItemsHelper{
 				}
 				else
 				{
-					if($key != 'page_new_attribs')
+					if($key == 'permissions' && is_array($value) )
 					{
-						$configtemp[] = $key.'='.$value;
+						$value = implode(',', $value);
 					}
-		/*
-		$pos_start_page_attribs = strpos($raw, 'START_PAGE_NEW_ATTRIBUTES');
-		$start_of_vars = $pos_start_page_attribs+26;
-		$page_new_attribs = substr($raw, $start_of_vars, 99999);
-		$config['page_new_attribs'] = $page_new_attribs;
-		*/		
+					$configtemp[] = $key.'='.$value;
 				}
 			}
 		}
-		//dump($configtemp);
-		//dump($changeValue);
 		$configuration = implode("\n",$configtemp);
-		$config_page_new_attribs = '';
-		if(isset($config['page_new_attribs']))
-		{
-			$config_page_new_attribs = $config['page_new_attribs'];
-			/*
-			dump($config['page_new_attribs']);
-			for($n = 0; $n < count($config['page_new_attribs']); $n++)
-			{
-				$row = each($config['page_new_attribs']);
-				$config_page_new_attribs .= "\n$row[key]=$row[value]";
-			}
-			*/
-		}
-		$configuration .= '
-		START_PAGE_NEW_ATTRIBUTES=';
-		$configuration .= $config_page_new_attribs;
-		
-		//dump($configuration,'configuration');
+
 		//update config
-		
+
 		$db = & JFactory::getDBO();
 		$db->setQuery( "UPDATE #__pi_config SET config='$configuration' WHERE id='pi' ");
 		$db->query();
 	}
-	
+
 	function getConfig()
 	{
 		static $config;
-		if (isset($config)) 
+		if (isset($config))
 		{
 			return $config;
 		}
 		$db = & JFactory::getDBO();
-		
+
 		$db->setQuery("SELECT config "
 		."FROM #__pi_config "
 		."WHERE id='pi' "
 		."LIMIT 1"
 		);
-		
+
 		$temp = $db->loadObjectList();
 		$temp = $temp[0];
 		$raw = $temp->config;
-				
+
 		$params = explode( "\n", $raw);
-		
+
 		for($n = 0; $n < count($params); $n++)
 		{
+			$var = '';
 			$temp = explode('=',$params[$n]);
-			$var = $temp[0];
+			$var = trim($temp[0]);
 			$value = '';
 			if(count($temp)==2){
 				$value = trim($temp[1]);
@@ -297,99 +482,130 @@ class PagesAndItemsHelper{
 					$value = true;
 				}
 			}
-			$config[$var] = $value;
+			//make sure no empty lines
+			if($var != ''){
+				$config[$var] = $value;
+			}
 		}
-		
+
 		//reformat cheatsheet config
 		$temp_cheatsheet = $config['plugin_syntax_cheatcheat'];
-		
+
 		$temp_cheatsheet = str_replace('[newline]','',$temp_cheatsheet);
 		$temp_cheatsheet = str_replace('[equal]','=',$temp_cheatsheet);
 		$config['plugin_syntax_cheatcheat'] = $temp_cheatsheet;
-		
+
 		//reformat item_save_redirect_url
 		$temp_item_save_redirect_url = $config['item_save_redirect_url'];
 		$temp_item_save_redirect_url = str_replace('[equal]','=',$temp_item_save_redirect_url);
 		$config['item_save_redirect_url'] = $temp_item_save_redirect_url;
-		
-		//reformat permissions to array
-		$temp = $config['permissions'];
-		$config['permissions'] = explode(',', $temp);
-		
+
 		return $config;
-	
+
+	}
+
+
+	function getDirJS($juri = false){
+		$juri = $juri ? JURI::root(true).'/' : '';
+		return $juri.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..'.DS.'javascript')));
+	}
+
+	function getDirCSS($juri = false){
+		$juri = $juri ? JURI::root(true).'/' : '';
+		return $juri.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..'.DS.'css')));
 	}
 
 	function getDirIcons(){
-			
+
+		static $dirIcons;
+		if(isset($dirIcons))
+		{
+			return $dirIcons;
+		}
+		/*
 		$dirIcons = 'components/com_pagesanditems/media/images/icons/';
 		//if(!$this->app->isAdmin()){ is causing error when saving a new cat blog ?!!
 		$app = JFactory::getApplication();
 		if(!$app->isAdmin()){
 			$dirIcons = 'administrator/'.$dirIcons;
 		}
-		
+		*/
 		//ms: 04.05.2011 another way to get the correct path this will work also on subdomain (JURI::root(true) return the subdomain)
 		$dirIcons = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..'.DS.'media'.DS.'images'.DS.'icons').DS));
-		defined('COM_PAGESANDITEMS_DIR_ICONS') or define('COM_PAGESANDITEMS_DIR_ICONS',$dirIcons);
+		//defined('COM_PAGESANDITEMS_DIR_ICONS') or define('COM_PAGESANDITEMS_DIR_ICONS',$dirIcons);
 		return $dirIcons;
 	}
-	
+
 	function getDirImages()
-	{		
+	{
+		static $dirImages;
+		if(isset($dirImages))
+		{
+			return $dirImages;
+		}
+		/*
 		$dirImages = 'components/com_pagesanditems/images/';
 		$app = JFactory::getApplication();
 		if($app->isAdmin()){
 			$dirImages = 'administrator/'.$dirImages;
 		}
+		*/
 		//ms: 04.05.2011 another way to get the correct path this will work also on subdomain (JURI::root(true) return the subdomain)
 		$dirImages = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..'.DS.'images').DS));
-		
-		defined('COM_PAGESANDITEMS_DIR_IMAGES') or define('COM_PAGESANDITEMS_DIR_IMAGES',$dirImages);
+		//defined('COM_PAGESANDITEMS_DIR_IMAGES') or define('COM_PAGESANDITEMS_DIR_IMAGES',$dirImages);
 		return $dirImages;
 	}
-	
+
 	function getDirComponentAdmin()
 	{
 		//ms: 04.05.2011 another way to get the correct path this will work also on subdomain (JURI::root(true) return the subdomain)
 		//return JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..')));
-		
-		
+
+
 		//return str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..')));
+		//JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..').DS));
 		return 'administrator/components/com_pagesanditems';
 	}
-	
+
 	function getDirComponentSite()
 	{
 		//ms: 04.05.2011 another way to get the correct path this will work also on subdomain (JURI::root(true) return the subdomain)
 		//return JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_ROOT.DS.'administrator'.DS,'',realpath(dirname(__FILE__).DS.'..')));
-		
+
 		//return str_replace(DS,'/',str_replace(JPATH_ROOT.DS.'administrator'.DS,'',realpath(dirname(__FILE__).DS.'..')));
 		return 'components/com_pagesanditems';
 	}
-	
-	
+
+
 	function getDirComponent()
 	{
 		//check if admin
-		if($this->app->isAdmin())
+		if(PagesAndItemsHelper::getApp()->isAdmin())
 		{
 			//return PagesAndItemsHelper::getDirComponentAdmin();
-			
+
 			//return str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).DS.'..')));
 			return 'administrator/components/com_pagesanditems';
 		}
 		else
 		{
 			//return PagesAndItemsHelper::getDirComponentSite();
-			
+
 			//return str_replace(DS,'/',str_replace(JPATH_ROOT.DS.'administrator'.DS,'',realpath(dirname(__FILE__).DS.'..')));
 			return 'components/com_pagesanditems';
 		}
 	}
-	
+
 	function getIsSuperAdmin()
 	{
+		static $isSuperAdmin;
+		if(isset($isSuperAdmin))
+		{
+			return $isSuperAdmin;
+		}
+		/*
+		
+		*/
 		$user =& JFactory::getUser();
 		$user_type = $user->get('usertype');
 		$user_id = $user->get('id');
@@ -400,15 +616,24 @@ class PagesAndItemsHelper{
 		{
 			if($user_type == 'Super Administrator')
 			{
-				return true;
+				$isSuperAdmin = true;
+				//return true;
 			}
 			else
 			{
-				return false;
+				$isSuperAdmin = false;
+				//return false;
 			}
 		}
 		else
 		{
+
+			
+			//'core.admin' is  Super Admin
+			//to the root asset node.
+			$isSuperAdmin = $user->authorise('core.admin');
+
+			/*
 			$groups = PagesAndItemsHelper::get_usertype($user_id);
 			if(in_array(8, $groups))
 			{
@@ -419,10 +644,23 @@ class PagesAndItemsHelper{
 			{
 				return false;
 			}
+			*/
 		}
+		return $isSuperAdmin;
 	}
-	
-	
+
+	function getUserId()
+	{
+		static $userId;
+		if(isset($userId))
+		{
+			return $userId;
+		}
+		$user =& JFactory::getUser();
+		$userId = $user->get('id');
+		return $userId;
+	}
+
 	function getUserType()
 	{
 		$user =& JFactory::getUser();
@@ -437,15 +675,14 @@ class PagesAndItemsHelper{
 		{
 			$user_id = $user->get('id');
 			return PagesAndItemsHelper::get_usertype($user_id);
-			
+
 
 			/*
-dump($groups);
 $groups =
 [array]
 	[integer] 0 = 1
 	[integer] 1 = 8
-			
+
 	id	parent_id	lft	rgt	title
 	1	0		1	20	Public
 	2	1		6	17	Registered
@@ -458,11 +695,11 @@ $groups =
 
 	12	2		15	16	Customer Group
 	10	3		12	13	Shop Suppliers
-			
-			
-			
-			
-			
+
+
+
+
+
 			if(in_array(8, $groups))
 			{
 				//ok? have we the super user?
@@ -475,19 +712,26 @@ $groups =
 			*/
 		}
 	}
-	
+
 	function get_usertype($user_id)
 	{
 		jimport( 'joomla.access.access' );
 		$groups = JAccess::getGroupsByUser($user_id);
-		
+
 		return $groups;
 	}
-	
+
 	function getIsAdmin()
 	{
+		static $isAdmin;
+		if(isset($isAdmin))
+		{
+			return $isAdmin;
+		}
 		$app = &JFactory::getApplication();
 		//check if admin
+		$isAdmin = $app->isAdmin();
+		return $isAdmin;
 		if($app->isAdmin())
 		{
 			return true;
@@ -517,15 +761,15 @@ $groups =
 		{
 			JHTML::_('behavior.calendar'); //load the calendar behavior
 
-			if (is_array($attribs)) 
+			if (is_array($attribs))
 			{
 				$attribs = JArrayHelper::toString( $attribs );
 			}
 			// Setup options object
 			$opt['showsTime'] = (array_key_exists('showsTime', $params)) ? $params['showsTime'] : 'false';
-		
+
 			//$options = JHTMLBehavior::_getJSObject($opt);
-		
+
 			$document =& JFactory::getDocument();
 			$document->addScriptDeclaration('window.addEvent(\'domready\', function() {Calendar.setup({
 			inputField	:	 "'.$id.'",			// id of the input field
@@ -543,19 +787,19 @@ $groups =
 		{
 			static $done;
 
-			if ($done === null) 
+			if ($done === null)
 			{
 				$done = array();
 			}
 
 			$readonly = isset($attribs['readonly']) && $attribs['readonly'] == 'readonly';
 			$disabled = isset($attribs['disabled']) && $attribs['disabled'] == 'disabled';
-			if (is_array($attribs)) 
+			if (is_array($attribs))
 			{
 				$attribs = JArrayHelper::toString($attribs);
 			}
 
-			if ((!$readonly) && (!$disabled)) 
+			if ((!$readonly) && (!$disabled))
 			{
 				// Load the calendar behavior
 				JHtml::_('behavior.calendar');
@@ -566,7 +810,7 @@ $groups =
 				{
 					// Setup options object
 					$opt['showsTime'] = (array_key_exists('showsTime', $params)) ? $params['showsTime'] : 'false';
-		
+
 					$document = JFactory::getDocument();
 					$document->addScriptDeclaration('window.addEvent(\'domready\', function() {Calendar.setup({
 					inputField: "'.$id.'",		// id of the input field
@@ -608,12 +852,12 @@ $groups =
 			}
 			$date->setOffset($offset);
 		}
-		$config = PagesAndItemsHelper::getConfig();		
+		$config = PagesAndItemsHelper::getConfig();
 		$date_now = $date->toFormat($format);
-		
+
 		return $date_now;
 	}
-	
+
 	function get_date_to_format($date,$format = false)
 	{
 		//for Joomla 1.6
@@ -627,8 +871,8 @@ $groups =
 		$date = JFactory::getDate($date,$offset);
 		$date = $date->toFormat($format); //deprecated in J1.6
 		return $date;
-		
-		
+
+
 		/*
 		// Get some system objects.
 		$config = JFactory::getConfig();
@@ -642,9 +886,9 @@ $groups =
 			// Transform the date string.
 			$date = $jDate->toMySQL(true);
 		}
-	
-		
-		
+
+
+
 		*/
 		$test = strtotime('2011-07-03');
 		$summertime = date( 'I', $test );
@@ -653,28 +897,28 @@ $groups =
 			//$yoffset = $yoffset +1;
 		}
 
-		
+
 		$app =& JFactory::getApplication();
-		
+
 		$date = JFactory::getDate($date); //,$offset);
-		
+
 		$offset = $app->getCfg('offset');
-		
+
 		$summertime = date( 'I', $date->toUnix() );
 		if($summertime)
 		{
 			$offset = $offset +1;
 		}
 		$date->setOffset($offset);
-		//$config = PagesAndItemsHelper::getConfig();		
+		//$config = PagesAndItemsHelper::getConfig();
 		$date = $date->toFormat($format); //before change
 		//$date = $date->toFormat($format,true);
-		
+
 		//$date = $date->format($format,true);
 		return $date;
 	}
-	
-	
+
+
 	function get_date_ready_for_database($date,$local = false)
 	{
 		$app =& JFactory::getApplication();
@@ -683,7 +927,7 @@ $groups =
 		if($summertime)
 		{
 			$offset = $offset +1;
-		}		
+		}
 		$date = JFactory::getDate($date,$offset);
 		$date = $date->toMySQL($local);
 		return $date;
@@ -695,9 +939,9 @@ $groups =
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
-		
-		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'buttonmaker.php');
+
+
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'html'.DS.'buttonmaker.php');
 		$button = new ButtonMaker();
 		if($type)
 		{
@@ -714,7 +958,7 @@ $groups =
 						{
 							$text = JText::_('JTOOLBAR_CLOSE');
 						}
-						
+
 					}
 					$button->text = $text;
 					if($buttonstyle == 'image')
@@ -723,7 +967,7 @@ $groups =
 						$button->imageName = 'base/icon-16-cross.png';
 					}
 				break;
-				
+
 				case 'cancel':
 					if(!$text)
 					{
@@ -735,7 +979,7 @@ $groups =
 						{
 							$text = JText::_('JTOOLBAR_CANCEL');
 						}
-						
+
 					}
 					$button->text = $text;
 					if($buttonstyle == 'image')
@@ -744,7 +988,7 @@ $groups =
 						$button->imageName = 'base/icon-16-cross.png';
 					}
 				break;
-				
+
 				case 'save':
 					if(!$text)
 					{
@@ -764,7 +1008,7 @@ $groups =
 						$button->imageName = 'base/icon-16-save.png';
 					}
 				break;
-				
+
 				case 'saveclose':
 					if(!$text)
 					{
@@ -776,7 +1020,7 @@ $groups =
 						{
 							$text = JText::_('COM_PAGESANDITEMS_SAVE');
 						}
-						
+
 					}
 					$button->text = $text;
 					if($buttonstyle == 'image')
@@ -786,7 +1030,7 @@ $groups =
 					}
 				break;
 			}
-		
+
 		}
 		return $button;
 	}
@@ -802,67 +1046,83 @@ submenu
 	public static function addTitle($more = '')
 	{
 		define('COM_PAGESANDITEMS_TITLE_IS_SET',true);
-		//JToolBarHelper::title( JText::_( 'Pages and Items' ).' '.$more, 'content_mvc.png' );
 		JToolBarHelper::title( JText::_( 'Pages and Items' ).' '.$more, 'pi.png' );
 	}
-	
+
+
+	public static function addSubmenuFirst($vName = 'page')
+	{
+		$extensionType = JRequest::getVar('extensionType', ''); //is the extensionName
+		//$path = JURI::root(true).str_replace(DS,'/',str_replace(JPATH_ROOT,'',JPATH_COMPONENT_ADMINISTRATOR));
+		$path = PagesAndItemsHelper::getDirIcons();
+		$menutype = JRequest::getVar('menutype',0);
+		$menutype = $menutype ? '&menutype='.$menutype : '';
+		$categoryId = JRequest::getVar('categoryId',0);
+		//$pageId = JRequest::getVar('pageId',0);
+		
+		$configs = $vName != 'config' && $vName != 'config_custom_itemtype' && $vName != 'config_custom_itemtype_field' && $vName != 'config_itemtype' && $extensionType != 'manager' && $vName != 'managers' ;
+		$items = $vName == 'item' || $vName == 'item_move_select';
+		
+		JSubMenuHelper::addEntry(
+			//'<img src="'.$path.'/media/images/icons/icon-16-pi.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;Pages and Items',
+			//'<img src="'.$path.'/media/images/icons/icon-16-pi.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS'),
+			'<img src="'.$path.'icon-16-pi.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS'),
+			'index.php?option=com_pagesanditems&view=page&layout=root'.$menutype,
+			$vName == 'page' 
+			//&& $vName != 'categorie'
+			&& $vName != 'category'
+			&& $configs
+			|| ($items && !$categoryId)
+		);
+		
+		//ms: add view categorie
+		$config = PagesAndItemsHelper::getConfigAsRegistry();
+		//if($config->get('enabled_view_categorie'))
+		if($config->get('enabled_view_category'))
+		{
+			//$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+			//$sub_task = JRequest::getVar('sub_task','');
+			$edit = ($categoryId > 1) ? '&sub_task=edit' : '';
+			
+			$edit .= ($categoryId > 1) ? '&categoryId='.$categoryId : '';
+			$edit = '';
+		
+			JSubMenuHelper::addEntry(
+			//'<img src="'.$path.'/media/images/icons/category/icon-16-category.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CATEGORIESANDITEMS'),
+				'<img src="'.$path.'category/icon-16-category.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CATEGORIESANDITEMS'),
+				//'index.php?option=com_pagesanditems&view=categorie'.$edit,
+				'index.php?option=com_pagesanditems&view=category'.$edit,
+				//$vName == 'categorie'
+				$vName == 'category'
+				&& $vName != 'page' 
+				&& $configs
+				|| ($items && $categoryId)
+			);
+		}
+	}
+
 	public static function addSubmenu($vName = 'page')
 	{
 		$extensionType = JRequest::getVar('extensionType', ''); //is the extensionName
-		//$path = str_replace(DS,'/',str_replace(JPATH_SITE,'',JPATH_COMPONENT_ADMINISTRATOR));
-		$path = JURI::root(true).str_replace(DS,'/',str_replace(JPATH_ROOT,'',JPATH_COMPONENT_ADMINISTRATOR));
+		//$path = JURI::root(true).str_replace(DS,'/',str_replace(JPATH_ROOT,'',JPATH_COMPONENT_ADMINISTRATOR));
+		$path = PagesAndItemsHelper::getDirIcons();
+		PagesAndItemsHelper::addSubmenuFirst($vName);
 		JSubMenuHelper::addEntry(
-			'<img src="'.$path.'/media/images/icons/icon-16-pi.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;Pages and Items',
-			'index.php?option=com_pagesanditems&view=page&layout=root',
-			$vName != 'rightsmanager' && $vName != 'config' && $vName != 'config_custom_itemtype' && $vName != 'config_custom_itemtype_field' && $vName != 'config_itemtype' && $vName != 'manage' && $vName != 'install' && $vName != 'manageextension' && $extensionType != 'manager' && $vName != 'managers'
-		);
-				
-		JSubMenuHelper::addEntry(
-			'<img src="'.$path.'/media/images/icons/base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIG'),
+			//'<img src="'.$path.'/media/images/icons/base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIG'),
+			'<img src="'.$path.'base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIG'),
 			'index.php?option=com_pagesanditems&view=config',
 			//'',
 			$vName == 'config' || $vName == 'config_custom_itemtype' || $vName == 'config_custom_itemtype_field' || $vName == 'config_itemtype'
 			);
-		
-		/*
-		ms:
-		// c: I think I like this better 
-		JSubMenuHelper::addEntry(
-			'<img src="'.$path.'/media/images/icons/extensions/icon-16-plugin_edit.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_PLUGIN_MANAGER'),
-			'index.php?option=com_pagesanditems&view=manage',
-			$vName == 'manage' || $vName == 'manageextension'
-		);
 
 		JSubMenuHelper::addEntry(
-			'<img src="'.$path.'/media/images/icons/extensions/icon-16-plugin_add.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_PLUGIN_INSTALLER'),
-			'index.php?option=com_pagesanditems&view=install',
-			$vName == 'install'
+			//'<img src="'.$path.'/media/images/icons/base/icon-16-toolbox.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_MANAGERS'),
+			'<img src="'.$path.'base/icon-16-toolbox.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_MANAGERS'),
+			'index.php?option=com_pagesanditems&view=managers',
+			$vName == 'managers' || $extensionType == 'manager'
 		);
-		*/
-		/*
-		ms: 06.05.2011
-		here we get the managers
-		the submenu-item only display if we have an manager who return onGetManager the template manager have not an onGetManager function
-		*/
-		/*
-		$managers = array();
-		require_once(realpath(dirname(__FILE__).DS.'..').DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
-		$dispatcher = &JDispatcher::getInstance();
-		$typeName = 'ExtensionManagerHelper';
-		$typeName::importExtension(null, null,true,null,true);
-		$dispatcher->trigger('onGetManager', array ( &$managers));
-		if(count($managers))
-		{
-		*/
-			JSubMenuHelper::addEntry(
-				'<img src="'.$path.'/media/images/icons/base/icon-16-toolbox.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_MANAGERS'),
-				'index.php?option=com_pagesanditems&view=managers',
-				$vName == 'managers' || $extensionType == 'manager'
-			);
-		//}
-
 	}
-	
+
 	//to do move each bit of toolbar script to the view.html.php where it is used
 	public static function addToolbar($vName = 'page',$vLayout = 'root') //,$pathPluginsItemtypes = null)
 	{
@@ -870,7 +1130,7 @@ submenu
 		switch ($vName)
 		{
 			case 'Xmanage':
-				
+
 				JToolBarHelper::custom('manage.publish', 'publish.png', 'publish_f2.png', 'COM_PAGESANDITEMS_ENABLE', true);
 				JToolBarHelper::custom('manage.unpublish', 'unpublish.png', 'unpublish_f2.png', 'COM_PAGESANDITEMS_DISABLE', true);
 				JToolBarHelper::divider();
@@ -880,17 +1140,17 @@ submenu
 				$path = JURI::root(true).str_replace(DS,'/',str_replace(JPATH_ROOT,'',JPATH_COMPONENT_ADMINISTRATOR));
 				//$path.'/media/images/icons/base/icon-32-refresh.png
 				$doc =& JFactory::getDocument();
-				
+
 				$style = '
-				.icon-32-refresh 
+				.icon-32-refresh
 				{
 					background-image: url("'.$path.'/media/images/icons/icon-32-refresh.png");
 				}
 				';
 				$doc->addStyleDeclaration($style);
 				*/
-				
-				
+
+
 				JToolBarHelper::deleteList('', 'manage.remove','COM_PAGESANDITEMS_UNINSTALL');
 				//JToolBarHelper::cancel('manage.cancel', 'COM_PAGESANDITEMS_CANCEL');
 				JToolBarHelper::divider();
@@ -900,7 +1160,7 @@ submenu
 				JToolBarHelper::cancel('managers.cancel', 'COM_PAGESANDITEMS_CANCEL');
 				//JToolBarHelper::back();
 				// JToolBarHelper::back();
-				
+
 			break;
 			case 'manageextension':
 				JRequest::setVar('hidemainmenu', true);
@@ -911,20 +1171,20 @@ submenu
 				JToolBarHelper::divider();
 				JToolBarHelper::cancel('manageextension.cancel', 'COM_PAGESANDITEMS_CANCEL');
 			break;
-			
+
 			case 'install':
 				//JToolBarHelper::back();
 				//JToolBarHelper::cancel('managers.cancel', 'COM_PAGESANDITEMS_CANCEL');
 				//JToolBarHelper::cancel('install.cancel', 'COM_PAGESANDITEMS_CANCEL');
 			break;
-			
+
 			case 'manageinstall':
 				//JToolBarHelper::back();
 				JToolBarHelper::cancel('managers.cancel', 'COM_PAGESANDITEMS_CANCEL');
 				//JToolBarHelper::cancel('install.cancel', 'COM_PAGESANDITEMS_CANCEL');
 			break;
-			
-		
+
+
 			case 'page':
 				//ms: move to views/page/view.html.php
 				/*
@@ -960,7 +1220,7 @@ submenu
 						//one problem is if user have change the title... all of this will not save
 						//only the state is changed
 						//all of this the user can handle in select 'state
-	
+
 						//JToolBarHelper::divider();
 						//JToolBarHelper::publish( 'page.page_publish');
 						//JToolBarHelper::unpublish( 'page.page_unpublish');
@@ -973,11 +1233,11 @@ submenu
 						JToolBarHelper::divider();
 						JToolBarHelper::cancel( 'page.cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
 					}
-					
+
 				}
 				*/
 			break;
-			
+
 			case 'item':
 				//ms: move to views/item/view.html.php
 				/*
@@ -993,23 +1253,23 @@ submenu
 					JToolBarHelper::save( 'item.item_save', JText::_('COM_PAGESANDITEMS_SAVE_ITEM') );
 					JToolBarHelper::apply( 'item.item_apply', JText::_('COM_PAGESANDITEMS_APPLY') );
 					//JToolBarHelper::divider();
-					
+
 					//ms: i have comment out the next lines
 					//one problem is if user have change the title,text... all of this will not save
 					//only the state is changed
 					//all of this the user can handle in select 'state
-					
-					
+
+
 					//JToolBarHelper::publish( 'item.item_publish');
 					//JToolBarHelper::unpublish( 'item.item_unpublish');
 					//JToolBarHelper::custom( 'item.item_archive','archive','archive','archive',false);
 
 
 					//JToolBarHelper::archive( 'item.item_archive');//,'archive','archive','archive',false);
-					
+
 					//JToolBarHelper::trash( 'item.item_trash');//,'trash','','',false);
 					//JToolBarHelper::divider();
-					
+
 					JToolBarHelper::custom( 'item.item_delete','delete','delete','delete',false);
 					//JToolBarHelper::divider();
 					JToolBarHelper::custom( 'item_move_select', 'move.png', 'move_f2.png', JText::_('COM_PAGESANDITEMS_MOVE'), false );
@@ -1019,70 +1279,38 @@ submenu
 				}
 				*/
 			break;
-		
+
 			case 'item_move_select':
 				JToolBarHelper::save( 'item.item_move_save', JText::_('COM_PAGESANDITEMS_SAVE') );
 				JToolBarHelper::cancel( 'cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
 			break;
-			
+
 			case 'page_move_select':
 				JToolBarHelper::save( 'page.page_move_save', JText::_('COM_PAGESANDITEMS_SAVE') );
 				JToolBarHelper::cancel( 'cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
 			break;
-			
+
 			case 'config':
-				JToolBarHelper::save( 'config.config_save', JText::_('COM_PAGESANDITEMS_SAVE') );
-				JToolBarHelper::apply( 'config.config_apply', JText::_('COM_PAGESANDITEMS_APPLY') );
-				JToolBarHelper::cancel( 'config.cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
+
 			break;
-			
+
 			case 'config_itemtype':
 				JToolBarHelper::save( 'itemtype.config_itemtype_save', JText::_('COM_PAGESANDITEMS_SAVE') );
 				JToolBarHelper::apply( 'itemtype.config_itemtype_apply', JText::_('COM_PAGESANDITEMS_APPLY') );
 				JToolBarHelper::cancel( 'itemtype.cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
 			break;
-			
+
 			case 'config_custom_itemtype':
-				if(!$sub_task && $sub_task!='new')
-				{
-					JToolBarHelper::custom( 'config_itemtype_render', 'copy.png', 'copy_f2.png', JText::_('COM_PAGESANDITEMS_RENDER_ITEMTYPES'), false );
-					JToolBarHelper::save( 'customitemtype.config_custom_itemtype_save', JText::_('COM_PAGESANDITEMS_SAVE') );
-				}
-				JToolBarHelper::apply( 'customitemtype.config_custom_itemtype_apply', JText::_('COM_PAGESANDITEMS_APPLY') );
-				if(!$sub_task && $sub_task != 'new')
-				{
-					//TODO visible over extensions/managers/archive ?
-					//can we make only an placeholder so we can add over the extensions?
-					//ore trigger the extensions/managers/archive to make the button
-					//like trigger('onToolbarButton',array('archive','config_custom_itemtype_archive'))
-					// ms: at this moment no customitemtype archive
-					//JToolBarHelper::custom( 'customitemtype.config_custom_itemtype_archive','archive','archive','archive',false);
-					//TODO visible over extensions/managers/trash ?
-					// ms: at this moment no customitemtype trash
-					//JToolBarHelper::trash( 'customitemtype.config_custom_itemtype_trash','trash','trash','trash',false);
-					JToolBarHelper::custom('customitemtype.config_custom_itemtype_delete','delete','delete','delete',false);
-				}
-				JToolBarHelper::cancel( 'customitemtype.cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
+				
 			break;
-			
+
 			case 'config_custom_itemtype_field':
-				JToolBarHelper::save( 'customitemtypefield.config_custom_itemtype_field_save', JText::_('COM_PAGESANDITEMS_SAVE') );
-				JToolBarHelper::apply( 'customitemtypefield.config_custom_itemtype_field_apply', JText::_('COM_PAGESANDITEMS_APPLY') );
-				if(!$sub_task && $sub_task != 'new')
-				{
-					// ms: at this moment no  archive
-					//JToolBarHelper::custom( 'customitemtypefield.config_custom_itemtype_field_archive','archive','archive','archive',false);
-					// ms: at this moment no trash
-					//JToolBarHelper::trash( 'customitemtypefield.config_custom_itemtype_field_trash','trash','trash','trash',false);
-					// ms: at this moment no delete
-					//JToolBarHelper::custom('customitemtypefield.config_custom_itemtype_field_delete','delete','delete','delete',false);
-				}
-				JToolBarHelper::cancel( 'customitemtypefield.cancel', JText::_('COM_PAGESANDITEMS_CANCEL') );
+				
 			break;
-			
+
 			case 'extension':
 			case 'managers':
-			
+
 			break;
 			/*
 			case 'pluginX':
@@ -1105,56 +1333,120 @@ submenu
 			case 'root':
 				JToolBarHelper::apply( 'page.root_save', JText::_('COM_PAGESANDITEMS_SAVE') );
 			break;
-		
+			/*
+			case 'categorie':
+			break;
+			*/
+			case 'category':
+			break;
+
 			default:
 				$extensionType = JRequest::getVar('extensionType', '');
 				if($extensionType != 'manager')
 				{
-					JToolBarHelper::apply( 'page.root_save', JText::_('COM_PAGESANDITEMS_SAVE') );
+					JToolBarHelper::apply( 'page.root_save', JText::_('COM_PAGESANDITEMS_SAVE').'X' );
 				}
 			break;
 		}
 	}
-	
+
 	function pi_strtolower($string){
-		if(function_exists('mb_strtolower')){			
+		if(function_exists('mb_strtolower')){
 			$string = mb_strtolower($string, 'UTF-8');
 		}
 		return $string;
-	}	
-	
+	}
+
+/**
+from model page
+BEGIN
+*/
+	function make_alias($alias)
+	{
+		$alias = str_replace("'",'',$alias);
+		$alias = str_replace('"','',$alias);
+		$alias = JFilterOutput::stringURLSafe($alias);
+		return $alias;
+	}
+
+	function make_alias_unique($alias, $tablename, $exclude_id){
+
+		//get aliasses, except for the current alias-row
+		$db = JFactory::getDBO();
+		$where = '';
+		if($exclude_id)
+		{
+			$where = "WHERE id<>$exclude_id ";
+		}
+		$db->setQuery("SELECT alias "
+		."FROM #__$tablename "
+		.$where
+		);
+		$rows = $db->loadObjectList();
+		$aliasses = array();
+		foreach($rows as $row){
+			$aliasses[] = $row->alias;
+		}
+
+		if(in_array($alias, $aliasses)){
+			$j = 2;
+			while (in_array($alias."-".$j, $aliasses)){
+				$j = $j + 1;
+			}
+			$alias = $alias."-".$j;
+		}
+
+		return $alias;
+	}
+
+
+	function getPageId()
+	{
+		static $getPageId;
+		if(isset($getPageId)){
+			return $getPageId;
+		}
+		if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6')){
+			$root_id = 0;
+		}else{
+			$root_id = 1;
+		}
+			$getPageId = JRequest::getVar('pageId', $root_id);
+		return $getPageId;
+	}
+
+
+	//moved a copy to helper
+	//to do: find where else there is a call to this function and make it go to the helper
 	function itemtype_select($menu_id)
 	{
 		$html = '';
 		$html .= JText::_('COM_PAGESANDITEMS_ITEMTYPE').': ';
 		//get itemtype aliasses in new array
-		$itemtypes = array();			
-		foreach($this->getItemtypes() as $type)
+		$itemtypes = array();
+		foreach(PagesAndItemsHelper::getItemtypes() as $type) //$this->getItemtypes() as $type)
 		{
 			/*
-			TODO rewrite 
-			*/			
-			
-			$type_array = array($type, $this->translate_item_type($type));
-			
-			
-			array_push($itemtypes, $type_array);			
+			TODO add for custom
+			*/
+			$type_array = array($type, PagesAndItemsHelper::translate_item_type($type));
+			array_push($itemtypes, $type_array);
 		}
-		
+
 		//sort array on alias
-		foreach ($itemtypes as $key => $row) 
+		foreach ($itemtypes as $key => $row)
 		{
-			$order[$key]  = strtolower($row[1]);    
+			$order[$key]  = strtolower($row[1]);
 		}
 		array_multisort($order, SORT_ASC, $itemtypes);
 
-		//print_r($itemtypes);
-		$link = '';
+
 
 		//$html .= '<select name="select_itemtype" id="select_itemtype">';
-		$html .= '<select id="select_itemtype" ';
-		if(!$menu_id && $this->app->isAdmin()){
-			//only when no id AND in the backend
+		$html .= '<select id="select_itemtype" name="select_itemtype"';
+		if(!$menu_id)
+		{
+			/*
 			$link = 'index.php?option=com_pagesanditems'; //.$option;
 			//$link .= '&amp;task=item.doExecute';
 			//$link .= '&amp;extension=menuitemtypeselect';
@@ -1164,20 +1456,23 @@ submenu
 			$link .= '&amp;sub_task=new';
 			$link .= '&amp;tmpl=component';
 			$link .= '&amp;pageType=content_article';
-			$link .= '&amp;menutype='.$this->pageMenuItem->menutype;
+			$menutype = isset($this->pageMenuItem->menutype) ? $this->pageMenuItem->menutype : '';
+			$link .= '&amp;menutype='.$menutype;
 			$link .= '&amp;pageId='.$menu_id;
 			//$link .= '&amp;select_itemtype=';
+			$link .= '&amp;categoryId='.JRequest::getVar('categoryId',null);
+			*/
 			
+			//$html .= 'name="select_itemtype" ';
 			
 			//$html .= 'onchange="document.getElementById(\'button_new_itemtype\').href.value = \''.$link.'\'+this.value\';" ';
-			
+
 		}
-		$html .= 'name="select_itemtype" ';
 		$html .= '>';
-		
+
 		foreach($itemtypes as $type)
 		{
-			
+
 			if($type[1])
 			{
 				//only show if itemtype is installed
@@ -1185,10 +1480,12 @@ submenu
 				if($type[0]=='text')
 				{
 					$html .= ' selected="selected"';
+					/*
 					if(!$menu_id)
 					{
 						$link .= '&amp;select_itemtype='.$type[0];
 					}
+					*/
 				}
 				$html .= '>'.$type[1];
 				if($type[0]=='text')
@@ -1197,56 +1494,67 @@ submenu
 				}
 				$html .= '</option>';
 			}
-			
+
 		}
 		$html .= '</select>';
-		if(!$menu_id && $this->app->isAdmin()){
-			$html .= '&nbsp;&nbsp;';
-	
-			$button = $this->getButtonMaker();
-			$button->imagePath = $this->dirIcons;
-			$button->buttonType = 'input';
-			$button->text = JText::_('COM_PAGESANDITEMS_NEW_ITEM');
-			$button->alt = JText::_('COM_PAGESANDITEMS_MAKE_NEW_ITEM');
-			
-			
-			if(!$menu_id)
-			{
-				//here we make an modal window
-				// with
-	
-	
-	
-				$size_x = '1024';
-				$size_y = '800';
-				$size = 'size: { x: '.$size_x.' , y: '.$size_y.'}';
-				$options = "handler: 'iframe', ".$size;
-				$button->rel = $options;
-				$button->href = $link;
-				$button->modal = true;
-				$button->id = 'button_new_itemtype';
-				//$button->onclick = 'alert(\'new_item('.$menu_id.')\');';
-			}
-			else
-			{
-				$button->onclick = 'new_item('.$menu_id.');';
-			}
-			
-			$button->imageName = 'base/icon-16-add.png';
-			$html .= $button->makeButton();
+		$html .= '&nbsp;&nbsp;';
+
+		$button = PagesAndItemsHelper::getButtonMaker();
+		$button->imagePath = PagesAndItemsHelper::getDirIcons();
+		$button->buttonType = 'input';
+		$button->text = JText::_('COM_PAGESANDITEMS_NEW_ITEM');
+		$button->alt = JText::_('COM_PAGESANDITEMS_MAKE_NEW_ITEM');
+
+
+		/*
+		if(!$menu_id)
+		{
+			//here we make an modal window
+			// with
+			$size_x = '1024';
+			$size_y = '800';
+			$size = 'size: { x: '.$size_x.' , y: '.$size_y.'}';
+			$options = "handler: 'iframe', ".$size;
+			$button->rel = $options;
+			$button->href = $link;
+			$button->modal = true;
+			$button->id = 'button_new_itemtype';
+			//$button->onclick = 'alert(\'new_item('.$menu_id.')\');';
 		}
+		else
+		{
+			$button->onclick = 'new_item('.$menu_id.');';
+		}
+		*/
+		
+		$button->onclick = 'new_item('.$menu_id.');';
+		
+		$button->imageName = 'base/icon-16-add.png';
+		$html .= $button->makeButton();
+
 		return $html;
 	}
-	
+
 	function getItemtypes(){
+		static $itemtypes;
+		if(isset($itemtypes)){
+			return $itemtypes;
+		}
+		$itemtypes = PagesAndItemsHelper::setItemtypes();
+		
+		return $itemtypes;
+		/*
 		if(!$this->itemtypes){
 			$this->setItemtypes();
 		}
 		return $this->itemtypes;
+		*/
 	}
-	
-	function setItemtypes(){		
-		$temp_itemtypes = explode(',',$this->config['itemtypes']);
+
+	function setItemtypes(){
+		$config = PagesAndItemsHelper::getConfig();
+		$database = JFactory::getDBO();
+		$temp_itemtypes = explode(',',$config['itemtypes']);
 		$temp = array();
 		for($n = 0; $n < count($temp_itemtypes); $n++)
 		{
@@ -1258,18 +1566,354 @@ submenu
 			}
 			$temp[] = $type;
 		}
+		
+		$query = 'SELECT element ';
+		$query .='FROM #__pi_extensions ';
+		$query .='WHERE type='.$database->Quote('itemtype').' ';
+		$query .='AND enabled ='.$database->Quote('1');
+		$database->setQuery( $query );
+		$itemtypeRows = $database->loadResultArray();
+		if(!in_array('custom', $itemtypeRows))
+		{
+			//the custom itemtype are disabled so we must remove all custom
+			$temp = array();
+		}
+		$temp_test = array();
+		if($itemtypeRows)
+		{
+			foreach($itemtypeRows as $itemtype)
+			{
+				if($itemtype != 'custom')
+				array_push($temp, $itemtype);
+			}
+		}
+		
+		
 		//make unique
 		$temp = array_unique($temp);
-		$this->itemtypes = $temp;
+		return $temp;
+		//$this->itemtypes = $temp;
 	}
+
+
+	function getMenutypes()
+	{
+		static $menutypes;
+		if(isset($menutypes)){
+			return $menutypes;
+		}
+		$menutypes = PagesAndItemsHelper::setMenutypes();
+		return $menutypes;
+	}
+
+	function setMenutypes() //$id = null, $edit = null)
+	{
+		//check to see which menutypes we need
+		$menutypes = array();
+		$config = PagesAndItemsHelper::getConfig();
+		
+		$db =& JFactory::getDBO();
+		/*
+		$db->setQuery("SELECT title, menutype FROM #__menu_types WHERE menutype = '' ORDER BY title ASC"  );
+		$rows_menu_types = $db->loadAssocList('menutype');
+		*/
+		if($config['menus'] != '')
+		{
+			$temp_menus = explode(',',$config['menus']);
+			for($n = 0; $n < count($temp_menus); $n++)
+			{
+				$temp_menutype = explode(';',$temp_menus[$n]);
+				/*
+				old
+				array_push($menutypes,$temp_menutype[0]);
+				
+				//todo also title and id from db???
+				change for menu_types id?
+				so title and menutype is change in #__menu_types
+				*/
+				/*
+				if(count($temp_menutype) == 3)
+				{
+					//we have an id
+					$db->setQuery("SELECT title, menutype FROM #__menu_types WHERE id = '$temp_menutype[2]' ORDER BY title ASC"  );
+				}
+				else
+				{
+				*/
+					$db->setQuery("SELECT title, menutype FROM #__menu_types WHERE menutype = '$temp_menutype[0]' ORDER BY title ASC"  );
+				//}
+				$menutype = $db->loadObject(); //menutype');
+				if(isset($menutype->menutype))
+				{
+					array_push($menutypes,$menutype->menutype);
+				}
+			}
+		}
+		return $menutypes;
+	}
+
+	function getMenutypeTitle($menutype)
+	{
+		$menutype_title = '';
+		//we want get the title from #__menu_types not from the config
+		$db =& JFactory::getDBO();
+		$db->setQuery("SELECT title, menutype FROM #__menu_types WHERE menutype = '$menutype' ORDER BY title ASC"  );
+		$row = $db->loadObject();
+		if($row)
+		{
+			$menutype_title = $row->title;
+		}
+		/*
+		$config = PagesAndItemsHelper::getConfig();
+		$temp_menus = explode(',',$onfig['menus']);
+		for($n = 0; $n < count($temp_menus); $n++)
+		{
+			$menutype_temp = explode(';',$temp_menus[$n]);
+			if($menutype_temp[0]==$menutype){
+				$menutype_title = $menutype_temp[1];
+				break;
+			}
+		}
+		*/
+		return $menutype_title;
+		//return strtolower($menutype_title);
+	}
+
+	//move to helper
+	function getCurrentMenutype()
+	{
+		static $currentMenutype;
+		if(isset($currentMenutype)){
+			return $currentMenutype;
+		}
+		$currentMenutype = PagesAndItemsHelper::setCurrentMenutype();
+		return $currentMenutype;
+	}
+
+	//move to helper
+	function setCurrentMenutype()
+	{
+		$config = PagesAndItemsHelper::getConfig();
+		$temp_menus = explode(',',$config['menus']);
+		//get the current pages menutype
+		if(count($temp_menus) !=0 && $temp_menus[0] != '')
+		{
+			//if(!JRequest::getVar('view') || (JRequest::getVar('view') == 'page' && JRequest::getVar('layout') == 'root' || !JRequest::getVar('menutype',0)) )
+			if(!JRequest::getVar('view') || (JRequest::getVar('view') == 'page' && JRequest::getVar('layout') == 'root'))
+			// || !JRequest::getVar('menutype',0)) ) 
+			{
+				$menu_in_url = JRequest::getVar('menutype');
+				if(!$menu_in_url)
+				{
+					$menutypes = PagesAndItemsHelper::getMenutypes();
+					$menu_in_url = $menutypes[0];
+				}
+				return $menu_in_url;
+			}
+			else
+			{
+				$menuitem = PagesAndItemsHelper::getMenuitem();
+				if($menuitem && count($menuitem))
+				{
+					return $menuitem->menutype;
+				}
+				$menuitem = null;
+				foreach(PagesAndItemsHelper::getMenuitems() as $menuitem)
+				{
+					if($menuitem->id == JRequest::getVar('pageId'))
+					{
+						return $menuitem->menutype;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	function getMenuitem($pageId = null,$state = "(published='0' OR published='1')")
+	{
+		$db =& JFactory::getDBO();
+		$where = array();
+		$where[] = $state;
+		$where[] = "id='".($pageId ? $pageId :JRequest::getVar('pageId'))."'";
+		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+
+		$version = new JVersion();
+		$joomlaVersion = $version->getShortVersion();
+		if($joomlaVersion < '1.6')
+		{
+			$db->setQuery("SELECT * FROM #__menu $where ORDER BY menutype ASC, sublevel ASC, ordering ASC"  );
+		}
+		else
+		{
+			$db->setQuery("SELECT *, title as name, parent_id as parent FROM #__menu $where ORDER BY lft ASC "  );
+		}
+		return $db->loadObject();
+	}
+
+
+	function getMenutypeMenuitems($menutype,$state = "(published='0' OR published='1')",$return = 'object')
+	{
+		$menutypes = "AND (menutype='".$menutype."')";
+		$where = array();
+		$where[] = $state;
+		$where[] = "(menutype='".$menutype."')";
+		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+		$db = JFactory::getDBO();
+		if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
+		{
+			$db->setQuery("SELECT * FROM #__menu $where ORDER BY menutype ASC, sublevel ASC, ordering ASC"  );
+		}
+		else
+		{
+			$db->setQuery("SELECT *, title as name, parent_id as parent FROM #__menu  $where ORDER BY menutype ASC, level ASC, lft ASC"  );
+		}
+		if($return == 'object')
+		{
+			return $db->loadObjectList();
+		}
+		else
+		{
+			return $db->loadAssocList('id');
+		}
+	}
+
+	function getMenuitems($state = "(published='0' OR published='1')")
+	{
+		static $menuitems;
+		if(isset($menuitems)){
+			return $menuitems;
+		}
+		$menuitems = PagesAndItemsHelper::setMenuitems();
+		return $menuitems;
+	}
+
+	function setMenuitems($state = "(published='0' OR published='1')")
+	{
+		$db =& JFactory::getDBO();
+		$where = array();
+		$where[] = $state;
+		//Where is use view pages and _currentMenutype and...?
+		//get menuitems (to be recycled in different functions)
+		$temp_menus = PagesAndItemsHelper::getMenutypes();
+		$menutypes = '';
+		if(count($temp_menus))
+		{
+			$menutypes = "AND (";
+			$where_menutypes = "(";
+			for($n = 0; $n < count($temp_menus); $n++)
+			{
+				if($n!=0)
+				{
+					$menutypes .= " OR ";
+					$where_menutypes .= " OR ";
+				}
+				//$menutype = explode(';',$temp_menus[$n]); //??????
+				//$menutypes .= "menutype='".$menutype[0]."'";
+				//$where_menutypes .= "menutype='".$menutype[0]."'";
+				
+				/*
+				$menutypes .= "menutype='".$temp_menus[$n]['menutype']."'";
+				$where_menutypes .= "menutype='".$temp_menus[$n]['menutype']."'";
+				
+				*/
+				$menutypes .= "menutype='".$temp_menus[$n]."'";
+				$where_menutypes .= "menutype='".$temp_menus[$n]."'";
+			}
+			$menutypes .= ")";
+			$where_menutypes .= ")";
+			$where[] = $where_menutypes;
+		}
+
+
+		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+
+		$version = new JVersion();
+		$joomlaVersion = $version->getShortVersion();
+		if($joomlaVersion < '1.6')
+		{
+			$db->setQuery("SELECT * FROM #__menu $where ORDER BY menutype ASC, sublevel ASC, ordering ASC"  );
+		}
+		else
+		{
+			$db->setQuery("SELECT *, title as name, parent_id as parent FROM #__menu $where ORDER BY lft ASC "  );
+		}
+		return $db->loadObjectList();
+	}
+
+	function getCurrentPageId()
+	{
+		static $currentPageId;
+		if(isset($currentPageId)){
+			return $currentPageId;
+		}
+		$currentPageId = PagesAndItemsHelper::setCurrentPageId();
+		return $currentPageId;
+		/*
+		if(!$this->_currentPageId)
+		{
+			$this->setCurrentPageId();
+		}
+		return $this->_currentPageId;
+		*/
+	}
+
+	function setCurrentPageId()
+	{
+		$db =& JFactory::getDBO();
+		$menutype = PagesAndItemsHelper::getCurrentMenutype();
+
+		$db->setQuery("SELECT * FROM #__menu WHERE (published='0' OR published='1') AND menutype='$menutype' ORDER BY ordering ASC LIMIT 1" );
+		$menuitem = $db->loadObject();
+		if($menuitem)
+		{
+			return $menuitem->id;
+		}
+	}
+
+	function getMenuItemsTypes()
+	{
+		static $menuItemsTypes;
+		if(isset($menuItemsTypes)){
+			return $menuItemsTypes;
+		}
+		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'menutypes.php');
+		$modelMenutypes = new PagesAndItemsModelMenutypes();
+		$menuItemsTypes = $modelMenutypes->getTypeListComponents();
+		return $menuItemsTypes;
+		
+	}
+
+
+
+/**
+from model page
+END
+*/
+
+
+/*
+
+new for tree
+*/
 	
+	function getTree()
+	{
+		//PagesAndItemsTree
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'tree'.DS.'tree.php');
+		$tree = new PagesAndItemsTree();
+		return $tree;
+	}
+
 	function translate_item_type($item_type){
 		/*
 		all itemtypes are extensions so we can add language to each itemtype
 		if we want so all itemtype JText can remove from the base language file
 		and only the custom_* need extra routine here
-		
+
 		*/
+		$database = JFactory::getDBO();
 		if($item_type=='text')
 		{
 			$plugin_name = 'Joomla '.JText::_('COM_PAGESANDITEMS_ITEMTYPE_JOOMLA_ARTICLE');
@@ -1293,36 +1937,37 @@ submenu
 			//custom itemtype
 			$pos = strpos($item_type, 'ustom_');
 			$type_id = substr($item_type, $pos+6, strlen($item_type));
-			$this->db->setQuery("SELECT name FROM #__pi_customitemtypes WHERE id='$type_id' LIMIT 1");
-			$rows = $this->db->loadObjectList();
+			$database->setQuery("SELECT name FROM #__pi_customitemtypes WHERE id='$type_id' LIMIT 1");
+			$rows = $database->loadObjectList();
 			$row = $rows[0];
-			$plugin_name = $row->name;
+			//$plugin_name = $row->name;
+			$plugin_name = $row->name.' ('.JText::_('COM_PAGESANDITEMS_CUSTOMITEMTYPE').')';
 		}
 		else
 		{
 			//
 			/*
-			
+
 			$translated = JText::_('PI_EXTENSION_ITEMTYPE_'.strtoupper($item_type).'_NAME');
 			if($translated <> 'PI_EXTENSION_ITEMTYPE_'.strtoupper($item_type).'_NAME')
 			{
-				
+
 			}
 			*/
 			/*
 			we will load the extension
 			if we have $itemtypeHtml == '' the extension are not installed ore not published?
 			*/
-			
+
 			//$itemtype = ExtensionHelper::importExtension('itemtype',null, $item_type,true,null,true);
-			
-			
+
+
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
 			$itemtype = ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
 			$dispatcher = &JDispatcher::getInstance();
 			//$itemtypeHtml = & new JObject();
 			$itemtypeHtml = ''; //->text = '';
-			
+
 			$results = $dispatcher->trigger('onGetPluginName', array(&$itemtypeHtml,$item_type));
 			//$dispatcher->trigger('onDetach',array($item_type));
 			//if($itemtypeHtml->text != '')
@@ -1335,113 +1980,140 @@ submenu
 			{
 				$plugin_name = false;
 				$plugin_name = $item_type;
-				
+
 			}
 			//
 			//echo ' itemtype: '.$item_type.' itemtypeHtml: '.$itemtypeHtml.' plugin_name: '.$plugin_name.'  </ br>';
 		}
 		return $plugin_name;
 	}
-	
+
+
+
+	//move to PagesAndItemsHelper
+	function checkItemTypeInstall($item_type)
+	{
+		//here we call the database #__extensions
+		//JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
+		//$row = JTable::getInstance('piextension','PagesAndItemsTable');
+		$database = JFactory::getDBO();
+		if(strpos($item_type, 'ustom_'))
+		{
+			$item_type = 'custom';
+		}
+		
+		$query = 'SELECT * ';
+		$query .='FROM #__pi_extensions ';
+		$query .='WHERE type='.$database->Quote('itemtype').' ';
+		$query .='AND element='.$database->Quote($item_type);
+		$database->setQuery( $query );
+		$row = $database->loadObject( );
+		return $row;
+	}
+
+
 	function trashPage($trashPageId){
-	
+
 		//check if menuitem is content-category-blog, and if so, get cat_id
 		$content_category_blog = false;
-		$this->db->setQuery("SELECT link, type FROM #__menu WHERE id='$trashPageId' LIMIT 1");
-		$rows = $this->db->loadObjectList();
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT link, type FROM #__menu WHERE id='$trashPageId' LIMIT 1");
+		$rows = $db->loadObjectList();
 		$row = $rows[0];
 		if((strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type!='url'))
 		{
 			$content_category_blog = true;
 			$cat_id = str_replace('index.php?option=com_content&view=category&layout=blog&id=','',$row->link);
 		}
-		
+
 		//trash mainmenuitem
-		$this->db->setQuery( "UPDATE #__menu SET published='-2' WHERE id='$trashPageId'");
-		$this->db->query();
-		
+		$db->setQuery( "UPDATE #__menu SET published='-2' WHERE id='$trashPageId'");
+		$db->query();
+		$config = PagesAndItemsHelper::getConfig();
 		//only trash items on page when its a content_blog_category
-		if($content_category_blog && $this->config['page_trash_items']){
+		if($content_category_blog && $config['page_trash_items']){
 			//trash all items on the page (category)
-			$this->trashItemsCategory($cat_id);
+			PagesAndItemsHelper::trashItemsCategory($cat_id);
 		}
-		
+
 		//trash category
-		if($content_category_blog && $this->config['page_trash_cat']){
-			$this->db->setQuery( "UPDATE #__categories SET published='-2' WHERE id='$cat_id'");
-			$this->db->query();
+		if($content_category_blog && $config['page_trash_cat']){
+			$db->setQuery( "UPDATE #__categories SET published='-2' WHERE id='$cat_id'");
+			$db->query();
 		}
-		
+
 		//trash all underlying child-pages
-		$this->trashPageChildren($trashPageId);
-		
-		
+		//$this->trashPageChildren($trashPageId);
+		PagesAndItemsHelper::trashPageChildren($trashPageId);
+
+
 	}
-	
+
 	function deletePage($deletePageId){
-	
+
 		//check if menuitem is content-category-blog, and if so, get cat_id
 		$content_category_blog = false;
-		$this->db->setQuery("SELECT link, type FROM #__menu WHERE id='$deletePageId' LIMIT 1");
-		$rows = $this->db->loadObjectList();
+		$db =& JFactory::getDBO();
+		$db->setQuery("SELECT link, type FROM #__menu WHERE id='$deletePageId' LIMIT 1");
+		$rows = $db->loadObjectList();
 		$row = $rows[0];
 		if((strstr($row->link, 'index.php?option=com_content&view=category&layout=blog') && $row->type!='url'))
 		{
 			$content_category_blog = true;
 			$cat_id = str_replace('index.php?option=com_content&view=category&layout=blog&id=','',$row->link);
 		}
-		
+
 		//only delete items on page when its a content_blog_category
-		if($content_category_blog && $this->config['page_delete_items']){
+		if($content_category_blog && $config['page_delete_items']){
 			//trash all items on the page (category)
-			$this->deleteItemsCategory($cat_id);
+			PagesAndItemsHelper::deleteItemsCategory($cat_id);
 		}
-		
+
 		//delete category
-		if($content_category_blog && $this->config['page_delete_cat']){
-			$this->db->setQuery( "DELETE FROM #__categories WHERE id='$cat_id'");
-			$this->db->query();
+		if($content_category_blog && $config['page_delete_cat']){
+			$db->setQuery( "DELETE FROM #__categories WHERE id='$cat_id'");
+			$db->query();
 		}
-		
+
 		//delete all underlying child-pages
-		$this->deletePageChildren($deletePageId);
-		
+		PagesAndItemsHelper::deletePageChildren($deletePageId);
+
 		//delete mainmenuitem
-		$this->db->setQuery( "DELETE FROM #__menu WHERE id='$deletePageId'");
-		$this->db->query();		
-		
+		$db->setQuery( "DELETE FROM #__menu WHERE id='$deletePageId'");
+		$db->query();
+
 	}
-	
+
 	function deleteItemsCategory($cat_id){
-   
+		$db =& JFactory::getDBO();
         //get content id's which are on frontpage
-        $this->db->setQuery("SELECT content_id FROM #__content_frontpage");
-        $frontpage_items = $this->db->loadResultArray();
-       
+        $db->setQuery("SELECT content_id FROM #__content_frontpage");
+        $frontpage_items = $db->loadResultArray();
+
         //get content-index to know which item has which itemtype
-        $this->db->setQuery("SELECT item_id, itemtype FROM #__pi_item_index");
-        $index_items = $this->db->loadObjectList();
-       
+        $db->setQuery("SELECT item_id, itemtype FROM #__pi_item_index");
+        $index_items = $db->loadObjectList();
+
         //trash all items in the category
-        $this->db->setQuery("SELECT id FROM #__content WHERE catid='$cat_id'" );
-        $rows = $this->db->loadObjectList();
-       
+        $db->setQuery("SELECT id FROM #__content WHERE catid='$cat_id'" );
+        $rows = $db->loadObjectList();
+
         //ms: here we will load all itemtypes
         require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
         ExtensionItemtypeHelper::importExtension(null, null,true,null,true);
         $dispatcher = &JDispatcher::getInstance();
 
         foreach($rows as $row){
-       
+
             $item_id = $row->id;
-            $this->db->setQuery( "DELETE FROM #__content WHERE id='$item_id'");
-            $this->db->query();
-           
+            $db->setQuery( "DELETE FROM #__content WHERE id='$item_id'");
+            $db->query();
+
             //if item was on frontpage, take it off
             if(in_array($item_id, $frontpage_items)){
-                $this->take_item_off_frontpage($item_id);
+                PagesAndItemsHelper::take_item_off_frontpage($item_id);
             }
-           
+
 
             //if item was plugin, delete sub-item rows etc.
             //ms: if item itemtype not 'text'|'html|'other_item'
@@ -1454,23 +2126,23 @@ submenu
                 }
             }
 
-           
+
             //if item had duplicate-items trash those as well
-            $this->db->setQuery("SELECT item_id FROM #__pi_item_other_index WHERE other_item_id='$item_id' ");
-            $other_items = $this->db->loadObjectList();
+            $db->setQuery("SELECT item_id FROM #__pi_item_other_index WHERE other_item_id='$item_id' ");
+            $other_items = $db->loadObjectList();
             foreach($other_items as $other_item){
                 //ms: update_duplicate_item is in models/page.php but i think it must move to extensions/itemtypes/other_item.php
                 //old $this->update_duplicate_item($other_item->item_id, $item_id);
                 //ms: i am confused see the extensions/itemtypes/other_item.php function update_duplicate_item($item_id, $other_item_id)
-              
+
                 $dispatcher->trigger('update_duplicate_item',array($other_item->item_id, $item_id));
                 //ms: i think we must write: $dispatcher->trigger('update_duplicate_item',array($item_id,$other_item->item_id));
                 $other_item_id = $other_item->item_id;
-               
-                $this->db->setQuery( "DELETE FROM #__content WHERE id='$other_item_id' ");
-                $this->db->query();
+
+                $db->setQuery( "DELETE FROM #__content WHERE id='$other_item_id' ");
+                $db->query();
             }
-           
+
             //if item was of itemtype other-item disconnect it from original item by deleting the row in the ohter-item-index
             foreach($index_items as $index_item){
                 if($index_item->itemtype=='other_item'){
@@ -1482,45 +2154,45 @@ submenu
             }
         }
     }
-	
-	function trashPageChildren($trashPageId){	
-			
-		$this->db->setQuery("SELECT id FROM #__menu WHERE parent_id='$trashPageId'" );
-		
-		$rows = $this->db->loadObjectList();
+
+	function trashPageChildren($trashPageId){
+		$db =& JFactory::getDBO();
+		$db->setQuery("SELECT id FROM #__menu WHERE parent_id='$trashPageId'" );
+
+		$rows = $db->loadObjectList();
 		foreach($rows as $row){
-			$this->trashPage($row->id);
+			PagesAndItemsHelper::trashPage($row->id);
 		}
 	}
-	
-	function deletePageChildren($deletePageId){	
-			
-		$this->db->setQuery("SELECT id FROM #__menu WHERE parent_id='$deletePageId'" );
-		
-		$rows = $this->db->loadObjectList();
+
+	function deletePageChildren($deletePageId){
+		$db =& JFactory::getDBO();
+		$db->setQuery("SELECT id FROM #__menu WHERE parent_id='$deletePageId'" );
+
+		$rows = $db->loadObjectList();
 		foreach($rows as $row){
-			$this->deletePage($row->id);
+			PagesAndItemsHelper::deletePage($row->id);
 		}
 	}
-	
+
 	function trashItemsCategory($trashCatId){
-		
+		$db =& JFactory::getDBO();
 		//trash all items in the category
-		$this->db->setQuery("SELECT id FROM #__content WHERE catid='$trashCatId'" );
-		$rows = $this->db->loadObjectList();
+		$db->setQuery("SELECT id FROM #__content WHERE catid='$trashCatId'" );
+		$rows = $db->loadObjectList();
 
 		foreach($rows as $row){
-		
+
 			$item_id = $row->id;
-			
-			$this->item_state($item_id, '-2');
+
+			PagesAndItemsHelper::item_state($item_id, '-2');
 		}
-		
+
 		//clean item-index
 		//only delete CCK rows when the item is really being deleted
 		//$this->keep_item_index_clean();
 	}
-	
+
 	//ms: add
 	function page_state($page_id, $new_state){
 
@@ -1532,24 +2204,25 @@ submenu
 			case '-2':
 				return PagesAndItemsHelper::trashPage($page_id);
 			break;
-			
+
 			case '1':
 			//publish
 				return PagesAndItemsHelper::publishPage(array($page_id),1);
 			break;
-			
+
 			case '0':
 				return PagesAndItemsHelper::publishPage(array($page_id),0);
 			//unpublish
 			break;
 		}
 	}
-	
+
 	//ms: add
 	function publishPage($pks, $value = 1)
 	{
 		// Initialise variables.
-		$table = $row = & JTable::getInstance('menu');
+		//$table = $row = & JTable::getInstance('menu');
+		$table = JTable::getInstance('menu');
 		$pks = (array) $pks;
 		// Default menu item existence checks.
 		if ($value != 1) {
@@ -1564,6 +2237,16 @@ submenu
 			}
 		}
 		$user = JFactory::getUser();
+
+		//ms: fix for publish only parent
+		if ($value == 1 ) {
+			$tree = $table->getTree($pks[0],true);
+			foreach($tree as $pk)
+			{
+				$pks[] = $pk->id;
+			}
+		}
+
 		// Attempt to change the state of the records.
 		if (!$table->publish($pks, $value, $user->get('id'))) {
 			//$this->setError($table->getError());
@@ -1571,13 +2254,13 @@ submenu
 		}
 		return true;
 	}
-	
-	
-	
-	function item_state($item_id, $new_state){	
-	
-		$database = JFactory::getDBO();	
-		
+
+
+
+	function item_state($item_id, $new_state){
+
+		$database = JFactory::getDBO();
+
 		//get category_id
 		$category_id = 0;
 		$database->setQuery("SELECT catid "
@@ -1586,16 +2269,16 @@ submenu
 		." LIMIT 1 "
 		);
 		$rows = $database->loadObjectList();
-		foreach($rows as $row){	
+		foreach($rows as $row){
 			$category_id = $row->catid;
-		}		
-		
+		}
+
 		//get Joomla ACL for this article
 		//include com_content helper
 		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
 		$ContentHelper = new ContentHelper;
-		$canDo = ContentHelper::getActions($category_id, $item_id);		
-		
+		$canDo = ContentHelper::getActions($category_id, $item_id);
+
 		//get content-index to know which item has which itemtype
 		$database->setQuery("SELECT id, itemtype FROM #__pi_item_index WHERE item_id='$item_id' ");
 		$index_items = $database->loadObjectList();
@@ -1605,8 +2288,8 @@ submenu
 			$itemtype = $index_item->itemtype;
 			$index_id = $index_item->id;
 		}
-		
-		//trigger something	
+
+		//trigger something
 		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
 		//ExtensionItemtypeHelper::importExtension(null, 'other_item',true,null,true);
 		//ExtensionItemtypeHelper::importExtension(null, null,true,null,true);
@@ -1618,16 +2301,17 @@ submenu
 			$itemtype = 'custom';
 		}
 		ExtensionItemtypeHelper::importExtension(null, $itemtype,true,null,true);
-		
-		
+
+
 		$dispatcher = &JDispatcher::getInstance();
-		
+
 		if($new_state != 'delete'){
 			//set any other state then deleting
+			//check for canDo edit.state
 			$database->setQuery( "UPDATE #__content SET state='$new_state' WHERE id='$item_id' ");
 			$database->query();
 		}
-		
+
 		/*
 		//if item was plugin, delete sub-item rows etc.
 		foreach($index_items as $index_item){
@@ -1636,7 +2320,7 @@ submenu
 			}
 		}
 		*/
-		
+
 		//if item had duplicate-items trash those as well
 		$database->setQuery("SELECT item_id FROM #__pi_item_other_index WHERE other_item_id='$item_id' ");
 		$other_items = $database->loadObjectList();
@@ -1655,7 +2339,7 @@ submenu
 				$dispatcher->trigger('onManagerItemtypeItemDelete', array ('other_item',$other_item->item_id));
 			}
 		}
-		
+
 		//if item was of itemtype other-item disconnect it from original item by deleting the row in the ohter-item-index
 		if($itemtype=='other_item' && $new_state=='delete' && $canDo->get('core.delete')){
 			//delete_other_item_entry is in models/page.php but i think it must move to extensions/itemtypes/other_item.php
@@ -1663,11 +2347,11 @@ submenu
 			//TODO
 			$dispatcher->trigger('delete_other_item_entry',array($item_id));
 		}
-		
+
 		//if delete
-		if($new_state=='delete' && $canDo->get('core.delete')){	
-			$this->take_item_off_frontpage($item_id);
-			
+		if($new_state=='delete' && $canDo->get('core.delete')){
+			PagesAndItemsHelper::take_item_off_frontpage($item_id);
+
 			/*
 			ms: replaced with $dispatcher->trigger('onItemtypeItemSave
 			if($itemtype!='text' && $itemtype!='html' && $itemtype!='other_item')
@@ -1681,13 +2365,27 @@ submenu
 				$itemtype = 'custom_'.$type_id;
 			}
 			$dispatcher->trigger('onItemtypeItemSave',array($itemtype, 1, $item_id,null));
-			
+
 
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
 			ExtensionManagerHelper::importExtension(null,null, true,null,true);
-			
+
 			$dispatcher->trigger('onManagerItemtypeItemDelete', array ($itemtype,$item_id));
 
+			/*
+			TODO search all pages with link ? 'option=com_content&view=article&id='$item_id
+			$query = "select * from #__menus where link LIKE '%option=com_content&view=article&id=".$item_id."%' ORDER BY id ";
+			$database->setQuery( $query );
+			$database->query();
+			$rows = $database->loadObjectList();
+			if(count($rows))
+			{
+				foreach($rows as $row)
+				{
+					$query = "UPDATE from #__menus where id=".$row->id." set published = 0 ";
+				}
+			}
+			*/
 			
 			
 			//delete the actual item
@@ -1702,26 +2400,29 @@ submenu
 			}
 			$dispatcher->trigger('onItemtypeItemNewState',array($itemtype, $new_state, $item_id));
 		}
-	
+
 	}
-	
+
+
+
 	function take_item_off_frontpage($item_id){
-		$this->db->setQuery("DELETE FROM #__content_frontpage WHERE content_id='$item_id' ");
-		$this->db->query();
-		
-		$this->db->setQuery( "UPDATE #__content SET featured='0' WHERE id='$item_id' ");
-		$this->db->query();
-		
-	}	
-	
+		$db = JFactory::getDBO();
+		$db->setQuery("DELETE FROM #__content_frontpage WHERE content_id='$item_id' ");
+		$db->query();
+
+		$db->setQuery( "UPDATE #__content SET featured='0' WHERE id='$item_id' ");
+		$db->query();
+
+	}
+
 	function keep_item_index_clean(){
-	
+		$db = JFactory::getDBO();
 		//get content id's
-		$this->db->setQuery( "SELECT id, state "
+		$db->setQuery( "SELECT id, state "
 		. "FROM #__content "
 		);
-		$items = $this->db->loadObjectList();
-		
+		$items = $db->loadObjectList();
+
 		//make nice arrays
 		$content_ids = array();
 		$content_ids_tashed = array();
@@ -1731,27 +2432,27 @@ submenu
 				$content_ids_tashed[] = $item->id;
 			}
 		}
-		
+
 		//get item index data
-		$this->db->setQuery( "SELECT id, item_id, itemtype "
+		$db->setQuery( "SELECT id, item_id, itemtype "
 		. "FROM #__pi_item_index "
 		);
-		$index_items = $this->db->loadObjectList();
-		
+		$index_items = $db->loadObjectList();
+
 		$from_cit_to_text = array();
-		
-		//loop through item index data. 
-		//delete rows which item in #__content has been deleted and 
+
+		//loop through item index data.
+		//delete rows which item in #__content has been deleted and
 		foreach($index_items as $index_item)
 		{
 			$index_id = $index_item->id;
 			$index_item_id = $index_item->item_id;
-			
+
 			$delete_index_row = 0;
-			
+
 			//customitemtypes which have been trashed, so delete it from index (makes it a normal item)
 			$itemtype = $index_item->itemtype;
-						
+
 			if(strpos($itemtype, 'ustom_')){
 				//custom itemtype
 				if(in_array($index_item_id, $content_ids_tashed)){
@@ -1761,30 +2462,30 @@ submenu
 					$from_cit_to_text[] = $index_item_id;
 				}
 			}
-			
+
 			//if item is no longer in content table, take it out of index.
 			if(!in_array($index_item_id, $content_ids)){
 				$delete_index_row = 1;
-				
+
 			}
-			
+
 			//delete the index row if needed
-			if($delete_index_row){				
-				$this->db->setQuery("DELETE FROM #__pi_item_index WHERE id='$index_id'");
-				$this->db->query();
+			if($delete_index_row){
+				$db->setQuery("DELETE FROM #__pi_item_index WHERE id='$index_id'");
+				$db->query();
 			}
 		}
-		
+
 		/*
 		//clean items which where customitemtypes, but have now become normal text-types, from custom itemtype codes
 		foreach($from_cit_to_text as $itemid){
 			//get item texts
-			$this->db->setQuery( "SELECT introtext, fulltext "
+			$db->setQuery( "SELECT introtext, fulltext "
 			."FROM #__content "
 			."WHERE id='$itemid' "
 			);
 			$items = $this->db->loadObjectList();
-			
+
 			//take the codes out
 			foreach($items as $item){
 				echo $item->introtext;
@@ -1792,28 +2493,29 @@ submenu
 				//$introtext = $this->take_cit_codes_out($item->introtext);
 				//$fulltext = $this->take_cit_codes_out($item->fulltext);
 			}
-			
+
 			//update item
 			//$this->db->setQuery( "UPDATE #__content SET introtext='$introtext', fulltext='$fulltext' WHERE id='$itemid'");
 			//$this->db->query();
 		}
 		*/
 	}
-	
+
 	function reorderItemsCategory($catId){
-		$this->db->setQuery("SELECT id, ordering, catid FROM #__content WHERE catid='$catId' AND (state='0' OR state='1') ORDER BY ordering ASC" );
-		$rows = $this->db->loadObjectList();
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT id, ordering, catid FROM #__content WHERE catid='$catId' AND (state='0' OR state='1') ORDER BY ordering ASC" );
+		$rows = $db->loadObjectList();
 		$counter = 1;
 		foreach($rows as $row){
 			//reorder to make sure all is well
 			$rowId = $row->id;
-			$this->db->setQuery( "UPDATE #__content SET ordering='$counter' WHERE id='$rowId'");
-			$this->db->query();
+			$db->setQuery( "UPDATE #__content SET ordering='$counter' WHERE id='$rowId'");
+			$db->query();
 			$counter = $counter + 1;
 		}
 		return $counter;
 	}
-	
+
 	function get_menutype($menu_id){
 		$database = JFactory::getDBO();
 		$database->setQuery("SELECT menutype "
@@ -1823,30 +2525,34 @@ submenu
 		);
 		$rows = $database->loadObjectList();
 		$menutype = 0;
-		foreach($rows as $row){	
+		foreach($rows as $row){
 			$menutype = $row->menutype;
 		}
 		return $menutype;
 	}
-	
+
 	function check_display($thing){
 		$return = 0;
-		if(isset($this->config[$thing])){
-			if($this->config[$thing]){
+		
+		//if(isset($this->config[$thing])){
+
+			//if($this->config[$thing]){
+			if(PagesAndItemsHelper::getConfigAsRegistry()->get($thing)){
 				$return = 1;
 			}
-		}
-		if($this->getIsSuperAdmin() && !$this->config['item_props_hideforsuperadmin']){
+		//}
+		//if($this->getIsSuperAdmin() && !$this->config['item_props_hideforsuperadmin']){
+		if(PagesAndItemsHelper::getIsSuperAdmin() && !PagesAndItemsHelper::getConfigAsRegistry()->get('item_props_hideforsuperadmin')){
 			$return = 1;
 		}
 		return $return;
 	}
-	
+
 	function get_all_page_fields(){
 		$fields = array();
-		
-		//array(name_of_right, element id, language_label, menu-type, field or panel)		
-		
+
+		//array(name_of_right, element id, language_label, menu-type, field or panel)
+
 		//fields under details
 		$fields[] = array('page_props_id','jform_id','JGRID_HEADING_ID','all','field');
 		$fields[] = array('page_props_type','jform_type-lbl','COM_MENUS_ITEM_FIELD_TYPE_LABEL','all','field');
@@ -1862,37 +2568,37 @@ submenu
 		$fields[] = array('page_props_home','jform_home','COM_MENUS_ITEM_FIELD_HOME_LABEL','all','field');
 		$fields[] = array('page_props_language','jform_language','JFIELD_LANGUAGE_LABEL','all','field');
 		$fields[] = array('page_props_template_style_id','jform_template_style_id','COM_MENUS_ITEM_FIELD_TEMPLATE_LABEL','all','field');
-		
+
 		//panel Link Type Options
 		$fields[] = array('page_props_linktype_options','menu-options-options','COM_MENUS_LINKTYPE_OPTIONS_LABEL','all','panel');
 		$fields[] = array('page_props_link_title_attri','jform_params_menu_anchor_title','COM_MENUS_ITEM_FIELD_ANCHOR_TITLE_LABEL','all','field');
 		$fields[] = array('page_props_link_css','jform_params_menu_anchor_css','COM_MENUS_ITEM_FIELD_ANCHOR_CSS_LABEL','all','field');
 		$fields[] = array('page_props_link_image','jform_params_menu_image-lbl','COM_MENUS_ITEM_FIELD_MENU_IMAGE_LABEL','all','field');
 		$fields[] = array('page_props_add_title','jform_params_menu_text-lbl','COM_MENUS_ITEM_FIELD_MENU_TEXT_LABEL','all','field');
-		
+
 		//panel page display Options
 		$fields[] = array('page_props_page_display_options','page-options-options','COM_MENUS_PAGE_OPTIONS_LABEL','all','panel');
 		$fields[] = array('page_props_browser_page','jform_params_page_title','COM_MENUS_ITEM_FIELD_PAGE_TITLE_LABEL','all','field');
 		$fields[] = array('page_props_show_page_heading','jform_params_show_page_heading','COM_MENUS_ITEM_FIELD_SHOW_PAGE_HEADING_LABEL','all','field');
 		$fields[] = array('page_props_page_heading','jform_params_page_heading','COM_MENUS_ITEM_FIELD_SHOW_PAGE_HEADING_LABEL','all','field');
 		$fields[] = array('page_props_page_class','jform_params_pageclass_sfx','COM_MENUS_ITEM_FIELD_PAGE_CLASS_LABEL','all','field');
-		
+
 		//panel page display Options
 		$fields[] = array('page_props_metadata_options','metadata-options','JGLOBAL_FIELDSET_METADATA_OPTIONS','all','panel');
 		$fields[] = array('page_props_meta_desc','jform_params_menu_meta_description','JFIELD_META_DESCRIPTION_LABEL','all','field');
 		$fields[] = array('page_props_meta_keys','jform_params_menu_meta_keywords','JFIELD_META_KEYWORDS_LABEL','all','field');
 		$fields[] = array('page_props_robots','jform_params_robots','JFIELD_METADATA_ROBOTS_LABEL','all','field');
 		$fields[] = array('page_props_secure','jform_params_secure','COM_MENUS_ITEM_FIELD_SECURE_LABEL','all','field');
-		
+
 		//panel module assignment
-		$fields[] = array('page_props_modules','module-options','COM_MENUS_ITEM_MODULE_ASSIGNMENT','all','panel');		
-		
+		$fields[] = array('page_props_modules','module-options','COM_MENUS_ITEM_MODULE_ASSIGNMENT','all','panel');
+
 		//label menutype category blog
 		$fields[] = array('','','COM_CONTENT_CATEGORY_VIEW_BLOG_TITLE','content_category_blog','menutype');
-		
+
 		//panel required_settings
 		$fields[] = array('page_props_required_settings','request-options','COM_MENUS_REQUEST_FIELDSET_LABEL','content_category_blog','panel');
-		
+
 		//panel category options
 		$fields[] = array('page_props_category_options','basic-options','JGLOBAL_CATEGORY_OPTIONS','content_category_blog','panel');
 		$fields[] = array('page_props_cat_title','jform_params_show_category_title','JGLOBAL_LIST_TITLE_LABEL','content_category_blog','field');
@@ -1904,7 +2610,7 @@ submenu
 		$fields[] = array('page_props_cat_subcat_desc','jform_params_show_subcat_desc','JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_cat_artincat','jform_params_show_cat_num_articles','COM_CONTENT_NUMBER_CATEGORY_ITEMS_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_cat_subheading','jform_params_page_subheading','JGLOBAL_SUBHEADING_LABEL','content_category_blog','field');
-		
+
 		//panel blog layout options
 		$fields[] = array('page_props_blog_options','advanced-options','JGLOBAL_BLOG_LAYOUT_OPTIONS','content_category_blog','panel');
 		$fields[] = array('page_props_blog_leading','jform_params_num_leading_articles','JGLOBAL_NUM_LEADING_ARTICLES_LABEL','content_category_blog','field');
@@ -1918,7 +2624,7 @@ submenu
 		$fields[] = array('page_props_blog_dateorder','jform_params_order_date','JGLOBAL_ORDERING_DATE_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_blog_pagination','jform_params_show_pagination','JGLOBAL_PAGINATION_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_blog_results','jform_params_show_pagination_results','JGLOBAL_PAGINATION_RESULTS_LABEL','content_category_blog','field');
-		
+
 		//panel article options
 		$fields[] = array('page_props_article_options','article-options','COM_CONTENT_ATTRIBS_FIELDSET_LABEL','content_category_blog','panel');
 		$fields[] = array('page_props_art_title','jform_params_show_title','JGLOBAL_SHOW_TITLE_LABEL','content_category_blog','field');
@@ -1942,63 +2648,64 @@ submenu
 		$fields[] = array('page_props_art_email','jform_params_show_email_icon','JGLOBAL_SHOW_EMAIL_ICON_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_art_hits','jform_params_show_hits','JGLOBAL_SHOW_HITS_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_art_unauthorised','jform_params_show_noauth','JGLOBAL_SHOW_UNAUTH_LINKS_LABEL','content_category_blog','field');
-		
+
 		//panel article options
 		$fields[] = array('page_props_integration_options','integration-options','COM_MENUS_INTEGRATION_FIELDSET_LABEL','content_category_blog','panel');
 		$fields[] = array('page_props_int_feed','jform_params_show_feed_link','JGLOBAL_SHOW_FEED_LINK_LABEL','content_category_blog','field');
 		$fields[] = array('page_props_int_each','jform_params_feed_summary','JGLOBAL_FEED_SUMMARY_LABEL','content_category_blog','field');
-		
-		return $fields;		
+
+		return $fields;
 	}
-	
+
 	function get_usergroups_from_user($user_id){
-		$database = JFactory::getDBO();		
+		$database = JFactory::getDBO();
 		$database->setQuery("SELECT m.group_id "
-		."FROM #__user_usergroup_map AS m "	
-		."WHERE m.user_id='$user_id' "		
+		."FROM #__user_usergroup_map AS m "
+		."WHERE m.user_id='$user_id' "
 		);
-		$rows = $database->loadObjectList();		
+		$rows = $database->loadObjectList();
 		$group_ids = array();
-		foreach($rows as $row){	
-			$group_ids[] = $row->group_id;	
+		foreach($rows as $row){
+			$group_ids[] = $row->group_id;
 		}
 		return $group_ids;
 	}
-	
+
 	function get_usergroups(){
-		$database = JFactory::getDBO();		
-		$database->setQuery("SELECT u.id AS id, u.title AS title, COUNT(DISTINCT u2.id) AS level "		
+		$database = JFactory::getDBO();
+		$database->setQuery("SELECT u.id AS id, u.title AS title, COUNT(DISTINCT u2.id) AS level "
 		." FROM #__usergroups AS u "
 		." LEFT OUTER JOIN #__usergroups AS u2 ON u.lft > u2.lft AND u.rgt < u2.rgt "
-		." GROUP BY u.id "		
-		." ORDER BY u.lft ASC "		
+		." GROUP BY u.id "
+		." ORDER BY u.lft ASC "
 		);
-		$usergroups = $database->loadObjectList()or die($database->getErrorMsg());				
+		$usergroups = $database->loadObjectList()or die($database->getErrorMsg());
 		return $usergroups;
 	}
-	
-	function check_pi_acl($permission){			
-			
-		$return_permission = false;		
-		
+
+	/*
+	function check_pi_acl($permission){
+
+		$return_permission = false;
+
 		$user =& JFactory::getUser();
 		$user_id = $user->get('id');
-				
-		//get usergroups				
-		$groups = $this->get_usergroups_from_user($user_id);	
-	
-		$permissions = $this->config['permissions'];			
-		
-		$access_array = array();				
+
+		//get usergroups
+		$groups = $this->get_usergroups_from_user($user_id);
+
+		$permissions = $this->config['permissions'];
+
+		$access_array = array();
 		foreach($groups as $group){
-			$check_permission = $group.'_'.$permission;	
-			$access_temp = 'yes';			
-			if(!in_array($check_permission, $permissions)){								
+			$check_permission = $group.'_'.$permission;
+			$access_temp = 'yes';
+			if(!in_array($check_permission, $permissions)){
 				$access_temp = 'no';
-			}			
+			}
 			$access_array[] = $access_temp;
 		}
-		
+
 		//check with config if to give access or not
 		if($this->config['multigroup_access_requirement']=='every_group'){
 			if(in_array('no', $access_array)){
@@ -2011,38 +2718,218 @@ submenu
 				$return_permission = true;
 			}else{
 				$return_permission = false;
-			}				
-		}		
-		
+			}
+		}
+
 		return $return_permission;
 	}
+	*/
+
+
+	function canDoMenus($parent_id = 0)
+	{
+		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers'.DS.'menus.php');
+		return MenusHelper::getActions($parent_id);
+		
+	}
+
+	function canDoContent($categoryId = 0, $articleId = 0)
+	{
+		require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
+		return ContentHelper::getActions($categoryId , $articleId);
+	}
+
 	
+
+	//ms: replace for PI ACL?
+	function check_acl($permission)
+	{
+		if($permission == '1')
+		{
+			/*
+			$page_id = JRequest::getVar('pageId', '');
+			//get parent_id
+			$parent_id = 0;
+			$database = JFactory::getDBO();
+			$database->setQuery("SELECT parent_id "
+			." FROM #__menus "
+			." WHERE id='$page_id' "
+			." LIMIT 1 "
+			);
+			$rows = $database->loadObjectList();
+			foreach($rows as $row){
+				$parent_id = $row->parent_id;
+			}
+			$canDo = PagesAndItemsHelper::canDoMenus($parent_id);
+			if(!$canDo->get('core.create') )
+			{
+				return false;
+			}
+			*/
+			if(!JFactory::getUser()->authorise('core.create', 'com_menus') )
+			{
+				//$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_NO_CREATE_PAGE'), 'warning');
+				return false;
+			}
+		}
+		elseif($permission == '2')
+		{
+			//we need parent_id?
+			/*
+			$page_id = JRequest::getVar('pageId', '');
+			//get parent_id
+			$parent_id = 0;
+			$database = JFactory::getDBO();
+			$database->setQuery("SELECT parent_id "
+			." FROM #__menus "
+			." WHERE id='$page_id' "
+			." LIMIT 1 "
+			);
+			$rows = $database->loadObjectList();
+			foreach($rows as $row){
+				$parent_id = $row->parent_id;
+			}
+			$canDo = PagesAndItemsHelper::canDoMenus($parent_id);
+			if(!$canDo->get('core.edit') )
+			{
+				return false;
+			}
+			*/
+			
+			if(!JFactory::getUser()->authorise('core.edit', 'com_menus') )
+			{
+				//$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_NO_CREATE_PAGE'), 'warning');
+				return false;
+			}
+		}
+		elseif($permission == '3')
+		{
+			//get Joomla ACL for this article
+			//include com_content helper
+			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
+			//$item_id = JRequest::getVar('itemId', JRequest::getVar('id', 0, 'post'));
+			$item_id = JRequest::getVar('itemId', '');
+			//get category_id
+			$cat_id = 0;
+			$database = JFactory::getDBO();
+			$database->setQuery("SELECT catid "
+			." FROM #__content "
+			." WHERE id='$item_id' "
+			." LIMIT 1 "
+			);
+			$rows = $database->loadObjectList();
+			foreach($rows as $row){
+				$cat_id = $row->catid;
+			}
+
+			$canDo = ContentHelper::getActions($cat_id, $item_id);
+			if(!$canDo->get('core.create')){
+				return false;
+			}
+		}
+		elseif($permission == '4')
+		{
+			//get Joomla ACL for this article
+			//include com_content helper
+			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
+			//$item_id = JRequest::getVar('itemId', JRequest::getVar('id', 0, 'post'));
+			$item_id = JRequest::getVar('itemId', '');
+			//get category_id
+			$cat_id = 0;
+			$created_by = 0;
+			$database = JFactory::getDBO();
+			$database->setQuery("SELECT * "
+			." FROM #__content "
+			." WHERE id='$item_id' "
+			." LIMIT 1 "
+			);
+			$row = $database->loadObject();
+			//foreach($rows as $row){
+			if($row)
+			{
+				$cat_id = $row->catid;
+				$created_by = $row->created_by;
+			}
+			//}
+			$canDoContent = ContentHelper::getActions($cat_id, $item_id);
+			
+			/*
+			if($canDo->get('core.edit') || $canDo->get('core.edit.own'))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
+			*/
+			$user		= JFactory::getUser();
+			$userId		= $user->get('id');
+			$canEdit	= $canDoContent->get('core.edit'); //$user->authorise('core.edit',			'com_content.article.'.$row->id);
+			$canEditOwn	= $canDoContent->get('core.edit.own') && $created_by == $userId;
+			
+			//if(!$canDo->get('core.edit')){
+			if((!$canEdit && !$canEditOwn))
+			{
+				return false;
+			}
+		}
+
+
+
+		return true;
+
+
+	}
+
 	function to_previous_page_when_no_permission($permission){
-		if(!$this->check_pi_acl($permission)){
+		if(!PagesAndItemsHelper::check_acl($permission)){ //ms: replace for PI ACL?
+		//if(!$this->check_pi_acl($permission)){
 			//get previous url
 			$previous_url = '';
 			if(isset($_SERVER['HTTP_REFERER'])){
-				$previous_url = $_SERVER['HTTP_REFERER'];							
+				$previous_url = $_SERVER['HTTP_REFERER'];
 			}
-			
-			$message = $this->get_no_permission_message($permission);			
-			
+
+			$message = PagesAndItemsHelper::get_no_permission_message($permission);//$this->get_no_permission_message($permission);
+
 			if($previous_url){
 				//set message
 				JError::raiseWarning(403, $message);
 				//redirect
-				$this->app->redirect($previous_url);
+				//check
+				/*
+				$pos = strpos($previous_url, 'view=item');
+				if($pos === false)
+				{
+					$this->app->redirect($previous_url);
+				}
+				else
+				{
+					$this->app->redirect('index.php?option=com_pagesanditems&view=page&layout=root');
+				}
+				*/
+				
+				PagesAndItemsHelper::getApp()->redirect($previous_url); //$this->app->redirect($previous_url);
 			}else{
+
+				//set message
+				JError::raiseWarning(403, $message);
+				//redirect
+				PagesAndItemsHelper::getApp()->redirect('index.php?option=com_pagesanditems&view=page&layout=root'); //$this->app->redirect('index.php?option=com_pagesanditems&view=page&layout=root');
+				/*
 				echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
 				echo "<script>alert('".html_entity_decode($message)."'); window.history.go(-1); </script>";
 				exit('<html><body><noscript>'.$message.'</noscript></body></html>');
-			}	
+				*/
+			}
 		}
 	}
-	
+
 	function get_no_permission_message($permission){
 		$message = 'you have no permission';
-		switch ($permission){		
+		switch ($permission){
 		case '1':
 			$message = JText::_('COM_PAGESANDITEMS_NO_CREATE_PAGE');
 			break;
@@ -2056,18 +2943,444 @@ submenu
 			$message = JText::_('COM_PAGESANDITEMS_NOEDITITEM');
 			break;
 		}
-		return $message;	
+		return $message;
 	}
-	
+
 	function die_when_no_permission($permission){
-		if(!$this->check_pi_acl($permission)){
-			$message = $this->get_no_permission_message($permission);
-			echo $message;
-			exit;
+		if(!PagesAndItemsHelper::check_acl($permission)){ //ms: replace for PI ACL?
+		//if(!$this->check_pi_acl($permission)){
+			$message = PagesAndItemsHelper::get_no_permission_message($permission);//$this->get_no_permission_message($permission);
+			JError::raiseWarning(403, $message);
+			//redirect
+			$app = &JFactory::getApplication();
+			$app->redirect('index.php?option=com_pagesanditems&view=page&layout=root');
+
+			//echo $message;
+			//exit;
 		}
 	}
 	
+	function breadcrumb($url = '')
+	{
+		$html = '';
+		$html .= '<table cellspacing="0" cellpadding="0" border="0" width="100%">';
+			$html .= '</tbody>';
+				$html .= '<tr>';
+					$html .= '<td  valign="top" width="20%">';
+					$html .= '</td>';
+					$html .= '<td valign="top">';
+						$html .= '<div id="pi_breadcrumb">';
+							$html .= $url;
+						$html .= '</div>';
+					$html .= '</td>';
+				$html .= '</tr>';
+			$html .= '</tbody>';
+		$html .= '</table>';
+		return $html;
+	}
+	
+	function toogleTextPageCategories($text)
+	{
+		$page_id = intval(JRequest::getVar('pageId', null));
+		$categoryId = intval(JRequest::getVar('categoryId', null));
+		$menutype = intval(JRequest::getVar('menutype', null));
+		$categoryId = intval(JRequest::getVar('categoryId', null));
+		if(!$page_id && !$menutype && $categoryId)
+		{
+			//$text = 'COM_PAGESANDITEMS_CATEGORIE';
+			$text = 'JCATEGORY';
+		}
 		
+		return JText::_($text);
+		
+	}
+	
+	function toogleModelPageCategories($view = null)
+	{
+		$page_id = intval(JRequest::getVar('pageId', null));
+		$menutype = intval(JRequest::getVar('menutype', null));
+		$categoryId = intval(JRequest::getVar('categoryId', null));
+		if(!$page_id && !$menutype && $categoryId)
+		{
+			//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'models'.DS.'categorie.php');
+			//$model = new PagesAndItemsModelCategorie();
+			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'models'.DS.'category.php');
+			$model = new PagesAndItemsModelCategory();
+		}
+		else
+		{
+			$model = $view->getModel('Page');
+		}
+		return $model;
+	}
 
+	//ms: ???
+	function toogleViewPageCategories($url = null, $amp = '&')
+	{
+		$page_id = intval(JRequest::getVar('pageId', null));
+		$menutype = intval(JRequest::getVar('menutype', null));
+		$categoryId = intval(JRequest::getVar('categoryId', null));
+		if(!$page_id && !$menutype && $categoryId)
+		{
+			//$url = str_replace('view=page','view=categorie',$url);
+			$url = str_replace('view=page','view=category',$url);
+		}
+		return $url;
+	}
+	
+	function truncate_string($string, $length)
+	{
+		$dots='...';
+		$string = trim($string);
+		if(strlen($string)<=$length){
+			return $string;
+		}
+		if(!strstr($string," ")){
+			return substr($string,0,$length).$dots;
+		}
+		$lengthf = create_function('$string','return substr($string,0,strrpos($string," "));');
+		$string = substr($string,0,$length);
+		$string = $lengthf($string);
+		while(strlen($string)>$length){
+			$string=$lengthf($string);
+		}
+		return $string.$dots;
+	}
+	/*
+	function loadJs($script)
+	{
+		//
+		switch($script)
+		{
+			case 'pages':
+			
+			break;
+			
+			case 'items':
+			
+			break;
+			
+			case 'categories':
+			
+			break;
+		}
+	}
+	*/
+	/*
+	function htmlReorderRows($name,$itemRows = array(),$header = array() ,$numberOfColumns = null,$hide_arrows = false,$rowColored = true,$addDelete = false,$load_js = true)
+	{
+		if($load_js){
+			JHTML::script('reorder_rows.js', PagesAndItemsHelper::getDirJS().'/',false);
+		}
+		$version = new JVersion();
+		$joomlaVersion = $version->getShortVersion();
+		$html = '';
+		$counter = 0;
+		if(count($itemRows)>=1)
+		{
+			$class[] = 'reorder_rows';
+			if($addDelete)
+			{
+				$class[] = 'reorder_rows_add_delete';
+			}
+			if(!$hide_arrows)
+			{
+				$class[] = 'reorder_rows_arrows';
+			}
+			$class = 'class="'.implode(' ',$class).'"';
+			
+			
+			
+			
+			
+			//print header
+			$html .= '<table '.$class.' width="100%" border="0" cellpadding="0" cellspacing="0">';
+			if(count($header)>=1)
+			{
+				$html .= '<tr>';
+				for ($k = 1; $k <= $numberOfColumns; $k++)
+				{
+					$classTd = isset($header['classHeader']['column'.$k]) ? 'class="'.$header['classHeader']['column'.$k].'"' : '';
+					$styleTd = isset($header['styleHeader']['column'.$k]) ? 'style="'.$header['styleHeader']['column'.$k].'"' : '';
+					$html .= '<td '.$classTd.'  '.$styleTd.'>';
+						$html .= '<strong>';
+							$html .= $header['column'.$k];
+						$html .= '<strong>';
+					$html .= '</td>';
+				}
+				
+				//start add/delete columns header
+				if($addDelete)
+				{
+					// $view = strtoupper(JRequest::getVar('view'));
+					//'COM_PAGESANDITEMS_ORDERING_SAVE_ON_SAVE_'.strtoupper(JRequest::getVar('view'))
+					$title = ''; //'title="'.JText::_('COM_PAGESANDITEMS_ROWS_ADD_DELETE').'"';
+					//class="hasTip" '.$title.'
+					$html .= '<td class="td_header_reorder_rows_add_delete">';
+					if(count($itemRows) !=1)
+					{
+						//$html .= '<a>';
+						//$html .= '<span class="hasTip" '.$title.'>';
+						$html .= '<strong>';
+							$html .= JText::_('JACTION_CREATE').'<br />'.JText::_('JACTION_DELETE');
+						$html .= '</strong>';
+						//$html .= '</span>';
+						//$html .= '</a>';
+					}
+					else
+					{
+						$html .= '&nbsp;';
+					}
+					if(!$hide_arrows)
+					{
+						$html .= '<div class="display_none" id="items_'.$name.'_move_up_holder">';
+								$html .= '<a title="'.JText::_('JLIB_HTML_MOVE_UP').'" class="jgrid" >'; //href="javascript: reorderItemsRows('.$i.','.($i-1).',\''.$name.'\','.$numberOfColumns.');">';
+									$html .= '<span class="state uparrow">';
+									$html .= '<span class="text">';
+										$html .= JText::_('JLIB_HTML_MOVE_UP');
+									$html .= '</span>';
+								$html .= '</span>';
+							$html .= '</a>';
+						$html .= '</div>';
+						$html .= '<div style="display:none;" id="items_'.$name.'_move_down_holder">';
+							$html .= '<a title="'.JText::_('JLIB_HTML_MOVE_UP').'" class="jgrid" >'; //href="javascript: reorderItemsRows('.$i.','.($i-1).',\''.$name.'\','.$numberOfColumns.');">';
+								$html .= '<span class="state uparrow">';
+									$html .= '<span class="text">';
+										$html .= JText::_('JLIB_HTML_MOVE_UP');
+									$html .= '</span>';
+								$html .= '</span>';
+							$html .= '</a>';
+						$html .= '</div>';
+					}
+					$html .= '</td>';
+				}
+				
+				//start reorder columns header
+				if(!$hide_arrows)
+				{
+					// $view = strtoupper(JRequest::getVar('view'));
+					//'COM_PAGESANDITEMS_ORDERING_SAVE_ON_SAVE_'.strtoupper(JRequest::getVar('view'))
+					$title = isset($header['column'+($k+1)]) ? 'title="'.$header['column'+($k+1)].'"' :  'title="'.JText::_('COM_PAGESANDITEMS_ORDERING_SAVE_ON_SAVE_'.strtoupper(JRequest::getVar('view'))).'"';
+					
+					//$html .= '<td colspan="4" class="td_reorder_rows_arrows" >';
+					$html .= '<td class="td_header_reorder_rows_arrows" >';
+					if(count($itemRows) !=1)
+					{
+						$html .= '<strong>';
+							$html .= JText::_('COM_PAGESANDITEMS_ORDERING');
+						$html .= '</strong>';
+					}
+					else
+					{
+						$html .= '&nbsp;';
+					}
+					$html .= '</td>';
+				}
+				//end reorder columns header
+				$html .= '</tr>';
+			}
+		
+			//loop through rows
+			$k = 0;
+			for ($i = 1; $i <= count($itemRows); $i++)
+			{
+				//ms: here we set the class row0 ore row1 for different color
+				$class = $rowColored ? 'class="row'.$k.'"' : '';
+				$html .= '<tr '.$class.'>';
+				
+				
+				//for($n = 0; $n < count($temp_itemtypes); $n++)
+				for($j = 1; $j <= $numberOfColumns; $j++)
+				{
+					$classTd = isset($header['class']['column'.$j]) ? 'class="'.$header['class']['column'.$j].'"' : '';
+					//$classTd ='';
+					//category_column = "category_column_"+j+"_"+i;			
+					//category_column_content = document.getElementById(category_column).innerHTML;
+				
+					$html .= '<td '.$classTd.' id="items_'.$name.'_column_'.$j.'_'.$i.'">';
+						
+						//_category_
+						$html .= $itemRows[$i]['column'.$j];
+					$html .= '</td>';
+				}
+				
+				//start add/delete columns
+				if($addDelete)
+				{
+					$html .= '<td class="td_reorder_rows_add_delete">'; // style="width:50px;">';
+						$button = PagesandItemsHelper::getButtonMaker();
+						$button->imagePath = PagesandItemsHelper::getDirIcons();
+						$button->buttonType = 'input';
+						$button->class = 'fltlft button';
+						$button->style = 'border:0;background-color:transparent;';
+						$button->onclick = 'addRow(\''.$name.'\','.$i.');';
+						$button->imageName = 'base/icon-16-plus-small.png';
+						$html .= $button->makeButton();
+
+						$button = PagesandItemsHelper::getButtonMaker();
+						$button->imagePath = PagesandItemsHelper::getDirIcons();
+						$button->buttonType = 'input';
+						$button->class = 'fltlft  button';
+						$button->style = 'border:0;background-color:transparent;';
+						$button->onclick = 'deleteRow(\''.$name.'\','.$i.');';
+						$button->imageName = 'base/icon-16-minus-small.png';
+						$html .= $button->makeButton();
+					$html .= '</td>';
+				}
+				//end add/delete columns
+				
+				//start reorder columns categories
+				if(!$hide_arrows)
+				{
+					
+					//$html .= '<td width="10">';
+					$html .= '<td class="td_reorder_rows_arrows">';
+					$html .= '<div class="div_reorder_rows_arrows">';
+					$html .= '<span>';
+					if($i!=1)
+					{
+						if($joomlaVersion >= '1.6')
+						{
+							
+							$html .= '<a title="'.JText::_('JLIB_HTML_MOVE_UP').'" class="jgrid" href="javascript: reorderItemsRows('.$i.','.($i-1).',\''.$name.'\','.$numberOfColumns.');">';
+								$html .= '<span class="state uparrow">';
+									$html .= '<span class="text">';
+										$html .= JText::_('JLIB_HTML_MOVE_UP');
+									$html .= '</span>';
+								$html .= '</span>';
+							$html .= '</a>';
+							
+						}
+						else
+						{
+							$html .= '<a href="javascript: reorderItemsRows('.$i.','.($i-1).',\''.$name.'\','.$numberOfColumns.');"><img src="/administrator/images/uparrow.png" alt="move up" border="0" /></a>';
+						}
+					}
+					else
+					{
+						$html .= '&nbsp;';
+					}
+					//$html .= '</span>';
+					//$html .= '</td>';
+					//$html .= '<td width="1">';
+					//$html .= "&nbsp;";
+					//$html .= '</td>';
+					//$html .= '<td width="10">';
+					$html .= '</span>';
+					$html .= '<span>';
+					
+					if($i!=count($itemRows))
+					{
+						if($joomlaVersion >= '1.6')
+						{
+							$html .= '<a title="'.JText::_('JLIB_HTML_MOVE_DOWN').'" class="jgrid" href="javascript: reorderItemsRows('.$i.','.($i+1).',\''.$name.'\','.$numberOfColumns.');"><span class="state downarrow"><span class="text">'.JText::_('JLIB_HTML_MOVE_DOWN').'</span></span></a>';
+						}
+						else
+						{
+							$html .= '<a href="javascript: reorderItemsRows('.$i.','.($i+1).',\''.$name.'\','.$numberOfColumns.');"><img src="/administrator/images/downarrow.png" alt="move down" border="0" /></a>';
+						}
+					}
+					else
+					{
+						$html .= '&nbsp;';
+					}
+					//$html .= '</td>';
+					//$html .= '<td width="12">';
+					//	$html .= "&nbsp;";
+					$html .= '</span>';
+					$html .= '</div>';
+					$html .= '</td>';
+				}
+				$html .= '</tr>';
+				$k = 1 - $k;
+				$counter++;
+			}
+			
+			$html .= '</table>';
+			
+		}
+		//2 hidden fields which are usefull for updating the ordering when submitted
+		$html .= '<input name="items_'.$name.'_are_reordered" id="items_'.$name.'_are_reordered" type="hidden" value="false" />';
+		$html .= '<input name="items_'.$name.'_total" id="items_'.$name.'_total" type="hidden" value="'.$counter.'" />';
+		
+		return $html;
+	}
+	*/
+	
+	function getHeaderImageTitle($image,$title = '',$class = 'headerIcon32')
+	{
+		$imgClass = explode("class:",$image);
+		$html = (count($imgClass) && count($imgClass) == 2) ? '<div class="'.$imgClass[1].' '.$class.'">' : '<div class="'.$class.'" style="background-image: url('.$image.');">';
+			$html .= '<h1 class="pi_h1" >';
+				$html .= $title ? $title : JText::_( 'COM_PAGESANDITEMS');
+			$html .= '</h1>';
+		$html .= '</div>';
+		return $html;
+	}
+	
+	function getThImageTitle($image,$title = '',$image2 = null,$iconClass = 'thIcon16',$class = '')
+	{
+		$imgClass = explode("class:",$image);
+		$imageDisplay1 = (count($imgClass) && count($imgClass) == 2) ? '<div class="'.$imgClass[1].' '.$iconClass.'">' : '<div class="'.$iconClass.'" style="background-image: url('.$image.');">';
+		$imageDisplay2 = '';
+		if($image2)
+		{
+		$imgClass2 = explode("class:",$image2);
+		$imageDisplay2 = (count($imgClass2) && count($imgClass2) == 2) ? '<div class="'.$imgClass2[1].' '.$iconClass.'">' : '<div class="'.$iconClass.'" style="background-image: url('.$image2.');float:left;left: 0;position: relative;">';
+		$imageDisplay2 .= '</div>';
+		}
+		$html = '';
+		$html .= $imageDisplay2;
+		$html .= $imageDisplay1;
+		
+			$html .= '<p '.($class ? 'class="'.$class.'"' : '').'>';
+				 // ? $title : JText::_( 'COM_PAGESANDITEMS');
+			$html .= $title;
+			$html .= '</p>';
+		$html .= '</div>';
+		//
+		return $html;
+	}
+	
+	function get_page_id_from_item_id($item_id){	
+		$database = JFactory::getDBO();
+		//$cat_id = $this->get_cat_id_from_item($item_id);
+		$cat_id = PagesAndItemsHelper::get_cat_id_from_item($item_id);
+		
+		$database->setQuery( "SELECT id, link, type FROM #__menu ");
+		$menuitems = $database->loadObjectList();
+
+		$original_page_id = false;
+		foreach($menuitems as $menu_item_page){
+		
+			$temp_cat_id = 0;
+			//if category blog
+			if( strstr($menu_item_page->link, 'index.php?option=com_content&view=category&layout=blog') && $menu_item_page->type!='url' && $menu_item_page->type=='component'){
+				//get the category id of each menu item
+				$pos_cat_id = strpos($menu_item_page->link,'id=');
+				$temp_cat_id = substr($menu_item_page->link, ($pos_cat_id+3), strlen($menu_item_page->link));
+				if($cat_id==$temp_cat_id){
+					$original_page_id = $menu_item_page->id;
+					break;
+				}
+			}elseif(strstr($menu_item_page->link, 'index.php?option=com_content&view=article&id='.$item_id) || strstr($menu_item_page->link, 'index.php?option=com_content&task=view&id='.$item_id)){
+				//full item layout
+				$original_page_id = $menu_item_page->id;
+				break;
+			}
+		}
+		return $original_page_id;
+	}
+	
+	function get_cat_id_from_item($item_id){
+		$database = JFactory::getDBO();
+		$database->setQuery( "SELECT catid FROM #__content WHERE id='$item_id' LIMIT 1 ");
+		$items = $database->loadObjectList();
+		$catid = false;
+		foreach($items as $item){
+			$catid = $item->catid;
+		}
+		return $catid;
+	}
 }
 ?>

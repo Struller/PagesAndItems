@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -19,7 +19,7 @@ jimport('joomla.installer.helper');
 
 
 /**
- * 
+ *
  *
  */
 $version = new JVersion();
@@ -226,11 +226,11 @@ class PagesAndItemsInstallerHelper extends JInstallerHelper
 		 * false on fail.
 		 */
 		//PagesAndItemsInstallerHelper::
-		if ($retval['type'] = PagesAndItemsInstallerHelper::detectType($extractdir))  //self::detectType($extractdir)) 
+		if ($retval['type'] = PagesAndItemsInstallerHelper::detectType($extractdir))  //self::detectType($extractdir))
 		{
 			return $retval;
 		}
-		else 
+		else
 		{
 			return false;
 		}
@@ -266,8 +266,8 @@ class PagesAndItemsInstallerHelper extends JInstallerHelper
 				continue;
 			}
 			/*
-			
-			0U:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\contentelements\pi_subitem_image_gallery.xmlU:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\contentelements\pi_subitem_image_gallery_images.xmlU:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\image_gallery.xml 
+
+			0U:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\contentelements\pi_subitem_image_gallery.xmlU:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\contentelements\pi_subitem_image_gallery_images.xmlU:\web\In Arbeit\___Joomlas2Go-S1.6.0-FP3.0.5de-J1.6_NewPI\htdocs\joomlas2Go\tmp\install_4d832111771f5\itemtype_image_gallery_v1_5_0\image_gallery.xml
 			*/
 			//echo ' name: '.$xml->getName();
 			if($xml->getName() != 'extension' && $xml->getName() != 'install')

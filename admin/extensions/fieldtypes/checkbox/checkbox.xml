@@ -2,15 +2,13 @@
 <extension version="1.5" type="fieldtype" method="upgrade">
 	<name>Checkbox (Pages and Items fieldtype)</name>
 	<author>Carsten Engel</author>
-	<creationDate>December 2010</creationDate>
-	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		fieldtype Checkbox (Pages and Items)
-	</description>
+	<description>Checkbox (fieldtype for custom itemtypes in the Pages-and-Items framework)</description>
 	<files>
 		<filename fieldtype="checkbox">checkbox.php</filename>
 		<filename >index.html</filename>
@@ -26,6 +24,10 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" >
+				<field name="showFieldName" type="radio" default="1" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+					<option value="-1">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="values" type="textarea" rows="5" cols="20" default="" label="COM_PAGESANDITEMS_VALUES" description="COM_PAGESANDITEMS_VALUES_TIP">
 				</field>
 				<field name="labels" type="textarea" rows="5" cols="20" default="" label="COM_PAGESANDITEMS_LABELS" description="COM_PAGESANDITEMS_LABELS_TIP">

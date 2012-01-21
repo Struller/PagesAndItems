@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -30,14 +30,14 @@ class PagesAndItemsControllerExtensionHtmlPage_childsMenuitemtypeselect extends 
 		parent::__construct($config);
 		//$this->registerTask( 'select', 'display' );
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Display the view
 	 */
-	
+
 	function display($tpl = null)
 	{
 		$version = new JVersion();
@@ -58,19 +58,19 @@ class PagesAndItemsControllerExtensionHtmlPage_childsMenuitemtypeselect extends 
 		}
 		$document = &JFactory::getDocument();
 		$vType = $document->getType();
-		
+
 		$this->addViewPath(realpath(dirname(__FILE__).'/views'));
-		
+
 		// Get/Create the view
 		$view = &$this->getView( $vName, $vType);
-		
+
 		$view->addTemplatePath(realpath(dirname(__FILE__).'/views'.DS.$vName.DS.'tmpl'));
 		// Set the layout
 		$view->setLayout($vLayout);
 		// Display the view
 		//$view->assignRef('controller', $this);
-		
-		
+
+
 		if(is_array($modelName))
 		{
 			for($n = 0; $n < count($modelName); $n++)
@@ -89,13 +89,13 @@ class PagesAndItemsControllerExtensionHtmlPage_childsMenuitemtypeselect extends 
 				*/
 			}
 		}
-		
+
 		if ($model = &$this->getModel('Base','PagesAndItemsModel'))
 		{
 			// Push the model into the view (as default)
 			$view->setModel($model, true);
 		}
-		
+
 		parent::display($tpl);
 		//$view->display();
 	}

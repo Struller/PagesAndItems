@@ -1,11 +1,11 @@
 <?php
 /**
- * @version		1.6.2.2$Id$
- * @package		Joomla.Framework
- * @subpackage	Form
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- */
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
+*/
 
 defined('JPATH_BASE') or die;
 

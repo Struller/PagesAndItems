@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,7 +22,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionManagerHelper //extends ExtensionsHelper
+//abstract 
+class ExtensionManagerHelper //extends ExtensionsHelper
 {
 
 	/**
@@ -37,7 +38,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 	 */
 	public static function getExtension($folder = null, $extension = null,$sort = null)
 	{
-		
+
 		$result		= array();
 		$extensions = self::_load($sort);
 		//$extensions = $this->_load();
@@ -53,7 +54,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 					{
 						$result[] = $extensions[$i];
 					}
-					elseif ($extensions[$i]->folder == $folder) 
+					elseif ($extensions[$i]->folder == $folder)
 					{
 						$result[] = $extensions[$i];
 					}
@@ -63,7 +64,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 					// Is this extension in the right group?
 					if (is_null($folder))
 					{
-						if ($extensions[$i]->name == $extension) 
+						if ($extensions[$i]->name == $extension)
 						{
 							//$result[] = $extensions[$i];
 							$result = $extensions[$i];
@@ -72,7 +73,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 					}
 					else
 					{
-						if ($extensions[$i]->folder == $folder && $extensions[$i]->name == $extension) 
+						if ($extensions[$i]->folder == $folder && $extensions[$i]->name == $extension)
 						{
 							$result = $extensions[$i];
 							break;
@@ -117,18 +118,18 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 	public static function importExtension($folder=null, $extensionnames = null, $autocreate = true, $dispatcher = null, $loadLanguage = false, $sort = null)
 	{
 		static $loaded = array();
-		
+
 		// check for the default args, if so we can optimise cheaply
 		$defaults = false;
 		$isLoaded = true;
 		$nullFolder = true;
-		if (is_null($extensionnames) && $autocreate == true && is_null($dispatcher)) 
+		if (is_null($extensionnames) && $autocreate == true && is_null($dispatcher))
 		{
 			$defaults = true;
 		}
 		if($folder == '' || is_null($folder))
 		{
-			if (!isset($loaded) || empty($loaded) || !$defaults) 
+			if (!isset($loaded) || empty($loaded) || !$defaults)
 			{
 				$isLoaded = false;
 			}
@@ -136,13 +137,13 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		else
 		{
 			$nullFolder = false;
-			if (!isset($loaded[$folder]) || !$defaults) 
+			if (!isset($loaded[$folder]) || !$defaults)
 			{
 				$isLoaded = false;
 			}
 		}
 		$results = null;
-		//if (!isset($loaded[$type][$folder]) || !$defaults) 
+		//if (!isset($loaded[$type][$folder]) || !$defaults)
 		if(!$isLoaded)
 		{
 			//$results = 'on';
@@ -156,7 +157,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 			//if(count($extensions) && count($extensions) > 1)
 			if($extensions)
 			{
-				for ($i = 0, $t = count($extensions); $i < $t; $i++) 
+				for ($i = 0, $t = count($extensions); $i < $t; $i++)
 				{
 					if (is_null($folder) || $folder == '')
 					{
@@ -170,22 +171,22 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 									$names[] = $ext;
 								}
 							}
-							for ($in = 0, $tn = count($names); $in < $tn; $in++) 
+							for ($in = 0, $tn = count($names); $in < $tn; $in++)
 							{
 
-								if($extensions[$i]->name == $names[$in] ) 
+								if($extensions[$i]->name == $names[$in] )
 								{
 									$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 									$results = true;
 								}
 							}
 						}
-						elseif ($extensions[$i]->name == $extensionnames) // || $extensionnames === null ) 
+						elseif ($extensions[$i]->name == $extensionnames) // || $extensionnames === null )
 						{
 							$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
 						}
-						elseif ($extensionnames == null ) 
+						elseif ($extensionnames == null )
 						{
 							$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
@@ -203,17 +204,17 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 									$names[] = $ext;
 								}
 							}
-							for ($in = 0, $tn = count($names); $in < $tn; $in++) 
+							for ($in = 0, $tn = count($names); $in < $tn; $in++)
 							{
 
-								if($extensions[$i]->name == $names[$in] ) 
+								if($extensions[$i]->name == $names[$in] )
 								{
 									$loaded[$folder][] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 									$results = true;
 								}
 							}
 						}
-						elseif ($extensions[$i]->folder == $folder && ($extensions[$i]->name == $extensionnames ||  $extensionnames === null)) 
+						elseif ($extensions[$i]->folder == $folder && ($extensions[$i]->name == $extensionnames ||  $extensionnames === null))
 						{
 							$loaded[$folder][] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
@@ -221,8 +222,8 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 					}
 				}
 				// bail out early if we're not using default args
-				
-				if(!$defaults) 
+
+				if(!$defaults)
 				{
 					if($nullFolder)
 					{
@@ -260,7 +261,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		}
 		if($folder == '' || is_null($folder))
 		{
-			
+
 			return $loaded;
 		}
 		else
@@ -294,10 +295,10 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		{
 			$folder = $extension->type.'s';//.DS;
 		}
-		
-		
+
+
 		/*
-		 in J1.6 
+		 in J1.6
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('extension_id AS "id", element AS "option", params, enabled');
@@ -305,9 +306,9 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		$query->where('`type` = '.$db->quote('component'));
 		$query->where('`element` = '.$db->quote($option));
 		$db->setQuery($query);
-		
+
 		in J1.5
-		name not element 
+		name not element
 		*/
 		$path = dirname(__FILE__).'/../../extensions'.DS.$folder.DS.$extension->name.DS.$extension->name.'.php';
 		if (!isset( $paths[$path] ) )
@@ -319,7 +320,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 
 				//require_once( dirname(__FILE__).DS.'extension.php' );
 				require_once( dirname(__FILE__).DS.$extension->type.'.php' );
-				if (!isset($paths[$path])) 
+				if (!isset($paths[$path]))
 				{
 					require_once $path;
 				}
@@ -329,11 +330,11 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 				if ($autocreate)
 				{
 					// Makes sure we have an event dispatcher
-					if (!is_object($dispatcher)) 
+					if (!is_object($dispatcher))
 					{
 						$dispatcher = &JDispatcher::getInstance();
 					}
-					
+
 					if($extension->folder && $extension->folder != '')
 					{
 						$extension_folders = explode('/',$extension->folder);
@@ -351,7 +352,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 							$extension_folder = ucfirst($extension->folder);
 						}
 						//$extension_folder = str_replace('/','_',$extension->folder);
-						
+
 						$prefix = ucfirst($extension->type).$extension_folder;
 					}
 					else
@@ -359,7 +360,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 						$prefix = ucfirst($extension->type);
 						//$folder = $extension->type.DS.$extension_folder.DS;
 					}
-					
+
 					if($extension->type == 'pagetype')
 					{
 						$extension_names = explode('_',$extension->name);
@@ -376,7 +377,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 						{
 							$extension_name = ucfirst($extension->name);
 						}
-						
+
 					}
 					else
 					{
@@ -420,8 +421,8 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 	protected static function _load($sort = null)
 	{
 		static $managers;
-		
-		if (isset($managers)) // && !$sort) 
+
+		if (isset($managers)) // && !$sort)
 		{
 			return $managers;
 		}
@@ -430,7 +431,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		$user	= &JFactory::getUser();
 		if (isset($user))
 		{
-			$query = 'SELECT folder , type, element AS name, params';
+			$query = 'SELECT * , element AS name'; //id,folder , type, element AS name, params';
 			$query .= ' FROM #__pi_extensions';
 			$query .= ' WHERE enabled >= 1';
 			$query .= ' AND type = '.$db->Quote('manager');
@@ -447,7 +448,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 		}
 		else
 		{
-			$query = 'SELECT folder , type, element AS name, params';
+			$query = 'SELECT * , element AS name'; //id,folder , type, element AS name, params';
 			$query .= ' FROM #__pi_extensions';
 			$query .= ' WHERE enabled >= 1';
 			$query .= ' AND type = '.$db->Quote('manager');
@@ -464,7 +465,7 @@ abstract class ExtensionManagerHelper //extends ExtensionsHelper
 
 		$db->setQuery($query);
 		$db->query();
-		if (!$managers = $db->loadObjectList()) 
+		if (!$managers = $db->loadObjectList())
 		{
 			if($db->getErrorMsg() != '')
 			{

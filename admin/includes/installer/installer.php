@@ -1,9 +1,11 @@
 <?php
 /**
- * @version		1.6.2.2$Id: installer.php 20196 2011-01-09 02:40:25Z ian $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- */
+* @version		2.1.0
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
+*/
 
 // No direct access
 defined('JPATH_BASE') or die;
@@ -20,7 +22,7 @@ jimport('joomla.installer.helper');
  */
 class PagesAndItemsInstaller extends JInstaller
 {
-	
+
 	/**
 	 * Set an installer adapter by name
 	 *
@@ -46,7 +48,7 @@ class PagesAndItemsInstaller extends JInstaller
 		$this->_adapters[$name] =& $adapter;
 		return true;
 	}
-	
+
 	/**
 	 * Constructor
 	 *
@@ -56,19 +58,19 @@ class PagesAndItemsInstaller extends JInstaller
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 			parent::__construct();
 			$files = JFolder::files(dirname(__FILE__).DS.'adapters','.php$');
 			foreach($files as $file)
 			{
-				$name = JFile::getName($file); 
+				$name = JFile::getName($file);
 				$name = JFile::stripExt($file);
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php')); //.'.php');
-				
+
 				$class = 'PiInstaller'.ucfirst($name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
 					$this->setAdapterJ15($name);
 					/*
@@ -78,7 +80,7 @@ class PagesAndItemsInstaller extends JInstaller
 					*/
 				}
 			}
-			
+
 		}
 		else
 		{
@@ -88,8 +90,8 @@ class PagesAndItemsInstaller extends JInstaller
 		/*
 		// here is parent JInstaller
 		can we call JAdapter::__construct(dirname(__FILE__),'PagesAndItemsInstaller');
-		
-		
+
+
 		public function __construct($basepath, $classprefix = null, $adapterfolder = null)
 		{
 			$this->_basepath		= $basepath;
@@ -97,7 +99,7 @@ class PagesAndItemsInstaller extends JInstaller
 			$this->_adapterfolder	= $adapterfolder ? $adapterfolder : 'adapters';
 			$this->_db = JFactory::getDBO();
 		}
-		
+
 		// in J1.6 parent::parent:: = JAdapter
 		//parent::__construct(dirname(__FILE__),'JInstaller');
 		call_user_func(array(get_parent_class(get_parent_class($this)), '__construct'));
@@ -108,13 +110,12 @@ class PagesAndItemsInstaller extends JInstaller
 
 	public function install($path=null)
 	{
-		//var_dump('install');
 		return parent::install($path);
 	}
 
 	function addLanguageToTable($type,$name,$element,$version,$client_id = 1,$check = false)
 	{
-		
+
 		$row = & JTable::getInstance('piextension', 'PagesAndItemsTable');
 		$db = $this->getDBO();
 		$query = "SELECT extension_id"
@@ -126,7 +127,7 @@ class PagesAndItemsInstaller extends JInstaller
 			;
 		//var_export($query.'<br />');
 		$db->setQuery($query);
-		if (!$db->Query()) 
+		if (!$db->Query())
 		{
 			//var_export('failed <br />');
 			// Install failed, send message
@@ -142,7 +143,7 @@ class PagesAndItemsInstaller extends JInstaller
 			{
 				//var_export('new id: '.$id.'<br />');
 				$where = 'type = '.$db->Quote('language'); //. ' And client_id = '.$db->Quote('0');
-			
+
 				$row_extension_id = $row->getNextTypeId($where,'language');
 				$db->setQuery( "INSERT INTO #__pi_extensions SET extension_id='$row_extension_id' ");
 				if(!$db->query())
@@ -236,7 +237,7 @@ class PagesAndItemsInstaller extends JInstaller
 		{
 			$removefiles = array();
 			$extensions = $extensionslanguage->children();
-			foreach ($extensions as $extension) 
+			foreach ($extensions as $extension)
 			{
 				$tag = (string)$extension->attributes()->tag;
 				$fileName = str_replace($tag.'.','',basename((string)trim($extension)) );
@@ -251,14 +252,13 @@ class PagesAndItemsInstaller extends JInstaller
 						JFile::delete($file);
 						//and delete from table
 					}
-					//dump($folder.'.'.$fileName);
 					$query = "SELECT extension_id"
 					." FROM #__pi_extensions"
 					." WHERE name = ".$db->Quote($folder.'.'.$fileName)
 					." AND type=".$db->Quote('language')
 					;
 					$db->setQuery($query);
-					if (!$db->Query()) 
+					if (!$db->Query())
 					{
 						//var_export('failed <br />');
 						// Install failed, send message
@@ -266,21 +266,20 @@ class PagesAndItemsInstaller extends JInstaller
 						//return false;
 					}
 					$id = $db->loadResult();
-					//dump($id);
 					if($id)
 					{
 						$row->delete($id);
 					}
-					
+
 				}
 				}
-				
+
 				//JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.'language'.DS.$tag.DS.basename((string)trim($extension));
-				
+
 			}
 		}
 	}
-	
+
 	function checkCoreLanguage($tag)
 	{
 		// Get the client info
@@ -290,31 +289,13 @@ class PagesAndItemsInstaller extends JInstaller
 		$destination = $client->path;
 		// If the language folder is not present, then the core pack hasn't been installed... ignore
 		$path = $destination .'/language/' . $tag;
-		//dump($path);
-		/*
-		$dateihandle = fopen("output_PI.txt", "a");
-		fwrite($dateihandle,"*******\n\r");
-		$out = var_export($path, true);
-		fwrite($dateihandle, $out);
-		fwrite($dateihandle, "\n\r********");
-		fwrite($dateihandle, "\n\r");
-		$out = var_export(dirname($path), true);
-		fwrite($dateihandle, $out);
-		fwrite($dateihandle, "\n\r********");
-		$out = var_export(JFolder::exists($path), true);
-		fwrite($dateihandle, $out);
-		fwrite($dateihandle, "\n\r********");
-		fclose($dateihandle);
-		
-		return false;
-		*/
-		if (!JFolder::exists($path)) 
+		if (!JFolder::exists($path))
 		{
 			return false;
 		}
 		return true;
 	}
-	
+
 	function copyLanguageXML($tag)
 	{
 		/*
@@ -324,13 +305,13 @@ class PagesAndItemsInstaller extends JInstaller
 		$copyfiles = array();
 		$source = JPath::clean($this->getPath('source'));
 
-		
+
 		$pathComponent = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS);
-		
+
 		$path['src'] = $source.DS.'extensions'.DS.'language'.DS.$tag.DS.'index.html';
 		$path['dest'] = $pathComponent.DS.'extensions'.DS.'language'.DS.$tag.DS.'index.html';
-		
-		
+
+
 		/*
 		$dateihandle = fopen("output_PI.txt", "a");
 		fwrite($dateihandle,"*******\n\r");
@@ -358,14 +339,14 @@ class PagesAndItemsInstaller extends JInstaller
 		$path = null;
 		$path['src'] = $source.DS.'extensions'.DS.'language'.DS.$tag.DS.$tag.'.xml';
 		$path['dest'] = $pathComponent.DS.'extensions'.DS.'language'.DS.$tag.DS.$tag.'.xml';
-		
+
 		$copyfiles[] = $path;
-		
+
 		$this->copyFiles($copyfiles,true);
-		
+
 	}
-	
-	
+
+
 	function addLanguage($manifest) //,$parent=null)
 	{
 		$row = & JTable::getInstance('piextension', 'PagesAndItemsTable');
@@ -379,14 +360,14 @@ class PagesAndItemsInstaller extends JInstaller
 			//and here we install the Pages and Items Language Files
 			$this->parseLanguages($manifest->languages);
 			$this->parseLanguages($manifest->administration->languages, 1);
-			
+
 		}
 		//add to table
 		if ( $manifest->languages  && count($manifest->languages->children()) )
 		{
-			
+
 			$languages = $manifest->languages->children();
-			foreach ($languages as $language) 
+			foreach ($languages as $language)
 			{
 				$piComponentLanguage = true;
 				//add to table
@@ -394,26 +375,26 @@ class PagesAndItemsInstaller extends JInstaller
 				$tag = (string)$language->attributes()->tag;
 				$name = basename(trim((string)$language));
 				$version = trim((string)$manifest->version);
-				
-				
-				
+
+
+
 				if(!$this->checkCoreLanguage($tag))
 				{
 					continue;
 				}
-				
+
 				$this->copyLanguageXML($tag);
 				$this->addLanguageToTable($manifestType,$tag,$tag,$version,0);
 				$this->addLanguageToTable($manifestType,$name,$tag,$version,0);
 			}
 		}
-		
-		
-			
+
+
+
 		if ( $manifest->administration->languages  && count($manifest->administration->languages->children()) )
 		{
 			$languages = $manifest->administration->languages->children();
-			foreach ($languages as $language) 
+			foreach ($languages as $language)
 			{
 				$piComponentLanguage = true;
 				//add to table
@@ -421,19 +402,19 @@ class PagesAndItemsInstaller extends JInstaller
 				$tag = (string)$language->attributes()->tag;
 				$name = basename(trim((string)$language));
 				$version = trim((string)$manifest->version);
-				
+
 				if(!$this->checkCoreLanguage($tag))
 				{
 					continue;
 				}
 				$this->copyLanguageXML($tag);
-				//first add to table with name = element 
+				//first add to table with name = element
 				$this->addLanguageToTable($manifestType,$tag,$tag,$version,'1');
 				$this->addLanguageToTable($manifestType,$name,$tag,$version,'1');
 			}
-			
+
 		}
-		
+
 		if( $piComponentLanguage)
 		{
 			//we must copy ore create the manifest file?
@@ -442,9 +423,9 @@ class PagesAndItemsInstaller extends JInstaller
 			{
 				$tag = (string)$manifest->tag;
 			}
-			
-			
-			
+
+
+
 			//$pathComponent = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS);
 			$dir = $pathComponent.DS.'extensions'.DS.'language'.DS.$tag;
 			if (!file_exists($dir))
@@ -457,13 +438,13 @@ class PagesAndItemsInstaller extends JInstaller
 			}
 			//check for install.xml only $tag not 'en-GB' ?
 			//no the file is copy from the commponent install or from pilanguage install
-			
+
 		}
-		
-		
+
+
 		$extensionslanguage = $manifest->extensionslanguage;
-		
-		
+
+
 		// we must install language in language/$tag or extensinon/language/$tag or extensinon/path to the extension /language/$tag
 		if ($extensionslanguage && count($extensionslanguage->children()))
 		{
@@ -489,7 +470,7 @@ class PagesAndItemsInstaller extends JInstaller
 				}
 			}
 			$extensions = $extensionslanguage->children();
-			foreach ($extensions as $extension) 
+			foreach ($extensions as $extension)
 			{
 				if($name != '' && $type != '')
 				{
@@ -507,7 +488,7 @@ class PagesAndItemsInstaller extends JInstaller
 					$pathfolder = '';
 				}
 				
-				$tag = 'en-GB';
+				$tag = ''; //'en-GB';
 				if ((string)$extension->attributes()->tag != '')
 				{
 					$tag = (string)$extension->attributes()->tag;
@@ -520,7 +501,7 @@ class PagesAndItemsInstaller extends JInstaller
 				{
 					continue;
 				}
-			
+
 				if($manifestType == 'component')
 				{
 					$version = 'integrated';
@@ -537,33 +518,35 @@ class PagesAndItemsInstaller extends JInstaller
 						$version = (string)$manifest->version;
 					}
 				}
-				
+
 				$baseFolder = (string)$extensionslanguage->attributes()->folder;
-				
+
 				/*
 				if we install over the component install
 				we have $this->getPath('source') = eg. .../extensions/fieldtype/calendar/
 				and the pathfolder is fieldtype/calendar
 				so installSourece = eg. .../extensions/
 				*/
+				
 				$installSource = JPath::clean(str_replace($pathfolder,'',$this->getPath('source')));
-				if ($baseFolder && file_exists($installSource.DS.$baseFolder)) 
+				if ($baseFolder && file_exists($installSource.DS.$baseFolder))
 				{
 					$source = $installSource.DS.$baseFolder;
 				}
-				else 
+				else
 				{
 					$source = $installSource;
 				}
-				
 				//where we store the language file/s?
 				//we need the name from the extension
 				//var_export($source.DS.trim($extension).'<br />');
 				//var_export($parent.'<br />');
-				//if (!$extensionInstaller->install($src.DS.'admin'.DS.'extensions'.DS.$pathfolder)) 
-				if (file_exists($source.DS.trim($extension)) ) //&& file_exists(JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.$pathfolder) )
+				//if (!$extensionInstaller->install($src.DS.'admin'.DS.'extensions'.DS.$pathfolder))
+				
+				//if (file_exists($source.DS.$tag.DS.(string)trim($extension)) ) //&& file_exists(JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.$pathfolder) )
+				if (file_exists($source.DS.(string)trim($extension)) )
 				{
-					$path['src']	= $source.DS.trim($extension);
+					$path['src']	= $source.DS.(string)trim($extension);
 					//$path['dest']	= JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.$pathfolder.DS.'language'.DS.$tag.DS.trim($extension);
 					// in my mind the best place was extensions/language
 					//$path['dest']	= JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions'.DS.'language'.DS.$tag.DS.trim($extension);
@@ -576,7 +559,7 @@ class PagesAndItemsInstaller extends JInstaller
 					if (basename($path['dest']) != $path['dest'])
 					{
 						$newdir = dirname($path['dest']);
-	
+
 						if (!JFolder::create($newdir))
 						{
 							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
@@ -587,22 +570,21 @@ class PagesAndItemsInstaller extends JInstaller
 
 					// Add the file to the copyfiles array
 					$copyfiles[] = $path;
-					
+
 					//need to add in table #__pi_extensions?
-					//first add to table with name = element 
+					//first add to table with name = element
 					$this->addLanguageToTable($manifestType,$tag,$tag,$version,1, true);
 					$this->addLanguageToTable($manifestType,basename((string)trim($extension)),$tag,$version,1);
-					
+
 
 				}
-				
+
 
 			}
-			//dump($copyfiles);
 			$this->copyFiles($copyfiles);
 		}
 	}
-	
+
 
 	/**
 	 * Returns the global Installer object, only creating it
@@ -634,15 +616,15 @@ class PagesAndItemsInstaller extends JInstaller
 	{
 		if ($eid)
 		{
-			
+
 			//$this->extension = JTable::getInstance('extension');
 			$componentPath = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS);
 			//var_export('refreshManifestCache'.$componentPath);
 			JTable::addIncludePath($componentPath.DS.'tables');
-			
+
 			//JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 			$extension = & JTable::getInstance('piextension', 'PagesAndItemsTable');
-			
+
 			if (!$extension->load($eid))
 			{
 				//$this->abort(JText::_('JLIB_INSTALLER_ABORT_LOAD_DETAILS'));
@@ -691,7 +673,7 @@ class PagesAndItemsInstaller extends JInstaller
 	{
 		// Read the file to see if it's a valid component XML file
 		$xml = simplexml_load_file($path);
-		
+
 		if (!$xml)
 		{
 			unset($xml);
@@ -706,7 +688,7 @@ class PagesAndItemsInstaller extends JInstaller
 		$data = array();
 		$type = (string)$xml->attributes()->type;
 		$data['type'] = $type;
-		
+
 		if (count($xml->files->children()))
 		{
 			foreach ($xml->files->children() as $file)
@@ -745,8 +727,8 @@ class PagesAndItemsInstaller extends JInstaller
 		$data['folder'] = $element ? $element : '';
 		unset($xml);
 		return $data;
-	}	
-	
+	}
+
 
 
 
@@ -754,11 +736,11 @@ class PagesAndItemsInstaller extends JInstaller
 	{
 		$version = new JVersion();
 		$joomlaVersion = $version->getShortVersion();
-		
+
 		if($joomlaVersion < '1.6')
 		{
 			// Validate that we have a param to use
-			if(!isset($this->manifest->params->param)) 
+			if(!isset($this->manifest->params->param))
 			{
 				return '{}';
 			}
@@ -769,9 +751,9 @@ class PagesAndItemsInstaller extends JInstaller
 			$ini = array();
 
 			// Iterating through the fieldsets:
-			foreach($fieldsets as $fieldset) 
+			foreach($fieldsets as $fieldset)
 			{
-				if( ! count($fieldset->children())) 
+				if( ! count($fieldset->children()))
 				{
 					// Either the tag does not exist or has no children therefore we return zero files processed.
 					return null;
@@ -783,12 +765,12 @@ class PagesAndItemsInstaller extends JInstaller
 					// Modified the below if statements to check against the
 					// null value since default values like "0" were casuing
 					// entire parameters to be skipped.
-					if (($name = $field->attributes()->name) === null) 
+					if (($name = $field->attributes()->name) === null)
 					{
 						continue;
 					}
 
-					if (($value = $field->attributes()->default) === null) 
+					if (($value = $field->attributes()->default) === null)
 					{
 						continue;
 					}
@@ -796,7 +778,7 @@ class PagesAndItemsInstaller extends JInstaller
 				}
 			}
 			return json_encode($ini);
-		
+
 		}
 		else
 		{
@@ -804,8 +786,8 @@ class PagesAndItemsInstaller extends JInstaller
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * Is the xml file a valid Joomla installation manifest file
 	 * overwrite the JInstaller in J1.6
@@ -818,8 +800,8 @@ class PagesAndItemsInstaller extends JInstaller
 	public function isManifest($file)
 	{
 		// Initialise variables.
-		$xml = simplexml_load_file($file);
-		//$xml = JFactory::getXML($file);
+		//$xml = simplexml_load_file($file);
+		$xml = JFactory::getXML($file);
 
 		// If we cannot load the xml file return null
 		if( ! $xml)
@@ -850,10 +832,10 @@ class PagesAndItemsInstaller extends JInstaller
 		}
 		//echo ' TYPE3: '.(string)$xml->attributes()->type;
 		// Valid manifest file return the object
-		
+
 		return $xml;
 	}
-	
+
 	/**
 	 * Is the xml file a valid PI Joomla installation manifest file
 	 * overwrite the JInstaller in J1.5
@@ -866,10 +848,12 @@ class PagesAndItemsInstaller extends JInstaller
 	{
 		// Initialize variables
 		$null	= null;
-		$xml	=& JFactory::getXMLParser('Simple');
+		//$xml	=& JFactory::getXMLParser('Simple');
+		$xml = simplexml_load_file($file);
 
 		// If we cannot load the xml file return null
-		if (!$xml->loadFile($file)) {
+		//if (!$xml->loadFile($file)) {
+		if (!$xml) {
 			// Free up xml parser memory and return null
 			unset ($xml);
 			return $null;
@@ -880,8 +864,10 @@ class PagesAndItemsInstaller extends JInstaller
 		 * @todo: Remove backwards compatability in a future version
 		 * Should be 'extension', but for backward compatability we will accept 'install'.
 		 */
-		$root =& $xml->document;
-		if (!is_object($root) || ($root->name() != 'extension' && $root->name() != 'install'))
+		//$root =& $xml->document;
+		//if (!is_object($root) || ($root->name() != 'extension' && $root->name() != 'install'))
+		//{
+		if($xml->getName() != 'install' && $xml->getName() != 'extension')
 		{
 			// Free up xml parser memory and return null
 			unset ($xml);

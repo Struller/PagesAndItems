@@ -8,9 +8,7 @@
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		pagetype ContentCategoryBlog (Pages and Items)
-	</description>
+	<description>ContentCategoryBlog (pagetype for the Pages-and-Items framework)</description>
 	<files>
 		<filename pagetype="content_category_blog">content_category_blog.php</filename>
 		<filename >index.html</filename>
@@ -21,7 +19,12 @@
 
 	<config>
 		<fields name="params">
-
+			<fieldset name="basic">
+				<field name="showCategoriesList" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_CATEGORIES_LIST">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+			</fieldset>
 		</fields>
 	</config>
 </extension>

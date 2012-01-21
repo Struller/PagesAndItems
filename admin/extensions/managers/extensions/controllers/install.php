@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -38,7 +38,7 @@ class PagesAndItemsControllerExtensionManagerExtensionsInstall extends PagesAndI
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'models');
 		JModel::addIncludePath($path);
 		$model = &$this->getModel( 'Install','PagesAndItemsModel');
-		
+
 
 		/*
 		$this->addViewPath(realpath(dirname(__FILE__).'/../views'));
@@ -49,23 +49,23 @@ class PagesAndItemsControllerExtensionManagerExtensionsInstall extends PagesAndI
 		$ftp =& JClientHelper::setCredentialsFromRequest('ftp');
 		$view->assignRef('ftp', $ftp);
 		*/
-		
-		
-		
-		
+
+
+
+
 		if ($model->install()) {
 			$cache = &JFactory::getCache('mod_menu');
 			$cache->clean();
 		}
-		
-		
+
+
 		$app = JFactory::getApplication();
 		$redirect_url = $app->getUserState('com_pagesanditems.installer.redirect_url');
-		
-		if(empty($redirect_url)) 
+
+		if(empty($redirect_url))
 		{
-			$redirect_url = JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extension=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=install',false);
-		} 
+			$redirect_url = JRoute::_('index.php?option=com_pagesanditems&task=manager.doExecute&extensionName=extensions&extensionFolder=&extensionType=manager&extensionTask=display&view=install',false);
+		}
 		else
 		{
 			// wipe out the user state when we're going to redirect
@@ -73,26 +73,25 @@ class PagesAndItemsControllerExtensionManagerExtensionsInstall extends PagesAndI
 			$app->setUserState('com_pagesanditems.installer.message', '');
 			$app->setUserState('com_pagesanditems.installer.extension_message', '');
 		}
-		//dump($redirect_url);
 		$this->setRedirect($redirect_url);
-		
-		
-		
-		
+
+
+
+
 		/*
 		//$view->assignRef('controller', $this);
 		$view->setModel( $model, true );
-		
+
 		require_once JPATH_COMPONENT_ADMINISTRATOR.'/helpers/pagesanditems.php';
 		$isAdmin = PagesAndItemsHelper::getIsAdmin();
 		$isSuperAdmin = PagesAndItemsHelper::getIsSuperAdmin();
 		if($isSuperAdmin)
 		{
 			// Load the submenu only for super admins
-			
+
 			//PagesAndItemsHelper::addSubmenu('install');
 		}
-		
+
 		$view->display();
 		*/
 	}

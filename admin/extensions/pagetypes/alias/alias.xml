@@ -8,9 +8,7 @@
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
 	<version>integrated</version>
-	<description>
-		pagetype Alias (Pages and Items)
-	</description>
+	<description>Alias (pagetype for the Pages-and-Items framework)</description>
 	<files>
 		<filename pagetype="alias">alias.php</filename>
 		<filename >index.html</filename>

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -28,13 +28,30 @@ class PagesAndItemsExtensionPagetypeContentFeatured extends PagesAndItemsExtensi
 		$icons = parent::onGetPageTypeIcons($icons,$pageType,$dirIcons, $component);
 		return true;
 	}
-	
-	function onGetPageItems(&$html,$view)
+
+	function onGetContentItems(&$ContentItems,$model)
 	{
-		if(isset($view->menuItemsType->icons->default->imageUrl))
+	
+		$ContentItems = $this->getContentItems($model);
+	}
+	
+	
+	
+	function getContentItems($model)
+	{
+		$menuItem = $model->menuItem;
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'itemslist.php');
+		$ItemsList = new ItemsList();
+		return $ItemsList->getContentItems(true,true,true,$menuItem,'COM_PAGESANDITEMS_ITEMS');
+	}
+
+	function onGetPageItems(&$html,$model)
+	{
+		if(isset($model->menuItemsType->icons->default->imageUrl))
 		{
-			$image = $view->menuItemsType->icons->default->imageUrl;
+			$image = $model->menuItemsType->icons->default->imageUrl;
 		}
+/*
 		if($image)
 		{
 			$image = '<img src="'.$image.'" alt="" style="vertical-align: middle;position: relative;" />&nbsp;';
@@ -43,26 +60,37 @@ class PagesAndItemsExtensionPagetypeContentFeatured extends PagesAndItemsExtensi
 		{
 			$image = '<img src="'.PagesAndItemsHelper::getDirIcons().'icon-16-menu.png" alt="" style="vertical-align: middle;" />&nbsp;';
 		}
-		$html = '';
-		$html .= '<table class="adminform" width="98%">';
-			$html .= '<tr>';
-				$html .= '<th style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
-					$html .= $image;
-					$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
-				$html .= '</th>';
-			$html .= '</tr>';
-			/*
-			$html .= '<tr>';
-				$html .= '<td>';
-					$html .= 'from pagetypes/content_featured/content_featured.php';
-				$html .= '</td>';
-			$html .= '</tr>';
-			*/
-			$html .= '<tr>';
-				$html .= '<td>';
-					$html .= $view->getContentItems();//($editToolbarButtons = true, $newToolbarButtons = true) oder (array(),array()
-				$html .= '</td>';
-			$html .= '</tr>';
+		*/
+		if(!$image)
+		{
+			$image = PagesAndItemsHelper::getDirIcons().'icon-16-menu.png';
+		}
+		
+		$html .= '<table class="piadminform xadminform" width="98%">';
+			$html .= '<thead class="piheader">';
+				$html .= '<tr>';
+					$html .= '<th>'; // class="piheader">';//style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
+						//$html .= $image;
+						//$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
+						$html .= PagesAndItemsHelper::getThImageTitle($image,JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE'));
+					$html .= '</th>';
+				$html .= '</tr>';
+			$html .= '</thead>';
+			$html .= '<tbody>';
+				/*
+				$html .= '<tr>';
+					$html .= '<td>';
+						$html .= 'from pagetypes/content_featured/content_featured.php';
+					$html .= '</td>';
+				$html .= '</tr>';
+				*/
+				$html .= '<tr>';
+					$html .= '<td>';
+						//$html .= $model->getContentItems();//($editToolbarButtons = true, $newToolbarButtons = true) oder (array(),array()
+						$html .= $this->getContentItems($model);
+					$html .= '</td>';
+				$html .= '</tr>';
+			$html .= '</tbody>';
 		$html .= '</table>';
 		return true;
 
@@ -72,17 +100,17 @@ class PagesAndItemsExtensionPagetypeContentFeatured extends PagesAndItemsExtensi
 	{
 		return 1;
 	}
-	
+
 	function onGetListItems(&$listItems)
 	{
 		$listItems = 1;
 		return true;
 	}
-	
-	
+
+
 	// hide some in the pagepropertys if need
-	// or add 
-	function onGetLists(&$lists,$pageMenuItem,$view)
+	// or add
+	function onGetLists(&$lists,$pageMenuItem,$model)
 	{
 		/*
 		$lists->display->id = 'style="color: green;font-style: oblique;font-size: large;"';
@@ -95,7 +123,7 @@ class PagesAndItemsExtensionPagetypeContentFeatured extends PagesAndItemsExtensi
 		$addtop .= 'we can add something here also script-code';
 		$addtop .= '</td>';
 		$addtop .= '</tr>';
-		
+
 		$lists->add->top =$addtop;
 		$addbottom = '<tr>';
 		$addbottom .= '<td>';
@@ -106,15 +134,15 @@ class PagesAndItemsExtensionPagetypeContentFeatured extends PagesAndItemsExtensi
 		*/
 		return true;
 	}
-	
+
 	function onBeforSave($data, $isnew)
 	{
-	
+
 	}
-	
+
 	function onAfterSave($menu_id, $data, $isnew)
 	{
-	
+
 	}
 }
 

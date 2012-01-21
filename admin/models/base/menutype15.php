@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -30,7 +30,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 	 * @var	array
 	 */
 	protected $_rlu = array();
-	
+
 	protected static $_filter = array('option', 'view', 'layout');
 
 
@@ -43,7 +43,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 	 */
 	public static function getLinkKey($request)
 	{
-		if (empty($request)) 
+		if (empty($request))
 		{
 			return false;
 		}
@@ -51,7 +51,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 		if (is_string($request))
 		{
 			$args = array();
-			if (strpos($request, 'index.php') === 0) 
+			if (strpos($request, 'index.php') === 0)
 			{
 				parse_str(parse_url(htmlspecialchars_decode($request), PHP_URL_QUERY), $args);
 			}
@@ -91,8 +91,9 @@ class PagesAndItemsModelPiMenutype extends JModel
 		// Initialise variables.
 		$lang = JFactory::getLanguage();
 		$extension = 'com_menus';
-		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
-		
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+
 		$list = array();
 
 		// Get the list of components.
@@ -102,7 +103,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 				' WHERE c.link <> "" AND parent = 0 AND enabled = 1' .
 				' ORDER BY c.name';
 		$db->setQuery( $query );
-		
+
 		$components = $db->loadObjectList();
 
 		foreach ($components as $component)
@@ -119,12 +120,12 @@ class PagesAndItemsModelPiMenutype extends JModel
 				// Create the reverse lookup for link-to-name.
 				foreach ($options as $option)
 				{
-					if (isset($option->request)) 
+					if (isset($option->request))
 					{
 						$this->_rlu[$this->getLinkKey($option->request)] = $option->get('title');
-						
+
 						/*
-						if (isset($option->request['option'])) 
+						if (isset($option->request['option']))
 						{
 							$lang->load($option->request['option'], JPATH_ADMINISTRATOR, null, false, false)
 							||	$lang->load($option->request['option'], JPATH_ADMINISTRATOR.'/components/'.$option->request['option'], null, false, false)
@@ -158,30 +159,30 @@ class PagesAndItemsModelPiMenutype extends JModel
 
 		$mainXML = JPATH_SITE.'/components/'.$component.'/metadata.xml';
 
-		if (is_file($mainXML)) 
+		if (is_file($mainXML))
 		{
 			$options = $this->_getTypeOptionsFromXML($mainXML, $component);
 		}
 
-		if (empty($options)) 
+		if (empty($options))
 		{
 			$options = $this->_getTypeOptionsFromMVC($component);
 		}
-		
+
 		/*
-		if (empty($options)) 
+		if (empty($options))
 		{
 			$mainXML = JPATH_ADMINISTRATOR.'/components/'.$component.'/metadata.xml';
 			$options = $this->_getTypeOptionsFromXML($mainXML, $component);
 		}
-		
-		if (empty($options)) 
+
+		if (empty($options))
 		{
 			$mainXML = JPATH_ADMINISTRATOR.'/components/'.$component.'/'.$component.'.xml';
 			$options = $this->_getTypeOptionsFromXML($mainXML, $component);
 		}
-		
-		if (empty($options)) 
+
+		if (empty($options))
 		{
 			$mainXML = JPATH_ADMINISTRATOR.'/components/'.$component.'/'.str_replace('com_','',$component).'.xml';
 			$options = $this->_getTypeOptionsFromXML($mainXML, $component);
@@ -286,13 +287,13 @@ class PagesAndItemsModelPiMenutype extends JModel
 				// Determine if a metadata file exists for the view.
 				$file = $path.'/'.$view.'/metadata.xml';
 
-				if (is_file($file)) 
+				if (is_file($file))
 				{
 					// Attempt to load the xml file.
-					if ($xml = simplexml_load_file($file)) 
+					if ($xml = simplexml_load_file($file))
 					{
 						// Look for the first view node off of the root node.
-						if ($menu = $xml->xpath('view[1]')) 
+						if ($menu = $xml->xpath('view[1]'))
 						{
 							$menu = $menu[0];
 
@@ -333,7 +334,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 									}
 								}
 							}
-							else 
+							else
 							{
 								$options = array_merge($options, (array) $this->_getTypeOptionsFromLayouts($component, $view));
 							}
@@ -342,7 +343,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 					}
 
 				}
-				else 
+				else
 				{
 					$options = array_merge($options, (array) $this->_getTypeOptionsFromLayouts($component, $view));
 				}
@@ -360,15 +361,15 @@ class PagesAndItemsModelPiMenutype extends JModel
 		$layoutNames = array();
 		$templateLayouts = array();
 		$lang = JFactory::getLanguage();
-		
+
 		// Get the layouts from the view folder.
 		$path = JPATH_SITE.'/components/'.$component.'/views/'.$view.'/tmpl';
-		if (JFolder::exists($path)) 
+		if (JFolder::exists($path))
 		{
 			$layouts = array_merge($layouts, JFolder::files($path, '.xml$', false, true));
 			//$layouts = array_merge($layouts, JFolder::files($path, '.php$', false, true));
 		}
-		else 
+		else
 		{
 			return $options;
 		}
@@ -377,7 +378,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 		foreach ($layouts as $key => $layout)
 		{
 			// Ignore private layouts.
-			if (strpos(JFile::getName($layout), '_') === false) 
+			if (strpos(JFile::getName($layout), '_') === false)
 			{
 
 				//unset $layout if no php file exist no other way
@@ -395,7 +396,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 				}
 			}
 		}
-		
+
 		// get the template layouts
 		// TODO: This should only search one template -- the current template for this item (default of specified)
 		/*
@@ -404,7 +405,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 		$templateName = array();
 		foreach($folders as $folder)
 		{
-			if (JFolder::exists($folder.DS.'html'.DS.$component.DS.$view)) 
+			if (JFolder::exists($folder.DS.'html'.DS.$component.DS.$view))
 			{
 				$template = JFile::getName($folder);
 				//$lang->load('tpl_'.$template.'.sys', JPATH_SITE, null, false, false)
@@ -412,7 +413,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 				//||	$lang->load('tpl_'.$template.'.sys', JPATH_SITE, $lang->getDefault(), false, false)
 				//||	$lang->load('tpl_'.$template.'.sys', JPATH_SITE.'/templates/'.$template, $lang->getDefault(), false, false);
 				$templateLayouts = JFolder::files($folder.DS.'html'.DS.$component.DS.$view, '.xml$', false, true);
-				
+
 
 				foreach ($templateLayouts as $layout)
 				{
@@ -434,7 +435,7 @@ class PagesAndItemsModelPiMenutype extends JModel
 		foreach ($layouts as $layout)
 		{
 			// Ignore private layouts.
-			if (strpos(JFile::getName($layout), '_') === false) 
+			if (strpos(JFile::getName($layout), '_') === false)
 			{
 				/*
 				if(!JFile::exists(JFile::stripext($layout).'php') )
@@ -453,17 +454,17 @@ class PagesAndItemsModelPiMenutype extends JModel
 				$o->request		= array('option' => $component, 'view' => $view);
 
 				// Only add the layout request argument if not the default layout.
-				if ($layout != 'default') 
+				if ($layout != 'default')
 				{
 					// If the template is set, add in format template:layout so we save the template name
 					$o->request['layout'] = (isset($templateName[$file])) ? $templateName[$file] . ':' . $layout : $layout;
 				}
 
 				// Load layout metadata if it exists.
-				if (is_file($file)) 
+				if (is_file($file))
 				{
 					// Attempt to load the xml file.
-					if ($xml = simplexml_load_file($file)) 
+					if ($xml = simplexml_load_file($file))
 					{
 						// Look for the first view node off of the root node.
 						if ($menu = $xml->xpath('layout[1]')) {

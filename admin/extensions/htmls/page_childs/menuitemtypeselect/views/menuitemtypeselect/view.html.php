@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -23,6 +23,8 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 	function display($tpl = null)
 	{
 		$doc =& JFactory::getDocument();
+		
+		/*
 		if ($model = &$this->getModel('Page')) //,'PagesAndItemsModel'))
 		{
 			//echo 'model';
@@ -30,34 +32,25 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 			//$joomlaVersion = $model->getJoomlaVersion();
 			//$this->assignRef( 'joomlaVersion',$joomlaVersion);
 		}
-		
-		//$path = JURI::root(true).'/'.str_replace(DS,'/',str_replace(JPATH_SITE.DS,'',realpath(dirname(__FILE__).'/../../media/css/').DS));
-		$path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).'/../../media/css/').DS));
-		/*
-		if($path)
-		{
-			$path = str_replace(DS,'/',str_replace(JPATH_SITE.DS,'',$path.DS));
-		}
-		//if($model->joomlaVersion < '1.6')
-		//{
-			JHTML::stylesheet('menuitemtypeselect.css', JURI::root().$path); //'../../media/css/');
-		//}
 		*/
-//		if($model->joomlaVersion < '1.6')
-//		{
-			JHTML::stylesheet('menuitemtypeselect.css', $path,false);
+
+		$path = PagesAndItemsHelper::getDirCSS();
+		JHTML::stylesheet('popup.css', $path.'/');
+		//JHTML::stylesheet('pagesanditems2.css', $path.'/');
+		$path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).'/../../media/css/').DS));
+			JHTML::stylesheet('menuitemtypeselect.css', $path);
 /*
 		}
 		else
 		{
 			JHTML::stylesheet($path.'menuitemtypeselect.css');
 		}
-*/		
-		
-		
+*/
+
+
 		JHTML::_('behavior.tooltip');
-		
-		
+
+
 		$pageId = JRequest::getVar( '$pageId', 0);
 		$menutype = JRequest::getVar( 'menutype', null);
 		$menutypes = null;
@@ -69,19 +62,19 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		parent::display($tpl);
 
 	}
-	
-	
-	
+
+
+
 	function getMenuItemTypes16()
 	{
 		/*
 		//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'com_menus'.DS.'models'.DS.'fields'.DS.'menutype.php');
 		//TODO make new model componentmenutype and menutype extends JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'com_menus'.DS.'models'.DS.'fields'.DS.'menutype.php
-		
-		from this model we can use here we can use 
+
+		from this model we can use here we can use
 		_getTypeOptions()
 		here we can get all we need
-		
+
 		// Initialise variables.
 		$html		= array();
 		$types		= $this->_getTypeOptions();
@@ -143,25 +136,25 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		$html[] = '</ul>';
 
 		return implode("\n", $html);
-		
-		
+
+
 		*/
-		
+
 	}
-	
-	
+
+
 	function getMenuItemTypes()
 	{
-		if($this->model->joomlaVersion >= '1.6')
+		if(PagesAndItemsHelper::getIsJoomlaVersion('>=','1.6'))
 		{
 			return $this->getMenuItemTypes16();
 		}
-		
-		
+
+
 		$sub_task = JRequest::getVar( 'sub_task', 'edit');
 		$extension = 'com_menus';
 		$lang = &JFactory::getLanguage();
-		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 		$pageType = JRequest::getVar( 'pageType', '' );
 		$pageId = JRequest::getVar( 'pageId', 0 );
 		$type = JRequest::getVar( 'type', 'component' );
@@ -170,13 +163,13 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		$sub_task = JRequest::getVar('sub_task');
 		require_once( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers'.DS.'helper.php' );
 		//require_once( JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php' );
-		
+
 		$requestUrl = JRequest::getVar('url', array(0),'', 'array');
 		$requestType = JRequest::getVar('type', null);
 		$requestEdit = JRequest::getVar( 'edit', false );
 		$requestCid = JRequest::getVar('cid', array(0),'', 'array');
 		$requestExpand = JRequest::getVar('expand', '');
-		
+
 		/*
 		$dirIcons = $this->controller->dirIcons;
 		JRequest::setVar( 'dirIcons', $dirIcons );
@@ -215,7 +208,7 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 				//in models/page_item.php too
 				$path = JPATH_SITE.DS.'components'.DS.$components[$i]->option.DS.'views';
 				$components[$i]->legacy = !is_dir($path);
-				$lang->load($components[$i]->option, JPATH_ADMINISTRATOR);
+				$lang->load($components[$i]->option, JPATH_ADMINISTRATOR, null, false, false) || $lang->load($components[$i]->option, JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 
 				if($components[$i]->legacy)
 				{
@@ -224,12 +217,12 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 					//$menu_item = new PagesAndItemsModelPage_item();
 					$menu_item = new PagesAndItemsModelPage_items();
 					$item = $menu_item->getItem();
-					
+
 
 					$html .='<li>';
 						//$html .='<div class="node-open">';
 							//$html .='<span></span>';
-							
+
 							$html .='<a ';
 								$html .= 'class="child" ';
 								$html .= 'onclick="';
@@ -267,7 +260,7 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 					$menu_item = new PagesAndItemsModelPage_items($pageId,true);
 					$item = $menu_item->getItem();
 					$typeCid = '&amp;menutype=' . htmlspecialchars($item->menutype).'&amp;cid[]=' . $item->id;
-					
+
 					$html .= '<a ';
 						$html .= 'class="parent" ';
 						$html .= '>';
@@ -299,17 +292,17 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 							else
 							{
 								$html .='<a ';
-									
+
 									/*
 									$url = array();
 									*/
 									$html .= 'class="child" ';
 									//$this->_output .= 'title="' . JText::_($this->_current->title);
 									//$this->_output .= '::' . JText::_($this->_current->msg) . '" ';
-									
+
 									$html .= 'onclick="';
 									$html .='window.parent.document.getElementById(\'urloption\').value = \''.$components[$i]->option.'\'; ';
-			
+
 									$html .='window.parent.document.getElementById(\'pageType\').value = \''.str_replace('com_', '', $components[$i]->option).'\'; ';
 									$html .='window.parent.document.getElementById(\'type\').value = \'component\'; ';
 									//if($pageId)
@@ -334,10 +327,10 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 										$html .='window.parent.submitbutton(\'newMenuItem\'); ';
 									}
 									$html .='window.parent.document.getElementById(\'sbox-window\').close();" ';
-									
-									
-									
-									
+
+
+
+
 									/*
 									$html .= 'onclick="';
 									$html .= 'window.parent.document.location.href=\'';
@@ -378,9 +371,9 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 					//	$html .= '</div>';
 
 					$html .= $expansion['html'];
-						
+
 						/*
-						expansion['html'] = 
+						expansion['html'] =
 						"index.php?
 						option=com_menus
 						&amp;task=edit
@@ -388,9 +381,9 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 						&amp;url[option]=com_content
 						&amp;url[view]=archive
 						&amp;menutype=customcontent"
-						
+
 						 title="Archived Article List Layout::Das Standardlayout für archivierte Beiträge zeigt Beiträge die archiviert wurden. Sie sind nach dem Datum durchsuchbar.">Archived Article List Layout</a></div></li>
-						
+
 						*/
 
 				//}
@@ -402,7 +395,7 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		}
 		$html .= '</ul>';
 		/*
-		
+
 		JRequest::setVar( 'type',  'component');
 		JRequest::setVar( 'url', array('option'=>$components[$i]->option));
 		JRequest::setVar('expand',str_replace('com_', '', $components[$i]->option));
@@ -413,24 +406,24 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		JRequest::setVar( 'cid', $requestCid );
 		JRequest::setVar( 'expand', $requestExpand );
 
-		
-		
+
+
 		return $html;
 		/*
 		onclick="window.parent.document.getElementById('sbox-window').close();">
-		
+
 		$expansion		= &$this->get('Expansion');
-		
+
 		//$this->menu_item
 		//$expansion = $this->menu_item->getExpansion();
-		
-		
+
+
 		for ($i=0,$n=count($components);$i<$n;$i++)
 		{
 			//$menu_item = &new MenusModelItem();
 			if(components[$i]->option == $pageUrl['option'])
 			{
-				
+
 				JRequest::setVar( 'url',  array("option"=>$pageUrl['option'],"view"=>$pageUrl['view'],"layout"=>$pageUrl['layout']));
 			}
 			else
@@ -444,7 +437,7 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 					$menu_item_urlparams_view = $menu_item_urlparams->get('view',null);
 					$menu_item_urlparams_layout = $menu_item_urlparams->get('layout',null);
 					$menu_item_urlparams_id = $menu_item_urlparams->get('id',null);
-			
+
 			//test for expansion
 			//if(!$components[$i]->option == 'com_content'
 			//{
@@ -454,7 +447,7 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 						<div class="node-open">
 							<span></span>
 							<a href="index.php?option=com_menus&amp;task=edit&amp;type=component&amp;url[option]=
-								<?php echo $this->components[$i]->option . $typeCid; ?>" 
+								<?php echo $this->components[$i]->option . $typeCid; ?>"
 								id="<?php echo str_replace('com_', '', $this->components[$i]->option); ?>">
 								<?php echo $this->components[$i]->name; ?>
 							</a>
@@ -500,5 +493,5 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		}
 		*/
 	}
-	
+
 }

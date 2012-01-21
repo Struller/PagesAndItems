@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -58,7 +58,7 @@ class PagesAndItemsModelElement extends JModel
 		$limit				= $app->getUserStateFromRequest('global.list.limit',					'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart			= $app->getUserStateFromRequest($option.'.articleelement.limitstart',			'limitstart',		0,	'int');
 		$search				= $app->getUserStateFromRequest($option.'.articleelement.search',				'search',			'',	'string');
-		if (strpos($search, '"') !== false) 
+		if (strpos($search, '"') !== false)
 		{
 			$search = str_replace(array('=', '<'), '', $search);
 		}
@@ -145,7 +145,7 @@ class PagesAndItemsModelElement extends JModel
 
 	function getPagination()
 	{
-		if (is_null($this->_list) || is_null($this->_page)) 
+		if (is_null($this->_list) || is_null($this->_page))
 		{
 			$this->getList();
 		}

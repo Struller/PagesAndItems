@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -19,11 +19,23 @@ class PagesAndItemsExtensionFieldtypeTextarea extends PagesAndItemsExtensionFiel
 	function display_config_form($plugin, $type_id, $name, $field_params, $field_id){
 		if(!$field_id){
 			//new field, set defaults here
+			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0
 			$field_params['no_lines_to_breaks'] = $this->params->get('no_lines_to_breaks'); //0
 			$field_params['limit_characters'] = $this->params->get('limit_characters'); //'0'
 		}
+		$html = '';
+		/*
+		//New show field name && description
+		$html .= $this->makeShowFieldName($field_id,$field_params,true);
 		//description
-		$html = $this->display_field_description($field_params);
+		//$html .= $this->display_field_description($field_params);
+		*/
+		//New show field name
+		$html .= $this->makeShowFieldName($field_id,$field_params);
+		//description
+		$html .= $this->display_field_description($field_params);
+
+
 		//validation
 		$html .= $this->display_field_validation($field_params);
 		//validation_mesage
@@ -34,7 +46,7 @@ class PagesAndItemsExtensionFieldtypeTextarea extends PagesAndItemsExtensionFiel
 		if($this->check_if_field_param_is_present($field_params, 'no_lines_to_breaks')){
 			if($field_params['no_lines_to_breaks']){
 				$field_content .= ' checked="checked"';
-			} 
+			}
 		}
 		$field_content .= 'name="field_params[no_lines_to_breaks]" value="1" />';
 		$html .= $this->display_field($field_name, $field_content);
@@ -61,34 +73,42 @@ class PagesAndItemsExtensionFieldtypeTextarea extends PagesAndItemsExtensionFiel
 		//$value = str_replace('<br />', "\n", $value);
 		$field_content = '<textarea cols="100" rows="25"  name="default_value" >'.$value.'</textarea>';
 		$html .= $this->display_field($field_name, $field_content);
-		
+
 		//no_lines_to_breaks
 		return $html;
 	}
-	
-	
+
+
 	function display_item_edit($field, $field_params, $field_values, $field_value, $new_field, $field_id){
 		//if new field, set defaults
 		if($new_field){
 			$field_value = $field_params['default_value'];
 		}
-		
+
 		//make html-breaks into line-breaks
 		//$field_value = str_replace('<br />', "\n", $field_value);
-		
+
 		$html = '<div class="field_type_text fieldtype">';
 		$html .= '<div class="pi_form_wrapper">';
 		$html .= '<div class="pi_width20">';
-		$html .= $field->name;
-		if($this->check_if_field_param_is_present($field_params, 'description')){
-			$html .= '<span class="star">&nbsp;*</span>';
+		$html .= ''; //$field->name;
+		
+		if($this->check_if_field_param_is_present($field_params, 'validation')){
+			if($field_params['validation']){
+				$html .= '<span class="star">&nbsp;*</span>';
+			}
+		}
+		else
+		{
+			$html .= '&nbsp;';
 		}
 		$html .= '</div>';
 		$html .= '<div class="pi_width70">';
+		/*
 		if($field_params['description']){
 			$html .= '<div>'.$field_params['description'].'</div>';
 		}
-		
+		*/
 		$limit_textfield_tags = '';
 		if($field_params['limit_characters']){
 			$html .= '<script language="javascript" type="text/javascript">'."\n";
@@ -111,33 +131,32 @@ onKeyUp="limitText_'.$field_id.'(this.form.'.$field_id.',this.form.countdown_'.$
 		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '</div>';
-		
+
 		return $html;
 	}
-	
+
 	function field_save($field, $insert_or_update){
-			
+
 		$value_name = 'field_values_'.$field->id;
-		//dump(JRequest::get());
 		//get vars
 		$value = JRequest::getVar($value_name,'','post','string', JREQUEST_ALLOWRAW );
 		$value = addslashes($value);
-		
+
 		//make linebreaks into html-breaks
 		//$value = str_replace("\n",'<br />', $value);
 		//take out all other html tags
 		//$value = strip_tags($value, '<br>');
-				
+
 		return $value;
 	}
-	
-	
+
+
 	function params_save($params_string)
 	{
 		$default_value = JRequest::getVar('default_value','','post','string', JREQUEST_ALLOWRAW);
-		
+
 		//$default_value = str_replace("\n",'<br />', $default_value);
-		
+
 		$default_value = 'default_value-=-'.$default_value.'[;-)# ]';
 		$default_temp = 'default_value-=-'.$this->get_field_param($params_string, 'default_value').'[;-)# ]';
 		if(strpos($params_string, 'default_value-=-')){
@@ -145,13 +164,13 @@ onKeyUp="limitText_'.$field_id.'(this.form.'.$field_id.',this.form.countdown_'.$
 		}else{
 			$params_string .= $default_value;
 		}
-								
+
 		//return $params_string;
 		return $params_string;
 	}
-	
-	
-		
+
+
+
 	function render_field_output($field, $intro_or_full, $readmore_type=0, $editor_id=0){
 		$value = $field->value;
 		if(!$this->get_field_param($field->params, 'no_lines_to_breaks')){
@@ -159,7 +178,7 @@ onKeyUp="limitText_'.$field_id.'(this.form.'.$field_id.',this.form.countdown_'.$
 		}
 		return addslashes($value);
 	}
-	
+
 }
 
 ?>

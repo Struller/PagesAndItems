@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!-- $Id: plugin.xml 19203 2010-10-22 16:28:34Z chdemko $ -->
+<form>
+	<fieldset>
+		<field
+			name="id"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			description ="JGLOBAL_FIELD_ID_DESC"
+			type="text"
+			default="0"
+			readonly="true"
+			class="readonly" />
+
+		<field
+			name="name"
+			label="name"
+			type="text"
+			default="0"
+			readonly="true"
+			class="readonly" />
+
+		<field
+			name="read_more"
+			type="text"
+			readonly="true"
+			class="readonly"
+			label="read_more"
+		 />
+	</fieldset>
+</form>

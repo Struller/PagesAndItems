@@ -4,6 +4,7 @@
 | Copyright (c) 2002-2003 Geir Landrö               |
 |--------------------------------------------------*/
 
+/*
 .page_tree {
 	margin-top: 8px;
 }
@@ -16,7 +17,7 @@
 	padding-left: 5px;
 	padding-top: 5px;
 }
-
+*/
 .dtree {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -65,10 +66,27 @@ margin-bottom: 50px;
 	color: #333;
 	text-decoration: underline;
 }
+/*
 .dtree a.nodeSel {
 	background-color: #E7EDDF;
 	border: 1px solid #6D9D2E;
 }
+*/
+.dtree a.nodeSel {
+	/*
+	background-color: #E7EDDF;
+	border: 1px solid #6D9D2E;
+	*/
+	/*
+	border: 1px solid #146295;
+	*/
+	border: 1px solid silver;
+	background-color: #F0F0EE;
+	margin-left: 5px;
+}
+
+
+
 .dtree .clip {
 	overflow: hidden;
 }

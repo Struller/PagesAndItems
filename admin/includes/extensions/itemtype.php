@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -24,17 +24,15 @@ abstract class PagesAndItemsExtensionItemtype extends PagesAndItemsExtension
 	{
 		parent::__construct($subject, $config);
 	}
-	
+
 	function onItemtypeIs_config_form(&$itemtypeHtmlIsConfig,$item_type,$type_id = null)
 	{
 		if(method_exists($this, 'onItemtypeDisplay_config_form'))
 		{
-
-			//$itemtypeHtml->text = '';
-			$itemtypeHtml = & new JObject();
+			//$itemtypeHtml = & new JObject();
+			$itemtypeHtml = new JObject();
 			$itemtypeHtml->text = '';
 
-			
 			if($itemtypeHtml = $this->onItemtypeDisplay_config_form(&$itemtypeHtml,$item_type))
 			{
 				if($item_type == 'custom')
@@ -50,8 +48,8 @@ abstract class PagesAndItemsExtensionItemtype extends PagesAndItemsExtension
 		}
 		return true;
 	}
-	
-	
+
+
 	function onGetPluginName(&$itemtypeHtml,$item_type)
 	{
 		if($this->_name != $item_type)
@@ -91,22 +89,22 @@ abstract class PagesAndItemsExtensionItemtype extends PagesAndItemsExtension
 	{
 		return true;
 	}
-	
+
 	function onItemtypeDisplay_item_config(&$itemtypeHtml,$item_type,$item_id,$text,$itemIntroText,$itemFullText)
 	{
 		return true;
 	}
-	
+
 	function onItemtypeToolbar(&$itemtypeHtml,$item_type)
 	{
 		return true;
 	}
-	
+
 	function onItemtypeItem_delete
-	
+
 	function onItemtypeItem_save
-	
+
 	function onItemtypeConfig_save
-	
+
 	*/
 }

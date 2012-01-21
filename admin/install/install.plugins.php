@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,7 +22,7 @@ class installPlugins
 		{
 
 			$plugins = &$this->manifest->getElementByPath('plugins');
-			if (is_a($plugins, 'JSimpleXMLElement') && count($plugins->children())) 
+			if (is_a($plugins, 'JSimpleXMLElement') && count($plugins->children()))
 			{
 				foreach ($plugins->children() as $plugin)
 				{
@@ -30,18 +30,18 @@ class installPlugins
 					$pelement	= $plugin->attributes('plugin');
 					$pgroup		= $plugin->attributes('group');
 					$porder		= $plugin->attributes('order');
-	
+
 					// Set the installation path
-					if (!empty($pelement) && !empty($pgroup)) 
+					if (!empty($pelement) && !empty($pgroup))
 					{
 						$parent->setPath('extension_root', JPATH_ROOT.DS.'plugins'.DS.$pgroup);
 					}
-					else 
+					else
 					{
 						$parent->abort(JText::_('Plugin').' '.JText::_('Install').': '.JText::_('No plugin file specified'));
 						return false;
 					}
-	
+
 					/**
 					 * ---------------------------------------------------------------------------------------------
 					 * Filesystem Processing Section
@@ -51,7 +51,7 @@ class installPlugins
 					// If the plugin directory does not exist, lets create it
 					$created = false;
 					if (!file_exists($parent->getPath('extension_root'))) {
-						if (!$created = JFolder::create($parent->getPath('extension_root'))) {	
+						if (!$created = JFolder::create($parent->getPath('extension_root'))) {
 							$parent->abort(JText::_('Plugin').' '.JText::_('Install').': '.JText::_('Failed to create directory').': "'.$parent->getPath('extension_root').'"');
 							return false;
 						}
@@ -96,7 +96,7 @@ class installPlugins
 					 * ---------------------------------------------------------------------------------------------
 					 */
 					//$db = &JFactory::getDBO();
-	
+
 					// Check to see if a plugin by the same name is already installed
 					$query = 'SELECT `id`' .
 					' FROM `#__plugins`' .
@@ -109,17 +109,17 @@ class installPlugins
 						return false;
 					}
 					$id = $database->loadResult();
-	
+
 					// Was there a plugin already installed with the same name?
 					if ($id) {
-	
+
 						if (!$parent->getOverwrite())
 						{
 							// Install failed, roll back changes
 							$parent->abort(JText::_('Plugin').' '.JText::_('Install').': '.JText::_('Plugin').' "'.$pname.'" '.JText::_('already exists!'));
 							return false;
 						}
-	
+
 					} else {
 						$pluginrow =& JTable::getInstance('plugin');
 						$pluginrow->name = $pname;
@@ -150,7 +150,7 @@ class installPlugins
 			// Set the installation path
 			$manifest = $parent->getManifest();
 			$xml = $manifest;
-			
+
 			if (isset($xml->plugins) && count($xml->plugins->children()))
 			{
 				foreach ($xml->plugins->children() as $plugin)
@@ -158,7 +158,7 @@ class installPlugins
 					$element = null;
 					$name = null;
 					$group = null;
-		
+
 					if ((string)$plugin->attributes()->plugin)
 					{
 						$element = (string)$plugin->attributes()->plugin;
@@ -168,12 +168,12 @@ class installPlugins
 					{
 						$group = (string)$plugin->attributes()->group;
 					}
-			
+
 					if ((string)$plugin->attributes()->name)
 					{
 						$name = (string)$plugin->attributes()->name;
 					}
-			
+
 					if (count($plugin->children()))
 					{
 						foreach ($plugin->children() as $files)
@@ -181,11 +181,11 @@ class installPlugins
 							if ((string)$files->attributes()->folder)
 							{
 								$folder = (string)$files->attributes()->folder;
-							
+
 								$src = $parent->getPath('source');
 								$installer = new JInstaller;
 								$result = $installer->install($src.DS.'admin'.DS.$folder);
-								
+
 								$database->setQuery("SELECT extension_id, enabled FROM #__extensions WHERE type='plugin' AND element='pagesanditems' AND folder='$group' LIMIT 1 ");
 								$pluginrow = $database->loadObject();
 								if(!$pluginrow->enabled)
@@ -204,19 +204,19 @@ class installPlugins
 		}
 		return $status_plugins;
 	}
-	
+
 	function installUseDB($parent)
 	{
 		$database = JFactory::getDBO();
 		//install system plugin
-		//ms: we copy the files from 
+		//ms: we copy the files from
 		//$plgSrc = JPATH_ADMINISTRATOR.DS.'components'.DS.'com_pagesanditems'.DS.'plugin_system'.DS;
 		$src = $parent->getPath('source');
 		$plgSrc = $src.DS.'admin'.DS.'plugin_system'.DS;
-		
+
 		$plgDst = JPATH_ROOT.DS.'plugins'.DS.'system'.DS.'pagesanditems'.DS;
 		if(!file_exists($plgDst)){
-			mkdir($plgDst);	
+			mkdir($plgDst);
 		}
 		$system_plugin_success = 0;
 		$system_plugin_success = JFile::copy($plgSrc.'pagesanditems.php', $plgDst.'pagesanditems.php');
@@ -230,7 +230,7 @@ class installPlugins
 			$rows = $database->loadObjectList();
 			$system_plugin_id = 0;
 			$system_plugin_enabled = 0;
-			foreach($rows as $row){	
+			foreach($rows as $row){
 				$system_plugin_id = $row->extension_id;
 				$system_plugin_enabled = $row->enabled;
 			}
@@ -248,7 +248,7 @@ class installPlugins
 				$database->setQuery( "INSERT INTO #__extensions SET name='System - Pages and Items', type='plugin', element='pagesanditems', folder='system', enabled='1', manifest_cache='$manifest_cache' ");
 				$database->query();
 			}
-			echo '<p style="color: #5F9E30;">system plugin enabled</p>';		
+			echo '<p style="color: #5F9E30;">system plugin enabled</p>';
 		}else{
 			echo '<p style="color: red;">system plugin not installed</p><p><a href="http://www.pages-and-items.com/extensions/pages-and-items/installation" target="_blank">download the system plugin</a> and install with the Joomla installer.</p>';
 		}
@@ -258,7 +258,7 @@ class installPlugins
 		$plgSrc = $src.DS.'admin'.DS.'plugin_content'.DS;
 		$plgDst = JPATH_ROOT.DS.'plugins'.DS.'content'.DS.'pagesanditems'.DS;
 		if(!file_exists($plgDst)){
-			mkdir($plgDst);	
+			mkdir($plgDst);
 		}
 		$content_plugin_success = 0;
 		$content_plugin_success = JFile::copy($plgSrc.'pagesanditems.php', $plgDst.'pagesanditems.php');
@@ -266,13 +266,13 @@ class installPlugins
 		JFile::copy($plgSrc.'index.html', $plgDst.'index.html');
 
 		if($content_plugin_success){
-			echo '<p style="color: #5F9E30;">content plugin installed</p>';		
+			echo '<p style="color: #5F9E30;">content plugin installed</p>';
 			//enable plugin
 			$database->setQuery("SELECT extension_id, enabled FROM #__extensions WHERE type='plugin' AND element='pagesanditems' AND folder='content' LIMIT 1 ");
 			$rows = $database->loadObjectList();
 			$content_plugin_id = 0;
 			$content_plugin_enabled = 0;
-			foreach($rows as $row){	
+			foreach($rows as $row){
 				$content_plugin_id = $row->extension_id;
 				$content_plugin_enabled = $row->enabled;
 			}
@@ -290,7 +290,7 @@ class installPlugins
 				$database->setQuery( "INSERT INTO #__extensions SET name='Content - Pages and Items', type='plugin', element='pagesanditems', folder='content', enabled='1', manifest_cache='$manifest_cache' ");
 				$database->query();
 			}
-			echo '<p style="color: #5F9E30;">content plugin enabled</p>';		
+			echo '<p style="color: #5F9E30;">content plugin enabled</p>';
 		}else{
 			echo '<p style="color: red;">content plugin not installed</p><p><a href="http://www.pages-and-items.com/extensions/pages-and-items/installation" target="_blank">download the content plugin</a> and install with the Joomla installer.</p>';
 		}

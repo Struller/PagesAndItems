@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -10,6 +10,7 @@
 defined('JPATH_BASE') or die;
 
 /**
+	TODO
 	override only _load()
 */
 //require_once( dirname(__FILE__).DS.'extensionhelper.php' );
@@ -22,9 +23,16 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
+abstract class ExtensionItemtypeHelper //extends ExtensionHelper
 {
 
+	/*
+	public function __construct()
+	{
+		parent::__construct($this);
+		//$this->_parent = $parent;
+	}
+	*/
 	/**
 	 * Get the extension data of a specific folder if no specific extension is specified
 	 * otherwise only the specific extension data is returned.
@@ -37,6 +45,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 	 */
 	public static function getExtension($folder = null, $extension = null)
 	{
+		//return parent::getExtension(self::_load(),$folder, $extension);
 		
 		$result		= array();
 		$extensions = self::_load();
@@ -53,7 +62,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 					{
 						$result[] = $extensions[$i];
 					}
-					elseif ($extensions[$i]->folder == $folder) 
+					elseif ($extensions[$i]->folder == $folder)
 					{
 						$result[] = $extensions[$i];
 					}
@@ -63,7 +72,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 					// Is this extension in the right group?
 					if (is_null($folder))
 					{
-						if ($extensions[$i]->name == $extension) 
+						if ($extensions[$i]->name == $extension)
 						{
 							//$result[] = $extensions[$i];
 							$result = $extensions[$i];
@@ -72,7 +81,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 					}
 					else
 					{
-						if ($extensions[$i]->folder == $folder && $extensions[$i]->name == $extension) 
+						if ($extensions[$i]->folder == $folder && $extensions[$i]->name == $extension)
 						{
 							$result = $extensions[$i];
 							break;
@@ -100,7 +109,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 	 */
 	public static function isEnabled($folder=null, $extension = null)
 	{
-		$result = &self::getExtension($folder, $extension);
+		$result = self::getExtension($folder, $extension);
 		return (!empty($result));
 	}
 
@@ -116,19 +125,22 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 	 */
 	public static function importExtension($folder=null, $extensionnames = null, $autocreate = true, $dispatcher = null, $loadLanguage = false)
 	{
-		static $loaded = array();
+		//return parent::getExtension(self::_load(),'itemtype',$folder, $extensionnames, $autocreate, $dispatcher, $loadLanguage);
 		
+		static $loaded = array();
+
 		// check for the default args, if so we can optimise cheaply
 		$defaults = false;
 		$isLoaded = true;
 		$nullFolder = true;
-		if (is_null($extensionnames) && $autocreate == true && is_null($dispatcher)) 
+		if (is_null($extensionnames) && $autocreate == true && is_null($dispatcher))
 		{
 			$defaults = true;
 		}
 		if($folder == '' || is_null($folder))
 		{
-			if (!isset($loaded) || empty($loaded) || !$defaults) 
+			//if (!isset($loaded) || empty($loaded) || !$defaults)
+			if (!isset($loaded) || empty($loaded) || $defaults)
 			{
 				$isLoaded = false;
 			}
@@ -136,13 +148,13 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		else
 		{
 			$nullFolder = false;
-			if (!isset($loaded[$folder]) || !$defaults) 
+			if (!isset($loaded[$folder]) || !$defaults)
 			{
 				$isLoaded = false;
 			}
 		}
 		$results = null;
-		//if (!isset($loaded[$type][$folder]) || !$defaults) 
+		//if (!isset($loaded[$type][$folder]) || !$defaults)
 		if(!$isLoaded)
 		{
 			//$results = 'on';
@@ -154,9 +166,10 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 			//$results = $extensions;
 			// Get the specified extension(s).
 			//if(count($extensions) && count($extensions) > 1)
+
 			if($extensions)
 			{
-				for ($i = 0, $t = count($extensions); $i < $t; $i++) 
+				for ($i = 0, $t = count($extensions); $i < $t; $i++)
 				{
 					if (is_null($folder) || $folder == '')
 					{
@@ -170,22 +183,22 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 									$names[] = $ext;
 								}
 							}
-							for ($in = 0, $tn = count($names); $in < $tn; $in++) 
+							for ($in = 0, $tn = count($names); $in < $tn; $in++)
 							{
 
-								if($extensions[$i]->name == $names[$in] ) 
+								if($extensions[$i]->name == $names[$in] )
 								{
 									$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 									$results = true;
 								}
 							}
 						}
-						elseif ($extensions[$i]->name == $extensionnames) // || $extensionnames === null ) 
+						elseif ($extensions[$i]->name == $extensionnames) // || $extensionnames === null )
 						{
 							$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
 						}
-						elseif ($extensionnames == null ) 
+						elseif ($extensionnames == null )
 						{
 							$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
@@ -203,17 +216,17 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 									$names[] = $ext;
 								}
 							}
-							for ($in = 0, $tn = count($names); $in < $tn; $in++) 
+							for ($in = 0, $tn = count($names); $in < $tn; $in++)
 							{
 
-								if($extensions[$i]->name == $names[$in] ) 
+								if($extensions[$i]->name == $names[$in] )
 								{
 									$loaded[$folder][] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 									$results = true;
 								}
 							}
 						}
-						elseif ($extensions[$i]->folder == $folder && ($extensions[$i]->name == $extensionnames ||  $extensionnames === null)) 
+						elseif ($extensions[$i]->folder == $folder && ($extensions[$i]->name == $extensionnames ||  $extensionnames === null))
 						{
 							$loaded[$folder][] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
@@ -221,8 +234,8 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 					}
 				}
 				// bail out early if we're not using default args
-				
-				if(!$defaults) 
+
+				if(!$defaults)
 				{
 					if($nullFolder)
 					{
@@ -260,7 +273,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		}
 		if($folder == '' || is_null($folder))
 		{
-			
+
 			return $loaded;
 		}
 		else
@@ -291,10 +304,10 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		{
 			$folder = $extension->type.'s';//.DS;
 		}
-		
-		
+
+
 		/*
-		 in J1.6 
+		 in J1.6
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('extension_id AS "id", element AS "option", params, enabled');
@@ -302,11 +315,12 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		$query->where('`type` = '.$db->quote('component'));
 		$query->where('`element` = '.$db->quote($option));
 		$db->setQuery($query);
-		
+
 		in J1.5
-		name not element 
+		name not element
 		*/
 		$path = dirname(__FILE__).'/../../extensions'.DS.$folder.DS.$extension->name.DS.$extension->name.'.php';
+
 		if (!isset( $paths[$path] ) )
 		{
 			$pathExists = file_exists($path);
@@ -316,7 +330,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 
 				//require_once( dirname(__FILE__).DS.'extension.php' );
 				require_once( dirname(__FILE__).DS.$extension->type.'.php' );
-				if (!isset($paths[$path])) 
+				if (!isset($paths[$path]))
 				{
 					require_once $path;
 				}
@@ -326,11 +340,11 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 				if ($autocreate)
 				{
 					// Makes sure we have an event dispatcher
-					if (!is_object($dispatcher)) 
+					if (!is_object($dispatcher))
 					{
 						$dispatcher = &JDispatcher::getInstance();
 					}
-					
+
 					if($extension->folder && $extension->folder != '')
 					{
 						$extension_folders = explode('/',$extension->folder);
@@ -348,7 +362,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 							$extension_folder = ucfirst($extension->folder);
 						}
 						//$extension_folder = str_replace('/','_',$extension->folder);
-						
+
 						$prefix = ucfirst($extension->type).$extension_folder;
 					}
 					else
@@ -356,7 +370,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 						$prefix = ucfirst($extension->type);
 						//$folder = $extension->type.DS.$extension_folder.DS;
 					}
-					
+
 					if($extension->type == 'pagetype')
 					{
 						$extension_names = explode('_',$extension->name);
@@ -373,7 +387,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 						{
 							$extension_name = ucfirst($extension->name);
 						}
-						
+
 					}
 					else
 					{
@@ -417,7 +431,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 	protected static function _load() //,$folder = '', $db = null)
 	{
 		static $itemtypes;
-		if (isset($itemtypes)) 
+		if (isset($itemtypes))
 		{
 			return $itemtypes;
 		}
@@ -426,7 +440,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		$user	= &JFactory::getUser();
 		if (isset($user))
 		{
-			$query = 'SELECT folder , type, element AS name, params';
+			$query = 'SELECT * , element AS name'; //id,folder , type, element AS name, params';
 			$query .= ' FROM #__pi_extensions';
 			$query .= ' WHERE enabled >= 1';
 			$query .= ' AND type = '.$db->Quote('itemtype');
@@ -436,7 +450,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 		}
 		else
 		{
-			$query = 'SELECT folder , type, element AS name, params';
+			$query = 'SELECT * , element AS name'; //id,folder , type, element AS name, params';
 			$query .= ' FROM #__pi_extensions';
 			$query .= ' WHERE enabled >= 1';
 			$query .= ' AND type = '.$db->Quote('itemtype');
@@ -446,7 +460,7 @@ abstract class ExtensionItemtypeHelper //extends ExtensionsHelper
 
 		$db->setQuery($query);
 		$db->query();
-		if (!$itemtypes = $db->loadObjectList()) 
+		if (!$itemtypes = $db->loadObjectList())
 		{
 			if($db->getErrorMsg() != '')
 			{

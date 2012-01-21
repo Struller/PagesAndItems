@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -21,7 +21,7 @@ require_once(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'models'.DS.'b
 //class PagesAndItemsModelExtensions extends PagesAndItemsModelBase //JModel
 class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 {
-	
+
 		/**
 	 * Method to auto-populate the model state.
 	 *
@@ -38,24 +38,24 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		// Load the filter state.
 		$search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
-		
+
 		$accessId = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', null, 'int');
 		$this->setState('filter.access', $accessId);
 		*/
-		
+
 		$state = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_state', '', 'string');
 		$this->setState('filter.state', $state);
 
 		$folder = $this->getUserStateFromRequest($this->context.'.filter.folder', 'filter_folder', null, 'cmd');
 		$this->setState('filter.folder', $folder);
-		
+
 		$folder = $this->getUserStateFromRequest($this->context.'.filter.type', 'filter_type', 1, 'cmd');
 		$this->setState('filter.folder', $folder);
 		/*
 		$language = $this->getUserStateFromRequest($this->context.'.filter.language', 'filter_language', '');
 		$this->setState('filter.language', $language);
 		*/
-		
+
 		// Load the parameters.
 		/*
 		$params = JComponentHelper::getParams('com_plugins');
@@ -145,7 +145,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 	protected function Xtranslate(&$items)
 	{
 		$lang = JFactory::getLanguage();
-		foreach($items as &$item) 
+		foreach($items as &$item)
 		{
 			if($item->folder)
 			{
@@ -165,14 +165,14 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 			{
 				$defaultLang = 'en-GB';
 			}
-		
+
 			if(defined('COM_PAGESANDITEMS_DEFAULT_LANG'))
 			{
 				$defaultLangPI = COM_PAGESANDITEMS_DEFAULT_LANG;
 			}
 			else
 			{
-				PagesAndItemsHelper::getConfig();
+				//PagesAndItemsHelper::getConfig();
 				if(defined('COM_PAGESANDITEMS_DEFAULT_LANG'))
 				{
 					$defaultLangPI = COM_PAGESANDITEMS_DEFAULT_LANG;
@@ -182,7 +182,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 					$defaultLangPI = $defaultLang;
 				}
 			}
-		
+
 			$basePath = JPATH_ADMINISTRATOR;
 				$lang->load(strtolower($extension), $path.DS.$element, $defaultLangPI, false)
 			||	$lang->load(strtolower($extension), $basePath, $defaultLangPI, false)
@@ -252,8 +252,8 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 
 		return $query;
 	}
-	
-	
+
+
 /**
 	 * Method to checkin a row.
 	 *
@@ -264,7 +264,6 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 	public function checkin($pk = null)
 	{
 		// Only attempt to check the row in if it exists.
-		//dump($pk);
 		if ($pk) {
 			$user = JFactory::getUser();
 
@@ -287,13 +286,12 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 				$this->setError($table->getError());
 				return false;
 			}
-			//dump($table);
 		}
 
 		return true;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Enable/Disable an extension.
 	 *
@@ -305,7 +303,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		// Initialise variables.
 		/*
 		$user = JFactory::getUser();
-		if ($user->authorise('core.edit.state', 'com_installer')) 
+		if ($user->authorise('core.edit.state', 'com_installer'))
 		{
 		*/
 			$result = true;
@@ -326,10 +324,10 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 			$table =& JTable::getInstance('piextension','PagesAndItemsTable');
 
 			// Enable the extension in the table and store it in the database
-			foreach($eid as $id) 
+			foreach($eid as $id)
 			{
 				$table->load($id);
-				
+
 				$notenable = (($table->type == 'itemtype' && ($table->element == 'content' || $table->element == 'text')) || ($table->type == 'pagetype' && $table->version == 'integrated')  || $table->protected || $table->type == 'language' );
 
 				if(!$notenable)
@@ -347,7 +345,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 					$table->enabled = $value;
 				}
 				*/
-				if (!$table->store()) 
+				if (!$table->store())
 				{
 					$this->setError($table->getError());
 					$result = false;
@@ -355,6 +353,8 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 				else
 				{
 					//ms: add
+					//TODO ms: remove if getItemtypes changed
+					/*
 					if($table->type == 'itemtype')
 					{
 						if($value)
@@ -366,6 +366,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 							PagesAndItemsHelper::changeConfigItemtype(null, $table->element, 'remove');
 						}
 					}
+					*/
 				}
 			}
 		/*
@@ -389,12 +390,16 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		// Initialise variables.
 		$user = JFactory::getUser();
 		$app = JFactory::getApplication();
+		$extension = 'com_installer';
+		$lang = &JFactory::getLanguage();
+		//$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false);
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 		//if ($user->authorise('core.delete', 'com_installer')) {
 
 			// Initialise variables.
 			$failed = array();
 			$success = array();
-			$protecte = array();
+			$protected = array();
 			$results = array();
 			/*
 			* Ensure eid is an array of extension ids in the form id => client_id
@@ -412,24 +417,24 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 			//$installer = JInstaller::getInstance();
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'installer.php');
 			$installer = PagesAndItemsInstaller::getInstance();
-			
-			
+
+
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 			/*
 			ms: new method to load the adapter so this we need not here
 			$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters','.php§');
 			foreach($files as $file)
 			{
-				$name = JFile::getName($file); 
+				$name = JFile::getName($file);
 				$name = JFile::stripExt($file);
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'adapters'.DS.strtolower($name.'.php'));
 				$class = 'PiInstaller'.ucfirst($name);
-				if (class_exists($class)) 
+				if (class_exists($class))
 				{
 					$adapter = new $class($installer);
 					$version = new JVersion();
 					$joomlaVersion = $version->getShortVersion();
-			
+
 					if($joomlaVersion < '1.6')
 					{
 						$adapter->parent =& $installer;
@@ -441,31 +446,31 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 			defined('COM_PAGESANDITEMS_INSTALLER_PATH') or define('COM_PAGESANDITEMS_INSTALLER_PATH', JPATH_COMPONENT_ADMINISTRATOR.DS.'extensions');
 			$row = JTable::getInstance('piextension','PagesAndItemsTable');
 			// Uninstall the chosen extensions
-			
-			foreach($eid as $id) 
+
+			foreach($eid as $id)
 			{
 				$id = trim($id);
 				$row->load($id);
 
-				if ($row->type && (!$row->protected && $row->version != 'integrated')) 
+				if ($row->type && (!$row->protected && $row->version != 'integrated'))
 				{
 					$result = $installer->uninstall($row->type, $id);
 					//$result = $installer->uninstall('extension', $id);
 					// Build an array of extensions that failed to uninstall
-					if ($result === false) 
+					if ($result === false)
 					{
 						$failed[] = $id;
 					}
 					else
 					{
-						$success[] = $id; 
+						$success[] = $id;
 					}
 				}
 				elseif($row->protected || $row->version == 'integrated')
 				{
 					$protected[] = $id;
 				}
-				
+
 			}
 
 			$langstring = 'COM_INSTALLER_TYPE_TYPE_'. strtoupper($row->type);
@@ -475,14 +480,30 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 				$rowtype = $row->type;
 			}
 
-			if (count($failed)) 
+			if (count($failed))
 			{
+/*
+$msg = JText::sprintf('COM_INSTALLER_INSTALL_ERROR', JText::_('COM_INSTALLER_TYPE_TYPE_'.strtoupper($package['type'])));
+			$result = false;
+		} else {
+			// Package installed sucessfully
+			$msg = JText::sprintf('COM_INSTALLER_INSTALL_SUCCESS', JText::_('COM_INSTALLER_TYPE_TYPE_'.strtoupper($package['type'])));
 
+
+$msg = JText::sprintf('COM_INSTALLER_UNINSTALL_ERROR', $rowtype);
+				$result = false;
+			} else {
+
+				// Package uninstalled sucessfully
+				$msg = JText::sprintf('COM_INSTALLER_UNINSTALL_SUCCESS', $rowtype);
+
+*/
 				// There was an error in uninstalling the package
 				foreach($failed as $fail)
 				{
 					//$msg = JText::sprintf('INSTALLEXT', JText::_($package['type']), JText::_('Error'));
-					$msg = JText::sprintf('COM_PAGESANDITEMS_UNINSTALLEXT', $rowtype.' id: '.$fail, JText::_('COM_PAGESANDITEMS_INSTALLEXT_FAILED'));
+					//$msg = JText::sprintf('COM_PAGESANDITEMS_UNINSTALL_ERROR', $rowtype); //.' id: '.$fail; //, JText::_('COM_PAGESANDITEMS_INSTALLEXT_FAILED'));
+					$msg = JText::sprintf('COM_INSTALLER_UNINSTALL_ERROR', $rowtype); //.' id: '.$fail; //, JText::_('COM_PAGESANDITEMS_INSTALLEXT_FAILED'));
 					JError::raiseWarning( 100, $msg );
 					//$app->enqueueMessage($msg);
 					$results[] = false;
@@ -493,13 +514,14 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 				foreach($success as $suc)
 				{
 					// Package uninstalled sucessfully
-					$msg = JText::sprintf('COM_PAGESANDITEMS_UNINSTALLEXT', $rowtype.' id: '.$suc, JText::_('COM_PAGESANDITEMS_INSTALLEXT_SUCCESS'));
+					//$msg = JText::sprintf('COM_PAGESANDITEMS_UNINSTALL_SUCCESS', $rowtype); //.' id: '.$suc; //, JText::_('COM_PAGESANDITEMS_INSTALLEXT_SUCCESS'));
+					$msg = JText::sprintf('COM_INSTALLER_UNINSTALL_SUCCESS', $rowtype); //.' id: '.$suc; //, JText::_('COM_PAGESANDITEMS_INSTALLEXT_SUCCESS'));
 					$app->enqueueMessage($msg);
 					//JError::raiseWarning( 100, 'Text Warning' );
 					$results[] = true;
 				}
 			}
-			
+
 			if (count($protected))
 			{
 				foreach($protected as $protect)
@@ -519,8 +541,8 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 			*/
 			return $results;
 		/*
-		} 
-		else 
+		}
+		else
 		{
 			$result = false;
 			JError::raiseWarning(403, JText::_('JERROR_CORE_DELETE_NOT_PERMITTED'));
@@ -538,7 +560,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 	 */
 	function refresh($eid)
 	{
-		if (!is_array($eid)) 
+		if (!is_array($eid))
 		{
 			$eid = array($eid => 0);
 		}
@@ -550,16 +572,16 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		$row = JTable::getInstance('piextension','PagesAndItemsTable');
 		$result = 0;
 		// refresh cache
-		foreach($eid as $id) 
+		foreach($eid as $id)
 		{
 			if(!$row->load($id))
 			{
 				return 0;
 			}
-			
+
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'installer'.DS.'installer.php');
 			$installer = PagesAndItemsInstaller::getInstance();
-			
+
 			$result |= $installer->refreshManifestCache($id); //refreshManifestCache($id);
 			/*
 			$path = realpath(dirname(__FILE__).'/../extensions');
@@ -580,13 +602,13 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		}
 		return $result;
 	}
-	
-	
+
+
 	function parseXMLInstallFile($path)
 	{
 		// Read the file to see if it's a valid component XML file
 		$xml = simplexml_load_file($path);
-		
+
 		if (!$xml)
 		{
 			unset($xml);
@@ -601,7 +623,7 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		$data = array();
 		$type = (string)$xml->attributes()->type;
 		$data['type'] = $type;
-		
+
 		if (count($xml->files->children()))
 		{
 			foreach ($xml->files->children() as $file)
@@ -641,6 +663,6 @@ class PagesAndItemsModelPiextensions extends PagesAndItemsModelBase //JModel
 		unset($xml);
 		return $data;
 	}
-	
+
 
 }

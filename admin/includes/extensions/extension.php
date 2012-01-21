@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -41,8 +41,8 @@ abstract class PagesAndItemsExtension extends JEvent
 	 * @access	protected
 	 */
 	protected $_type = null;
-	
-	
+
+
 	/**
 	 * The extension id
 	 *
@@ -50,7 +50,7 @@ abstract class PagesAndItemsExtension extends JEvent
 	 * @access	protected
 	 */
 	protected $_extension_id = null;
-	
+
 	/**
 	 * The plugin folder
 	 *
@@ -58,23 +58,26 @@ abstract class PagesAndItemsExtension extends JEvent
 	 * @access	protected
 	 */
 	protected $_folder = null;
-	//protected $_subject = null;
 	
+	protected $_required_version = null;
+	
+	//protected $_subject = null;
+
 	//ms: remove?
-	public $controller = null;
+	//public $controller = null;
 	//ms: remove?
-	public $helper = null;
+	//public $helper = null;
 	//ms: remove?
-	public $model = null;
+	//public $model = null;
 
 	var $db;
 	//ms: remove?
-	var $live_site;
+	//var $live_site;
 	var $pi_config;
-	var $dirIcons;
-	var $joomlaVersion;
-	
-	
+	//var $dirIcons;
+	//var $joomlaVersion;
+
+
 	/**
 	 * Constructor
 	 *
@@ -85,50 +88,54 @@ abstract class PagesAndItemsExtension extends JEvent
 	{
 
 		$this->_subject = $subject;
-		
-		$version = new JVersion();
-		$this->joomlaVersion = $version->getShortVersion();
 
-		
+		//$version = new JVersion();
+		//$this->joomlaVersion = $version->getShortVersion();
+
 		// Get the plugin type.
-		if (isset($config['extension_id'])) 
+		if (isset($config['extension_id']))
 		{
 			$this->_extension_id = $config['extension_id'];
 		}
-		
+
 		// Get the plugin name.
-		if (isset($config['name'])) 
+		if (isset($config['name']))
 		{
 			$this->_name = $config['name'];
 		}
-
+		
+		// Get the plugin required_version.
+		if (isset($config['required_version']))
+		{
+			$this->_required_version = $config['required_version'];
+		}
+		
+		
+		
 		// Get the plugin type.
-		if (isset($config['type'])) 
+		if (isset($config['type']))
 		{
 			$this->_type = $config['type'];
 		}
 		if($this->_type != 'fieldtype')
 		{
+			/*
 			if(!defined('COM_PAGESANDITEMS_DIR_ICONS'))
 			{
 				require_once(dirname(__FILE__).'/../../helpers/pagesanditems.php');
 				$this->dirIcons = PagesAndItemsHelper::getDirIcons();
-				/*
-				$this->setModel();
-				if(isset($this->model->dirIcons))
-				$this->dirIcons = $this->model->dirIcons;
-				*/
 			}
 			else
 			{
 				$this->dirIcons = COM_PAGESANDITEMS_DIR_ICONS;
 			}
+			*/
 		}
 		$this->db =& JFactory::getDBO();
 		$this->live_site =JURI::root();
 
 		// Get the plugin folder.
-		if (isset($config['folder'])) 
+		if (isset($config['folder']))
 		{
 			$this->_folder = $config['folder'];
 		}
@@ -153,7 +160,7 @@ abstract class PagesAndItemsExtension extends JEvent
 			if($joomlaVersion < '1.6')
 			{
 				//joomla 1.5.x
-				if ($config['params'] instanceof JParameter) 
+				if ($config['params'] instanceof JParameter)
 				{
 					$this->params = $config['params'];
 				}
@@ -176,26 +183,15 @@ abstract class PagesAndItemsExtension extends JEvent
 			}
 			else
 			{
-				//if ($config['params'] instanceof JParameter) 
-				if ($config['params'] instanceof JRegistry) 
+				if ($config['params'] instanceof JRegistry)
 				{
 					$this->params = $config['params'];
 				}
 				else
 				{
 					$this->params = new JRegistry;
-					$this->params->loadJSON($config['params']);
-					/*
-					if($config['params'] != '')
-					{
-						//$params = $this->objectToString($params);
-						$this->params = new JParameter($config['params'],$path);
-					}
-					else
-					{
-						$this->params = new JParameter('{}',$path);
-					}
-					*/
+					//$this->params->loadJSON($config['params']); //is deprecated
+					$this->params->loadString($config['params']); //format is as standard JSON
 					
 					/*
 					in future Joomla will remove JParameter
@@ -206,7 +202,7 @@ abstract class PagesAndItemsExtension extends JEvent
 					but the xml file content is more different so we can not use this at this moment?
 					if we want use in J1.5 JParameter and in J1.6 JRegistry, JModelForm, JForm
 					we must have in the xml-file:
-					
+
 					<params>
 						<param name="no_lines_to_breaks" type="radio" default="0" label="COM_PAGESANDITEMS_NO_LINES_TO_BREAKS">
 							<option value="0">No</option>
@@ -229,27 +225,9 @@ abstract class PagesAndItemsExtension extends JEvent
 							</fieldset>
 						</fields>
 					</config>
-					
 					*/
-					
 				}
-				/*
-				//joomla 1.6.x
-				if ($config['params'] instanceof JRegistry) 
-				{
-					$this->params = $config['params'];
-				}
-				else
-				{
-					$this->params = new JRegistry;
-					$this->params->loadJSON($config['params']);
-				}
-				*/
 			}
-			//TODO JVersion
-			/*
-
-			*/
 		}
 
 
@@ -261,7 +239,7 @@ abstract class PagesAndItemsExtension extends JEvent
 		if (!isset($config['language']) || $config['language'])
 		{
 			$events = array_diff(get_class_methods($this), get_class_methods('PagesAndItemsExtension'));
-			
+
 			if($this->_type == 'itemtype' || $this->_type == 'fieldtype')
 			{
 
@@ -294,12 +272,12 @@ abstract class PagesAndItemsExtension extends JEvent
 		$db = & JFactory::getDBO();
 		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 		$row =& JTable::getInstance('piextension','PagesAndItemsTable');
-		
+
 		//$task = $this->getTask();
 		$task = JRequest::getVar('sub_task');
 		$row->load($this->_extension_id);
 		$client = JRequest::getWord( 'filter_client', 'site' );
-		if (!$row->bind(JRequest::get('post'))) 
+		if (!$row->bind(JRequest::get('post')))
 		{
 			JError::raiseError(500, $row->getError() );
 		}
@@ -334,7 +312,7 @@ abstract class PagesAndItemsExtension extends JEvent
 		$html = '';
 		JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 		$row 	=& JTable::getInstance('piextension','PagesAndItemsTable');
-		
+
 		// load the row from the db table
 		$row->load( $this->_extension_id );
 
@@ -362,7 +340,7 @@ abstract class PagesAndItemsExtension extends JEvent
 						$html .= "<div style=\"text-align: center; padding: 5px; \">".JText::_('There are no parameters for this item')."</div>";
 				endif;
 				$html .= $pane->endPanel();
-				if ($params->getNumParams('advanced')) 
+				if ($params->getNumParams('advanced'))
 				{
 					$html .= $pane->startPanel(JText :: _('Advanced Parameters'), "advanced-page");
 					if($output = $params->render('params', 'advanced')) :
@@ -372,7 +350,7 @@ abstract class PagesAndItemsExtension extends JEvent
 					endif;
 					$html .= $pane->endPanel();
 				}
-				if ($params->getNumParams('legacy')) 
+				if ($params->getNumParams('legacy'))
 				{
 					$html .= $pane->startPanel(JText :: _('Legacy Parameters'), "legacy-page");
 					if($output = $params->render('params', 'legacy')) :
@@ -395,8 +373,8 @@ abstract class PagesAndItemsExtension extends JEvent
 
 	function onDetach($type)
 	{
-		
-		//if($this->_name != $type) //?? 
+
+		//if($this->_name != $type) //??
 		if($this->_type == $type)
 		{
 			$this->_subject->detach($this);
@@ -405,6 +383,7 @@ abstract class PagesAndItemsExtension extends JEvent
 	}
 
 	//ms: remove?
+	/*
 	public function setHelper()
 	{
 		if(!$this->helper)
@@ -414,8 +393,9 @@ abstract class PagesAndItemsExtension extends JEvent
 		}
 		//		PagesAndItemsHelper::addSubmenu(JRequest::getWord('view', 'pagesanditems'));
 	}
-
+	*/
 	//ms: remove?
+	/*
 	public function setModel()
 	{
 		if(!$this->model)
@@ -434,7 +414,7 @@ abstract class PagesAndItemsExtension extends JEvent
 			}
 		}
 	}
-
+	*/
 	public function getConfig()
 	{
 		if(!$this->pi_config)
@@ -467,13 +447,14 @@ abstract class PagesAndItemsExtension extends JEvent
 	}
 
 	//ms: remove?
+	/*
 	public function setController()
 	{
 		if(!$this->controller)
 		{
 			//load the base controller
 			$className = 'PagesAndItemsController';
-			if (!class_exists($className)) 
+			if (!class_exists($className))
 			{
 				//TODO for J1.6 rename com_pagesanditems to com_pagesanditems
 				require_once(dirname(__FILE__).'/../../controller.php');
@@ -481,22 +462,42 @@ abstract class PagesAndItemsExtension extends JEvent
 			$this->controller = new $className();
 		}
 	}
-
+	*/
 	public function onFireEvent()
 	{
 		$this->loadLanguage(); //, JPATH_ADMINISTRATOR);
 	}
+
+
+
+	public function getRequired_version($extension = null)//$type = null, $folder = null, $extension = null)
+	{
+		if($extension && $this->_name == $extension)
+		{
+			return $this->_required_version;
+			return true;
+		}
+		return -1;
+	}
+
+	public function onGetRequired_version(&$required_version,$extension = null)//$type = null, $folder = null, $extension = null)
+	{
+		if($extension && $this->_name == $extension)
+		{
+			$required_version = $this->_required_version ? $this->_required_version : 0;
+			return true;
+		}
+		return false;
+	}
+
 
 	public function getParams()//$type = null, $folder = null, $extension = null)
 	{
 		return $this->params;
 	}
 
-
 	public function onGetParams(&$params, $extension = null)//$type = null, $folder = null, $extension = null)
 	{
-
-		//
 		if($extension && $this->_name == $extension)
 		{
 			$params = $this->params;
@@ -506,27 +507,66 @@ abstract class PagesAndItemsExtension extends JEvent
 		//$this->loadLanguage(null, JPATH_ADMINISTRATOR);
 	}
 
+
+	public function onGetId(&$id, $extension = null)//$type = null, $folder = null, $extension = null)
+	{
+
+		//
+		if($extension && $this->_name == $extension)
+		{
+			$id = $this->_extension_id; //_extension_id
+			return true; //$this->_extension_id;
+		}
+		return false;
+		//$this->loadLanguage(null, JPATH_ADMINISTRATOR);
+	}
+	
+
+	public function onGetFolder(&$folder,$extension = '') //, $basePath = JPATH_ADMINISTRATOR)
+	{
+		if($extension != $this->_name)
+		{
+			return false;
+		}
+		$path = realpath(dirname(__FILE__).'/../../extensions');
+		if($this->_folder)
+		{
+			$extension_folder = $this->_folder;
+			$path = str_replace('/',DS,$path.DS.$this->_type.'s'.DS.$extension_folder);
+		}
+		else
+		{
+			$path = str_replace('/',DS,$path.DS.$this->_type.'s');
+		}
+		
+		$folder = $path.DS.$this->_name;
+
+		$pathExtensions = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'extensions');
+
+		return true;
+
+	}
+
+
 	public function onAfterParamsSave(&$params, $extension = null)//$type = null, $folder = null, $extension = null)
 	{
-		//dump('par');
-		//
 		if($extension && $this->_name == $extension && $this->_type == 'itemtype')
 		{
 			$path = realpath(dirname(__FILE__));
 			require_once($path.DS.'managerhelper.php');
 			ExtensionManagerHelper::importExtension(null, null,true,null,true);
 			$dispatcher = &JDispatcher::getInstance();
-			$dispatcher->trigger('onItemtypeParamsSave', array($this->params,$extension)); 
-			
+			$dispatcher->trigger('onItemtypeParamsSave', array($this->params,$extension));
+
 			/*
 			//here we will tell the PagesAndItemsHelperLanguage params is save
-			
+
 			$path = realpath(dirname(__FILE__).DS.'..'.DS.'..');
 			require_once($path.DS.'helpers'.DS.'language.php');
 			PagesAndItemsHelperLanguage::languageItemtypeParamsSave($this->params,$extension);
 			*/
 			//$translate_html = PagesAndItemsHelperLanguage::languageDisplayItemtypeItemEdit($item_type,$item_id,'pi_subitem_image_gallery',$this->params, $row->id);
-			
+
 			//$params = $this->params;
 			/*
 			here we will trigger pi_fish
@@ -561,15 +601,15 @@ abstract class PagesAndItemsExtension extends JEvent
 	 * @param	string	$extension	The extension for which a language file should be loaded
 	 * @param	string	$basePath	The basepath to use
 	 * @return	boolean	True, if the file has successfully loaded.
-	 * @since	
+	 * @since
 	 */
 	public function loadLanguage($extension = '') //, $basePath = JPATH_ADMINISTRATOR)
 	{
 		
 		PagesAndItemsHelper::loadExtensionLanguage($this->_name,$this->_type,$this->_folder);
 		return;
-		
-		if (empty($extension)) 
+
+		if (empty($extension))
 		{
 			if($this->_folder)
 			{
@@ -592,9 +632,9 @@ abstract class PagesAndItemsExtension extends JEvent
 		{
 			$defaultLang = 'en-GB';
 		}
-		
+
 		$path = realpath(dirname(__FILE__).'/../../extensions');
-		
+
 		if($this->_folder)
 		{
 			$extension_folder = $this->_folder;
@@ -604,8 +644,8 @@ abstract class PagesAndItemsExtension extends JEvent
 		{
 			$path = str_replace('/',DS,$path.DS.$this->_type.'s');
 		}
-		
-		
+
+
 		//$config = $this->getConfig();
 		//$defaultLangPI = $config['language'];
 		/*
@@ -628,29 +668,20 @@ abstract class PagesAndItemsExtension extends JEvent
 			}
 		}
 		*/
-		
-		
+
+
 		//ms: where we have the extensions languages?
 		// in my mind the best place was extensions/language
 		$pathExtensions = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'extensions');
-		/*
-		if($this->_name == 'display_template')
-		{
-			dump($pathExtensions);
-			dump($extension);
-			//dump($lang->load(strtolower($extension), $pathExtensions, null, false));
-			//dump($lang->load(strtolower($extensionShort), $path.DS.$this->_name, $defaultLang, false));
-		}
-		*/
-		
+
 		/*
 		ms: TODO only $pathExtensions in $lang->load
 		*/
-		$language = 
+		$language =
 		/*
 			$lang->load(strtolower($extensionShort), $path.DS.$this->_name, null, false, false)
 		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name, $defaultLang, false, false)
-		||	
+		||
 		*/
 		/*
 			$lang->load(strtolower($extension), $path.DS.$this->_name, $defaultLangPI, false) //, false)
@@ -662,19 +693,18 @@ abstract class PagesAndItemsExtension extends JEvent
 		||	$lang->load(strtolower($extension), $pathExtensions, null, false) //ms: add)
 		||	$lang->load(strtolower($extension), $basePath, null, false) //, false)
 		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name, null, false) //, false)
-		
+
 		||	$lang->load(strtolower($extension), $path.DS.$this->_name, $defaultLang, false) //, false)
 		||	$lang->load(strtolower($extension), $pathExtensions, $defaultLang, false) //ms: add)
-		||	$lang->load(strtolower($extension), $basePath, $defaultLang, false) //, false)		
-		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name, $defaultLang, false) //, false)		
+		||	$lang->load(strtolower($extension), $basePath, $defaultLang, false) //, false)
+		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name, $defaultLang, false) //, false)
 		/*
 		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name.DS.'short', null, false) //, false)
 		||	$lang->load(strtolower($extensionShort), $path.DS.$this->_name.DS.'short', $defaultLang, false) //, false)
 		*/
-		
+
 		;
-		
-		//dump('load');
+
 		/*
 		if($this->_name == 'display_template')
 
@@ -682,7 +712,7 @@ abstract class PagesAndItemsExtension extends JEvent
 
 
 		return $language;
-			
+
 	}
 
 	protected function _getValueAsINI($value)
@@ -708,7 +738,7 @@ abstract class PagesAndItemsExtension extends JEvent
 
 		return $string;
 	}
-	
+
 	public function objectToString($object=null) //, $options = array())
 	{
 		// Initialize variables.
@@ -718,16 +748,16 @@ abstract class PagesAndItemsExtension extends JEvent
 		if(count(get_object_vars($object)))
 		{
 			// Iterate over the object to set the properties.
-			foreach (get_object_vars($object) as $key => $value) 
+			foreach (get_object_vars($object) as $key => $value)
 			{
 				// If the value is an object then we need to put it in a local section.
 				if (is_object($value)) {
 					// Add the section line.
 					$local[] = '';
 					$local[] = '['.$key.']';
-	
+
 					// Add the properties for this section.
-					foreach (get_object_vars($value) as $k => $v) 
+					foreach (get_object_vars($value) as $k => $v)
 					{
 						$local[] = $k.'='.$this->_getValueAsINI($v);
 					}
@@ -767,7 +797,7 @@ must go to fieldtype.php?
 		$html .= '</div>';
 		return $html;
 	}
-	
+
 	function display_field_description($field_params){
 		//$field_name = strtolower(JText::_('COM_PAGESANDITEMS_DESCRIPTION'));
 		//changed on request of Micha for German chapital letters.
@@ -775,7 +805,7 @@ must go to fieldtype.php?
 		$field_content = '<input type="text" class="width200" value="'.$field_params['description'].'" name="field_params[description]" />';
 		return $this->display_field($field_name, $field_content);
 	}
-	
+
 	function display_field_validation($field_params){
 		$field_name = JText::_('COM_PAGESANDITEMS_VALIDATION');
 		$field_content = '<input type="checkbox" class="checkbox"';
@@ -784,11 +814,11 @@ must go to fieldtype.php?
 			if($field_params['validation']){
 				$field_content .= ' checked="checked"';
 			}
-		} 
+		}
 		$field_content .= 'name="field_params[validation]" value="not_empty" /> '.JText::_('COM_PAGESANDITEMS_NOT_EMPTY');
 		return $this->display_field($field_name, $field_content);
 	}
-	
+
 	function check_if_field_param_is_present($field_params, $field_param){
 		$param_is_present = false;
 		for($n = 0; $n < count($field_params); $n++){
@@ -800,7 +830,7 @@ must go to fieldtype.php?
 		}
 		return $param_is_present;
 	}
-	
+
 	function check_if_plugin_lang_var_is_present($pi_lang_plugin, $var){
 		$var_is_present = false;
 		for($n = 0; $n < count($pi_lang_plugin); $n++){
@@ -812,17 +842,17 @@ must go to fieldtype.php?
 		}
 		return $var_is_present;
 	}
-	
+
 	function display_field_validation_message($field_params){
 		$field_content = '<input type="text" class="width200" value="'.$field_params['alert_message'].'" name="field_params[alert_message]" />';
 		return $this->display_field(JText::_('COM_PAGESANDITEMS_VALIDATION_ALERT_MESSAGE'), $field_content);
 	}
-	
+
 	function display_field_default_value($field_params){
 		$field_content = '<input type="text" class="width200" value="'.$field_params['default_value'].'" name="field_params[default_value]" />';
 		return $this->display_field(JText::_('COM_PAGESANDITEMS_DEFAULT_VALUE'), $field_content);
 	}
-	
+
 	function get_field_value($values_string, $property){
 		$values_array = explode('[;-)# ]', $values_string);
 		$property = substr($property,1);
@@ -836,15 +866,15 @@ must go to fieldtype.php?
 		}
 		return $html;
 	}
-	
+
 	function get_field_param($values_string, $property)
 	{
 		return $this->get_field_value($values_string, $property);
 	}
-	
+
 	function phpWrapper($content)
 	{
-		
+
 		$database = JFactory::getDBO();
 		ob_start();
 		// eval ?
@@ -857,7 +887,7 @@ must go to fieldtype.php?
 	function get_var($name, $default = null, $hash = 'default', $type = 'none', $mask = 0)
 	{
 		//make sure there is no $type
-		if($type!='none' && $type!=''){			
+		if($type!='none' && $type!=''){
 			exit('don\'t use $type, it won\'t work in older versions');
 		}
 		$var = JRequest::getVar($name, $default, $hash, $type, $mask);

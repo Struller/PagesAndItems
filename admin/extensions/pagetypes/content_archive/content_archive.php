@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -25,16 +25,40 @@ class PagesAndItemsExtensionPagetypeContentArchive extends PagesAndItemsExtensio
 		$icons = parent::onGetPageTypeIcons($icons,$pageType,$dirIcons, $component);
 		return true;
 	}
-	/**
-	$view is here the model
-	*/
-	function onGetPageItems(&$html,$view)
+
+	function onGetContentItems(&$ContentItems,$model)
+	{
+	
+		$ContentItems = $this->getContentItems($model);
+	}
+	
+	function getContentItems($model)
+	{
+		/*
+		if(is_object($model))
+		{
+			$menuItem = $model->menuItem;
+		}
+		else
+		{
+			$menuItem = $model->menuItem;
+		}
+		*/
+		$menuItem = $model->menuItem;
+		require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'lists'.DS.'itemslist.php');
+		$ItemsList = new ItemsList();
+		return $ItemsList->getContentItems(true,false,false,$menuItem,'COM_PAGESANDITEMS_ITEMS');
+	}
+
+
+	function onGetPageItems(&$html,$model)
 	{
 		$image = '';
-		if(isset($view->menuItemsType->icons->default->imageUrl))
+		if(isset($model->menuItemsType->icons->default->imageUrl))
 		{
-			$image = $view->menuItemsType->icons->default->imageUrl;
+			$image = $model->menuItemsType->icons->default->imageUrl;
 		}
+/*
 		if($image)
 		{
 			$image = '<img src="'.$image.'" alt="" style="vertical-align: middle;position: relative;" />&nbsp;';
@@ -43,36 +67,46 @@ class PagesAndItemsExtensionPagetypeContentArchive extends PagesAndItemsExtensio
 		{
 			$image = '<img src="'.PagesAndItemsHelper::getDirIcons().'icon-16-menu.png" alt="" style="vertical-align: middle;" />&nbsp;';
 		}
-		$html = '';
-		$html .= '<table class="adminform" width="98%">';
-			$html .= '<tr>';
-				$html .= '<th style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
-					$html .= $image;
-					$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
-				$html .= '</th>';
-			$html .= '</tr>';
-			
-			/*
-			BEGIN can remove
-			*/
-			/*
-			$html .= '<tr>';
-				$html .= '<td>';
-					$html .= 'from pagetypes/content_archive/content_archive.php';
-				$html .= '</td>';
-			$html .= '</tr>';
-			*/
-			/*
-			END can remove
-			*/
-			$html .= '<tr>';
-				$html .= '<td>';
-					//array('trash','delete');
-					//$html .= $view->getContentItems(array('trash','archive','delete'),false,false); 
-					$html .= $view->getContentItems(true,false,false);
-					//($editToolbarButtons = true, $newToolbarButtons = true) 
-				$html .= '</td>';
-			$html .= '</tr>';
+		*/
+		if(!$image)
+		{
+			$image = PagesAndItemsHelper::getDirIcons().'icon-16-menu.png';
+		}
+		
+		$html .= '<table class="piadminform xadminform" width="98%">';
+			$html .= '<thead class="piheader">';
+				$html .= '<tr>';
+					$html .= '<th>'; // class="piheader">';// style="background: none repeat scroll 0 0 #F0F0F0;border-bottom: 1px solid #999999;">';
+						//$html .= $image;
+						//$html .= JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE');
+						$html .= PagesAndItemsHelper::getThImageTitle($image,JText::_('COM_PAGESANDITEMS_ITEMS_ON_PAGE'));
+					$html .= '</th>';
+				$html .= '</tr>';
+			$html .= '</thead>';
+			$html .= '<tbody>';
+				/*
+				BEGIN can remove
+				*/
+				/*
+				$html .= '<tr>';
+					$html .= '<td>';
+						$html .= 'from pagetypes/content_archive/content_archive.php';
+					$html .= '</td>';
+				$html .= '</tr>';
+				*/
+				/*
+				END can remove
+				*/
+				$html .= '<tr>';
+					$html .= '<td>';
+						//array('trash','delete');
+						//$html .= $model->getContentItems(array('trash','archive','delete'),false,false);
+						//$html .= $model->getContentItems(true,false,false);
+						$html .= $this->getContentItems($model); //$model->getContentItems();
+						//($editToolbarButtons = true, $newToolbarButtons = true)
+					$html .= '</td>';
+				$html .= '</tr>';
+			$html .= '</tbody>';
 		$html .= '</table>';
 		return true;
 	}
@@ -81,17 +115,17 @@ class PagesAndItemsExtensionPagetypeContentArchive extends PagesAndItemsExtensio
 	{
 		return 1;
 	}
-	
+
 	function onGetListItems(&$listItems)
 	{
 		$listItems = 1;
 		return true;
 	}
-	
-	
+
+
 	// hide some in the pagepropertys if need
-	// or add 
-	function onGetLists(&$lists,$pageMenuItem,$view)
+	// or add
+	function onGetLists(&$lists,$pageMenuItem,$model)
 	{
 		/*
 		$lists->display->id = 'style="color: green;font-style: oblique;font-size: large;"';
@@ -104,7 +138,7 @@ class PagesAndItemsExtensionPagetypeContentArchive extends PagesAndItemsExtensio
 		$addtop .= 'we can add something here also script-code';
 		$addtop .= '</td>';
 		$addtop .= '</tr>';
-		
+
 		$lists->add->top =$addtop;
 		$addbottom = '<tr>';
 		$addbottom .= '<td>';
@@ -115,15 +149,15 @@ class PagesAndItemsExtensionPagetypeContentArchive extends PagesAndItemsExtensio
 		*/
 		return true;
 	}
-	
+
 	function onBeforSave($data, $isnew)
 	{
-	
+
 	}
-	
+
 	function onAfterSave($menu_id, $data, $isnew)
 	{
-	
+
 	}
 }
 

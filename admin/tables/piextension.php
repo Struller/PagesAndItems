@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -16,7 +16,7 @@ defined('JPATH_BASE') or die();
 class PagesAndItemsTablePiExtension extends JTable
 {
 	var $extension_id = null;
-	var $name = null;	// 
+	var $name = null;	//
 	var $type = null;
 	var $element = null; //???
 	var $folder = null;
@@ -36,29 +36,29 @@ class PagesAndItemsTablePiExtension extends JTable
 	var $checked_out_time = null;
 	var $ordering = null;
 	var $state = null;
-	
-	
+
+
 	/**
 	 * Contructor
 	 *
 	 * @access var
 	 * @param database A database connector object
 	 */
-	
-	function __construct(&$db) 
+
+	function __construct(&$db)
 	{
 		parent::__construct('#__pi_extensions', 'extension_id', $db);
-		
-		
+
+
 	}
-	
+
 	function getNextTypeId( $where=null , $type =null)
 	{
-		if ($where === null) 
+		if ($where === null)
 		{
 			return false;
 		}
-		if ($type === null) 
+		if ($type === null)
 		{
 			return false;
 		}
@@ -70,7 +70,7 @@ class PagesAndItemsTablePiExtension extends JTable
 		$this->_db->setQuery($query);
 		$max = (int) $this->_db->loadResult();
 		// Check for a database error.
-		if ($this->_db->getErrorNum()) 
+		if ($this->_db->getErrorNum())
 		{
 			$e = new JException(
 				JText::sprintf('JLIB_DATABASE_ERROR_GET_NEXT_ORDER_FAILED', get_class($this), $this->_db->getErrorMsg())
@@ -79,12 +79,12 @@ class PagesAndItemsTablePiExtension extends JTable
 
 			return false;
 		}
-		
+
 		if($max == 0 || $max === null)
 		{
 			/*
-			based of the type we need an bas id 
-			
+			based of the type we need an bas id
+
 			*/
 			switch($type)
 			{
@@ -92,23 +92,23 @@ class PagesAndItemsTablePiExtension extends JTable
 				case 'fieldtypes':
 				return '1';
 				break;
-				
+
 				case 'itemtype':
 				case 'itemtypes':
 				return '1000';
 				break;
-				
+
 				case 'pagetype':
 				case 'pagetypes':
 				return '2000';
 				break;
-				
-				
+
+
 				case 'html':
 				case 'htmls':
 				return '3000';
 				break;
-			
+
 				case 'manager':
 				case 'managers':
 				return '4000';
@@ -119,7 +119,7 @@ class PagesAndItemsTablePiExtension extends JTable
 				return '5000';
 				break;
 			}
-			
+
 		}
 		// Return the largest extension_id value + 1.
 		return ($max + 1);
@@ -127,21 +127,21 @@ class PagesAndItemsTablePiExtension extends JTable
 
 	function loadType( $type=null )
 	{
-		if ($type === null) 
+		if ($type === null)
 		{
 			return false;
 		}
 		$this->reset();
 
 		$db =& $this->getDBO();
-		
-		
+
+
 		$query = 'SELECT *'
 		. ' FROM '.$this->_tbl
 		. ' WHERE '.$this->type.' = '.$db->Quote($type);
 		$db->setQuery( $query );
 
-		if ($result = $db->loadAssoc( )) 
+		if ($result = $db->loadAssoc( ))
 		{
 			return $this->bind($result);
 		}
@@ -162,7 +162,7 @@ class PagesAndItemsTablePiExtension extends JTable
 	function check()
 	{
 		// check for valid name
-		if (trim($this->name) == '' || trim($this->element) == '') 
+		if (trim($this->name) == '' || trim($this->element) == '')
 		{
 			$this->setError(JText::sprintf('MUST_CONTAIN_A_TITLE', JText::_('Extension')));
 			return false;
@@ -173,22 +173,29 @@ class PagesAndItemsTablePiExtension extends JTable
 	function bind($array, $ignore = '')
 	{
 		//parent::bind($array, $ignore);
-		
+
 		if (is_array($array))
 		{
-			
+
 			if (isset( $array['params']) )
 			{
 				if(is_array($array['params']) || is_object($array['params']))
 				{
 					$array['params'] = json_encode($array['params']);
-					
 				}
 				else
 				{
+				
 				}
 			}
 		}
+		/*
+		elseif(is_array($array))
+		{
+			
+		}
+		*/
+		
 		return parent::bind($array, $ignore);
 	}
 }

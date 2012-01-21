@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="html" folder="category_actions" method="upgrade">
+	<name>Unpublish (Pages and Items Html)</name>
+	<author>Carsten Engel</author>
+	<creationDate>november 2011</creationDate>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>Unpublish for categorieItems in view categorie in underlaying categories(Html for the Pages-and-Items framework)</description>
+	<files>
+		<filename html="unpublish">unpublish.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params>
+	</params>
+
+	<config>
+		<fields name="params">
+
+		</fields>
+	</config>
+</extension>

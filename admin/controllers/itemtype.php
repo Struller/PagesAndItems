@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -26,12 +26,10 @@ class PagesAndItemsControllerItemType extends PagesAndItemsController
 
 	function getDispatcher($item_type)
 	{
-		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
-		//$extensions = ExtensionHelper::importExtension('itemtype',null, $item_type,true,null,true);
 		$path = realpath(dirname(__FILE__).DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
 		$extensions = ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
-		
+
 		$dispatcher = &JDispatcher::getInstance();
 		return $dispatcher;
 	}
@@ -39,14 +37,13 @@ class PagesAndItemsControllerItemType extends PagesAndItemsController
 	function config_itemtype_save()
 	{
 		//here we need the model base for future configcustomitemtype
-		$model = &$this->getModel('Base','PagesAndItemsModel');
+		//$model = &$this->getModel('Base','PagesAndItemsModel');
 		$item_type = JRequest::getVar('item_type', '', 'post');
 		$dispatcher = $this->getDispatcher($item_type);
 		$msg = '';
 		$dispatcher->trigger('onItemtypeConfig_save',array(&$msg,$item_type));
 		$msg = '';
 		//redirect
-		//$message = JText::_('COM_PAGESANDITEMS_ITEMTYPE_SAVED');
 		if(JRequest::getVar('sub_task', '')=='apply')
 		{
 			$url = 'index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$item_type;
@@ -55,8 +52,9 @@ class PagesAndItemsControllerItemType extends PagesAndItemsController
 		{
 			$url = 'index.php?option=com_pagesanditems&view=config&tab=itemtypes';
 		}
-		$model->redirect_to_url( $url, $msg);
-		
+		$this->setRedirect(JRoute::_($url, false), $msg);
+		//$model->redirect_to_url( $url, $msg);
+
 	}
 
 }

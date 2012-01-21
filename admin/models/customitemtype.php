@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -10,35 +10,262 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-jimport( 'joomla.application.component.model' );
-require_once(dirname(__FILE__).DS.'base.php');
+jimport( 'joomla.application.component.modeladmin' );
+//require_once(dirname(__FILE__).DS.'base.php');
 /**
 
  */
- 
 
-class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
+
+class PagesAndItemsModelCustomItemtype extends JModelAdmin //JModel //PagesAndItemsModelBase
 {
 	/*
+	BEGIN adopt from J1.6
+	*/
 	
+	/**
+	 * Method to get the record form.
+	 *
+	 * @param	array	$data		Data for the form.
+	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
+	 * @return	JForm	A JForm object on success, false on failure
+	 * @since	1.6
+	 */
+	public function getForm($data = array(), $loadData = true)
+	{
+		// The folder and element vars are passed when saving the form.
+		if (empty($data))
+		{
+			$item	= $this->getItem();
+			//$folder	= $item->folder;
+			//$element= $item->element;
+			//$type	= $item->type;
+		}
+		else
+		{
+			//$folder	= JArrayHelper::getValue($data, 'folder', '', 'cmd');
+			//$element	= JArrayHelper::getValue($data, 'element', '', 'cmd');
+			//$type		= JArrayHelper::getValue($data, 'type', '', 'cmd');
+		}
+
+		// These variables are used to add data from the plugin XML files.
+		//$this->setState('item.folder',	$folder);
+		//$this->setState('item.element',	$element);
+		//$this->setState('item.type',	$type);
+
+		// Get the form.
+		//$form = JForm::getInstance($name, $source, $options, false, $xpath);
+		$form = $this->loadForm('com_pagesanditems.customitemtype', 'customitemtype', array('control' => 'jform', 'load_data' => $loadData));
+		if (empty($form)) {
+			return false;
+		}
+		/*
+		// Modify the form based on access controls.
+		if (!$this->canEditState((object) $data))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('ordering', 'disabled', 'true');
+			$form->setFieldAttribute('enabled', 'disabled', 'true');
+
+			// Disable fields while saving.
+			// The controller has already verified this is a record you can edit.
+			$form->setFieldAttribute('ordering', 'filter', 'unset');
+			$form->setFieldAttribute('enabled', 'filter', 'unset');
+		}
+		*/
+		return $form;
+	}
+
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 * @return	mixed	The data for the form.
+	 * @since	1.6
+	 */
+	protected function loadFormData()
+	{
+		// Check the session for previously entered form data.
+		$data = JFactory::getApplication()->getUserState('com_pagesanditems.edit.customitemtype.data', array());
+
+		if (empty($data)) {
+			$data = $this->getItem();
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Method to get a single record.
+	 *
+	 * @param	integer	The id of the primary key.
+	 *
+	 * @return	mixed	Object on success, false on failure.
+	 */
+	public function getItem($pk = null)
+	{
+		// Initialise variables.
+		$pk = (!empty($pk)) ? $pk : (int) $this->getState('customitemtype.id');
+		//echo '$pk: '.$pk.' :$pk,';
+		//echo '$pk state : '.$this->getState('extension.extension_id').' :$pk state,';
+		//echo 'X';
+		//$this->_cache[$pk]
+		if (!isset($this->_cache[$pk]))
+		{
+			//echo 'XX';
+			$false	= false;
+
+			// Get a row instance.
+			$table = $this->getTable();
+
+			// Attempt to load the row.
+			$return = $table->load($pk);
+
+			// Check for a table object error.
+			if ($return === false && $table->getError())
+			{
+				$this->setError($table->getError());
+				return $false;
+			}
+
+			// Convert to the JObject before adding other data.
+			$properties = $table->getProperties(1);
+			$this->_cache[$pk] = JArrayHelper::toObject($properties, 'JObject');
+
+			// Convert the params field to an array.
+			$registry = new JRegistry;
+			$registry->loadJSON($table->params);
+			$this->_cache[$pk]->params = $registry->toArray();
+
+			// Get the plugin XML.
+			$path = realpath(dirname(__FILE__).'/../');
+			$path = str_replace('/',DS,$path.DS.'extensions'.DS.'itemtypes'.DS.'custom');
+			
+			$path = JPath::clean($path.DS.'custom.xml');
+			if (file_exists($path)) {
+				$this->_cache[$pk]->xml = JFactory::getXML($path);
+			} else {
+				$this->_cache[$pk]->xml = null;
+			}
+			//$this->setState('extension.extension_id',$pk);
+		}
+		//$this->_cache[$pk]->test = 'test';
+		return $this->_cache[$pk];
+	}
+
+	/**
+	 * Returns a reference to the a Table object, always creating it.
+	 *
+	 * @param	type	The table type to instantiate
+	 * @param	string	A prefix for the table class name. Optional.
+	 * @param	array	Configuration array for model. Optional.
+	 * @return	JTable	A database object
+	 //'extension','PagesAndItemsTable'
+	*/
+	public function getTable($type = 'customitemtypes', $prefix = 'PagesAndItemsTable', $config = array())
+	{
+		return JTable::getInstance($type, $prefix, $config);
+	}
+
+	/**
+	 * Auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @return	void
+	 * @since	1.6
+	 */
+	protected function populateState()
+	{
+		// Execute the parent method.
+		parent::populateState();
+
+		$app = JFactory::getApplication('administrator');
+
+		// Load the User state.
+		$pk = (int) JRequest::getInt('type_id');
+		$this->setState('customitemtype.id', $pk);
+	}
+
+	/**
+	 * @param	object	A form object.
+	 * @param	mixed	The data expected for the form.
+	 * @return	mixed	True if successful.
+	 * @throws	Exception if there is an error in the form event.
+	 * @since	1.6
+	 */
+	protected function preprocessForm(JForm $form, $data, $group = '')
+	{
+		jimport('joomla.filesystem.file');
+		jimport('joomla.filesystem.folder');
+
+		// Initialise variables.
+		// Get the plugin XML.
+		$path = realpath(dirname(__FILE__).'/../');
+		$path = str_replace('/',DS,$path.DS.'extensions'.DS.'itemtypes'.DS.'custom');
+
+		$path = JPath::clean($path.DS.'custom.xml');
+
+		$formFile = JPath::clean($path);
+
+		if (!file_exists($formFile))
+		{
+			if (!file_exists($formFile))
+			{
+				throw new Exception(JText::sprintf('COM_PLUGINS_ERROR_FILE_NOT_FOUND', $element.'.xml'));
+				return false;
+			}
+		}
+
+		if (file_exists($formFile))
+		{
+			// Get the plugin form.
+			if (!$form->loadFile($formFile, false, '//config'))
+			{
+				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
+			}
+		}
+
+		// Attempt to load the xml file.
+		if (!$xml = simplexml_load_file($formFile))
+		{
+			if ($type != 'language')
+			{
+				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
+			}
+		}
+		// Trigger the default form events.
+		parent::preprocessForm($form, $data, $group);
+
+	}
+	/*
+	END adopt from J1.6
+	*/
+	
+	
+	
+	
+	
+
+	/*
 	getFields only for Test?
 	*/
 	function getFields($type_id,$item_id,$new_or_edit)
 	{
+		$db = JFactory::getDBO();
 		//".$type_id." as item_id
 		if($new_or_edit == 'new')
 		{
-			$this->db->setQuery( "SELECT f.*, f.id AS field_id "
+			$db->setQuery( "SELECT f.*, f.id AS field_id "
 			. "\n FROM #__pi_custom_fields AS f "
 			. "\n WHERE f.type_id='$type_id' "
 			. "\n ORDER BY f.ordering ASC "
 			);
-			$fields = $this->db->loadObjectList();
+			$fields = $db->loadObjectList();
 		}
 		else
 		{
 			/*
-			$this->db->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id "
+			$db->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id "
 			. "\n FROM #__pi_custom_fields AS f "
 			. "\n LEFT JOIN #__pi_custom_fields_values AS v "
 			. "\n ON v.field_id = f.id "
@@ -48,7 +275,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			. "\n ORDER BY f.ordering ASC "
 			);
 			*/
-			$this->db->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id "
+			$db->setQuery( "SELECT f.*, v.*, v.id AS value_id, f.id AS field_id "
 			. "\n FROM #__pi_custom_fields_values AS v "
 			. "\n LEFT JOIN #__pi_custom_fields AS f "
 			. "\n ON f.id=v.field_id "
@@ -57,41 +284,43 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			. "\n AND f.id=v.field_id "
 			. "\n ORDER BY f.ordering ASC "
 			);
-			$fields = $this->db->loadObjectList();
+			$fields = $db->loadObjectList();
 			if(empty($fields))
 			{
-				$this->db->setQuery( "SELECT f.*, f.id AS field_id "
+				$db->setQuery( "SELECT f.*, f.id AS field_id "
 				. "\n FROM #__pi_custom_fields AS f "
 				. "\n WHERE f.type_id='$type_id' "
 				. "\n ORDER BY f.ordering ASC "
 				);
-				$fields = $this->db->loadObjectList();
+				$fields = $db->loadObjectList();
 			}
 		}
 		return($fields);
 	}
-	
-	
+
+
 	function clean_cache_content()
 	{
-		if ($this->app->getCfg('caching')) {
-			
+		$app = JFactory::getApplication();
+		if ($app->getCfg('caching')) {
+
 			//clean content cache
 			$cache = & JFactory::getCache('com_content');
 			$cache->clean();
 		}
 	}
-	
+
 	//copied to helper as is used in at least 3 different ways
 	//to do find any calls to this function and make go to helper
 	function keep_item_index_clean()
 	{
+		$db = JFactory::getDBO();
 		//get content id's
-		$this->db->setQuery( "SELECT id, state "
+		$db->setQuery( "SELECT id, state "
 		. "FROM #__content "
 		);
-		$items = $this->db->loadObjectList();
-		
+		$items = $db->loadObjectList();
+
 		//make nice arrays
 		$content_ids = array();
 		$content_ids_tashed = array();
@@ -101,27 +330,27 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 				$content_ids_tashed[] = $item->id;
 			}
 		}
-		
+
 		//get item index data
-		$this->db->setQuery( "SELECT id, item_id, itemtype "
+		$db->setQuery( "SELECT id, item_id, itemtype "
 		. "FROM #__pi_item_index "
 		);
-		$index_items = $this->db->loadObjectList();
-		
+		$index_items = $db->loadObjectList();
+
 		$from_cit_to_text = array();
-		
-		//loop through item index data. 
-		//delete rows which item in #__content has been deleted and 
+
+		//loop through item index data.
+		//delete rows which item in #__content has been deleted and
 		foreach($index_items as $index_item)
 		{
 			$index_id = $index_item->id;
 			$index_item_id = $index_item->item_id;
-			
+
 			$delete_index_row = 0;
-			
+
 			//customitemtypes which have been trashed, so delete it from index (makes it a normal item)
 			$itemtype = $index_item->itemtype;
-						
+
 			if(strpos($itemtype, 'ustom_')){
 				//custom itemtype
 				if(in_array($index_item_id, $content_ids_tashed)){
@@ -131,20 +360,20 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 					$from_cit_to_text[] = $index_item_id;
 				}
 			}
-			
+
 			//if item is no longer in content table, take it out of index.
 			if(!in_array($index_item_id, $content_ids)){
 				$delete_index_row = 1;
-				
+
 			}
-			
+
 			//delete the index row if needed
 			if($delete_index_row){
-				$this->db->setQuery("DELETE FROM #__pi_item_index WHERE id='$index_id'");
-				$this->db->query();
+				$db->setQuery("DELETE FROM #__pi_item_index WHERE id='$index_id'");
+				$db->query();
 			}
 		}
-		
+
 		/*
 		//clean items which where customitemtypes, but have now become normal text-types, from custom itemtype codes
 		foreach($from_cit_to_text as $itemid){
@@ -154,7 +383,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			."WHERE id='$itemid' "
 			);
 			$items = $this->db->loadObjectList();
-			
+
 			//take the codes out
 			foreach($items as $item){
 				echo $item->introtext;
@@ -162,19 +391,20 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 				//$introtext = $this->take_cit_codes_out($item->introtext);
 				//$fulltext = $this->take_cit_codes_out($item->fulltext);
 			}
-			
+
 			//update item
 			//$this->db->setQuery( "UPDATE #__content SET introtext='$introtext', fulltext='$fulltext' WHERE id='$itemid'");
 			//$this->db->query();
 		}
 		*/
 	}
-	
+
 	function get_menu_id_from_category_blog($cat_id){
+		$db = JFactory::getDBO();
 		//get page data
-		$this->db->setQuery("SELECT * FROM #__menu ");
-		$all_menuitems = $this->db->loadObjectList();
-		
+		$db->setQuery("SELECT * FROM #__menu ");
+		$all_menuitems = $db->loadObjectList();
+
 		//make a new array from all categories which are used as category-blog-pages in menu
 		foreach($all_menuitems as $menuitem){
 			if(((strstr($menuitem->link, 'com_content&view=category&layout=blog') && $menuitem->type=='url') || !strstr($menuitem->link, 'com_content&view=category&layout=blog')) && $menuitem->type!='content_blog_category'){
@@ -186,48 +416,51 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		}
 		return $menu_id;
 	}
-	
+
 	function get_url_from_menuitem($menu_id){
-		$this->db->setQuery("SELECT link FROM #__menu WHERE id='$menu_id' LIMIT 1");
-		$menu_items = $this->db->loadResultArray();
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT link FROM #__menu WHERE id='$menu_id' LIMIT 1");
+		$menu_items = $db->loadResultArray();
 		$menu_url = $menu_items[0].'&Itemid='.$menu_id;
 		return $menu_url;
 	}
-	
 
-	function reorderItemsCategory($catId) 
+
+	function reorderItemsCategory($catId)
 	{
-		$this->db->setQuery("SELECT id, ordering, catid FROM #__content WHERE catid='$catId' AND (state='0' OR state='1') ORDER BY ordering ASC" );
-		$rows = $this->db-> loadObjectList();
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT id, ordering, catid FROM #__content WHERE catid='$catId' AND (state='0' OR state='1') ORDER BY ordering ASC" );
+		$rows = $db-> loadObjectList();
 		$counter = 1;
 		foreach($rows as $row){
 			//reorder to make sure all is well
 			$rowId = $row->id;
-			$this->db->setQuery( "UPDATE #__content SET ordering='$counter' WHERE id='$rowId'");
-			if (!$this->db->query()) {
-				echo "<script> alert('".$this->db->getErrorMsg()."'); window.history.go(-1); </script>";
+			$db->setQuery( "UPDATE #__content SET ordering='$counter' WHERE id='$rowId'");
+			if (!$db->query()) {
+				echo "<script> alert('".$db->getErrorMsg()."'); window.history.go(-1); </script>";
 				exit();
 			}
 			$counter = $counter + 1;
 		}
 		return $counter;
 	}
-	
+
 	function make_value_into_parameter($parameter, $value)
 	{
 		return $parameter.'-=-'.$value.'[;-)# ]';
 	}
-	
-	
+
+
 	function delete_fields_values($field_id)
 	{
 		//delete field values
-		$this->db->setQuery("DELETE FROM #__pi_custom_fields_values WHERE field_id='$field_id'");
-		$this->db->query();
+		$db = JFactory::getDBO();
+		$db->setQuery("DELETE FROM #__pi_custom_fields_values WHERE field_id='$field_id'");
+		$db->query();
 	}
-	
-	
-	
+
+
+
 	function get_installed_fieldtypes(){
 		$dir_itemtypes = array();
 		$temp_plugins = array();
@@ -243,20 +476,20 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			$dir_itemtypes = JFolder::folders(dirname(__FILE__).'/../../../plugins/pages_and_items/fieldtypes/');
 		}
 		*/
-													
+
 		$installed_fieldtypes = $this->fieldtypes_integrated;
 		//TODO search in #__plugins_table or over PluginHelper
 		//jimport( 'joomla.plugin.helper' );
 		//get_installed_fieldtypes
-		
+
 		$plugins = JPluginHelper::getPlugin('pagesanditems');
-		
+
 		foreach($plugins as $plugin)
 		{
 				//if($plugin->name)
 				//array_push($temp_plugins, $plugin->name);
 		}
-		
+
 		foreach($dir_itemtypes as $itemtype)
 		{
 			//if(in_array($itemtype, $temp_plugins))
@@ -272,28 +505,28 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		}
 		$sort_order = SORT_ASC;//define as a var or else ioncube goes mad
 		array_multisort($column, $sort_order, $installed_fieldtypes);
-			
+
 		return $installed_fieldtypes;
 	}
-	
+
 
 	function take_itemtype_out_of_configuration($itemtype)
 	{
-
-		$this->db->setQuery("SELECT config "
+		$db = JFactory::getDBO();
+		$db->setQuery("SELECT config "
 		."FROM #__pi_config "
 		."WHERE id='pi' "
 		."LIMIT 1"
 		);
-		$temp = $this->db->loadObjectList();
+		$temp = $db->loadObjectList();
 		$temp = $temp[0];
 		$config_string = $temp->config;
-		
+
 		$start_itemtypes = strpos($config_string, 'itemtypes=');
 		$end_itemtypes = strpos($config_string, 'START_PAGE_NEW_ATTRIBUTES');
 		$config_before = substr($config_string, 0, $start_itemtypes);
 		$config_after = substr($config_string, $end_itemtypes, 999999);
-		
+
 		//make new config string
 		$config = $config_before.'itemtypes=';
 		$first = true;
@@ -309,27 +542,27 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		}
 		$config .= '
 		'.$config_after;
-			
+
 		//update config
-		$this->db->setQuery( "UPDATE #__pi_config SET config='$config' WHERE id='pi' ");
-		$this->db->query();
+		$db->setQuery( "UPDATE #__pi_config SET config='$config' WHERE id='pi' ");
+		$db->query();
 	}
 
 
 	/*
 	function update_custom_itemtypes_by_type($type_id)
-	who are used? ore is not used? 
+	who are used? ore is not used?
 		this is in models/customitemtype.php in function custom_itemtype_fields_delete()
 		and not longer used
 		//update items output
 		//$model->update_custom_itemtypes_by_type($type_id);
-		
+
 		//update items with ajax render script and return to cit-config-page
 		$url = 'index.php?option=com_pagesanditems&view=render_items_by_custom_itemtype&type_id='.$type_id;
 		$url .= '&futuretask=config_custom_itemtype';
 		$model->redirect_to_url( $url, '');
-	
-	
+
+
 	TODDO remove
 	*/
 	function Xupdate_custom_itemtypes_by_type($type_id)
@@ -342,7 +575,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		."WHERE itemtype='$itemtype_name' "
 		);
 		$items_array = $this->db->loadResultArray();
-		
+
 		foreach($items_array as $item_id)
 		{
 			$this->update_content_table_from_custom_itemtype($item_id, $itemtype_name);
@@ -369,11 +602,11 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 	//TODO move to itemtype
 	function Xupdate_content_table_from_custom_itemtype($item_id, $item_type,$new_item=false,$row = false, $fields = false, $into=false)
 	{
-		
+
 		//get type_id
 		$pos = strpos($item_type, 'ustom_');
 		$type_id = substr($item_type, $pos+6, strlen($item_type));
-				
+
 		//get template
 		$this->db->setQuery( "SELECT template_intro, template_full, read_more, editor_id, html_after, html_before "
 		. "\nFROM #__pi_customitemtypes "
@@ -388,7 +621,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		$editor_id = $template->editor_id;
 		$html_after = $template->html_after;
 		$html_before = $template->html_before;
-		
+
 		//CHANGE MS NOVEMBER 2010
 		if(!$row)
 		{
@@ -426,7 +659,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			$fulltext_temp = $this->render_html_from_custom_itemtype_template($template_full, $fields, $row, 'full');
 			$fulltext_temp2 = str_replace(' ','',$fulltext_temp);
 			$length_with_content = strlen($fulltext_temp2);
-			
+
 			$full_template_temp = $template_full;
 			$template_array = explode('{field_',$full_template_temp);
 			foreach($template_array as $template_chunk){
@@ -441,13 +674,13 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 					$full_template_temp2 .= $template_chunk;
 				}
 			}
-			
+
 			$full_template_temp2 = str_replace(' ','',$full_template_temp2);
 			$length_without_content = strlen($full_template_temp2);
-			
+
 			//if($length_with_content==$length_without_content){
 			if($length_with_content==$length_without_content || $length_without_content==0){
-				//there is no content in fulltext 
+				//there is no content in fulltext
 				$fulltext = '';
 			}else{
 				//there is content in fulltext
@@ -460,7 +693,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			//normal read more
 			$fulltext = $this->render_html_from_custom_itemtype_template($template_full, $fields, $row, 'full', $read_more);
 		}
-		
+
 		//CHANGE MS NOVEMBER 2010
 		if(!$into)
 		{
@@ -476,8 +709,8 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			return array("introtext"=>$introtext,"fulltext"=>$fulltext);
 		}
 		//END CHANGE MS NOVEMBER 2010
-		
-		
+
+
 		//ADD MS 18.09.2009
 //		$fields = $this->db->loadObjectList();
 		if(!$new_item && !$into){
@@ -507,7 +740,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			/*
 			todo must rewrite
 			*/
-			
+
 			//get fields plugin
 			$this->db->setQuery( "SELECT DISTINCT plugin "
 			. "\nFROM #__pi_custom_fields "
@@ -533,7 +766,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			require_once($path.DS.'includes'.DS.'extensions'.DS.'fieldtypehelper.php');
 			$fieldtypes = ExtensionFieldtypeHelper::importExtension(null, $fieldPlugins,true,null,true);
 			$dispatcher = &JDispatcher::getInstance();
-			
+
 			foreach($fields as $field)
 			{
 				//start update
@@ -542,14 +775,15 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		}
 		//end field loop MS
 		//ADD MS 18.09.2009 END
-		
+
 	}
-	
-	
+
+
 	function render_html_from_custom_itemtype_template($template, $fields, $row, $intro_or_full, $readmore_type=0, $editor_id=0, $html_after='', $html_before='', $language = null )
 	{
+		$db = JFactory::getDBO();
 		$read_more_link_defined = $this->check_for_read_more_link($fields, $editor_id);
-				
+
 		//no template specified, so render default template
 		if(!$template)
 		{
@@ -564,7 +798,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 					$template .= $class_object->template_special_output($fields);
 				}
 			}
-			
+
 			//if(!$template_spezial)
 			if(!$template)
 			{
@@ -580,7 +814,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			//ADD MS
 			//}
 		}
-		
+
 		$html = addslashes($template);
 		//Deal with readmore type 3
 		if($readmore_type=='3')
@@ -667,7 +901,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 				}
 			}
 		}
-		
+
 		$replaceRegex=array();
 		$replaceValue=array();
 		if (! empty($row)){
@@ -685,12 +919,12 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			$replaceValue[]=$row->publish_up;
 			$replaceRegex[]='/{article_rating}/is';
 			//get average rating
-			$this->db->setQuery( "SELECT rating_sum, rating_count "
+			$db->setQuery( "SELECT rating_sum, rating_count "
 			. "FROM #__content_rating "
 			. "WHERE content_id='$row->id' "
 			. "LIMIT 1 "
 			);
-			$ratings = $this->db->loadObjectList();
+			$ratings = $db->loadObjectList();
 			$rating_ave = '';
 			foreach($ratings as $rating){
 				$rating_sum = $rating->rating_sum;
@@ -699,18 +933,18 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 			}
 			$replaceValue[] = $rating_ave;
 		}
-		
+
 		foreach($fields as $field){
 			$field_tag="field_".$field->name."_".$field->field_id;
 			if($field->plugin=='image_multisize'){
 				for ($n = 1; $n <= 5; $n++){
 					$field->size = $n;
 					$value=$this->get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type, $editor_id);
-					$replaceRegex[]="/{".$field_tag." size=".$n."}/is"; 
+					$replaceRegex[]="/{".$field_tag." size=".$n."}/is";
 					$replaceValue[] = $value;
 					$field->output = 'alt';
 					$value=$this->get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type, $editor_id);
-					$replaceRegex[]="/{".$field_tag." size=".$n." output=alt}/is"; 
+					$replaceRegex[]="/{".$field_tag." size=".$n." output=alt}/is";
 					$replaceValue[] = $value;
 				}
 			}else{
@@ -726,17 +960,17 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 					$replaceRegex[]="/{\/?if-not-empty_".$field_tag."}/is";
 					$replaceValue[] = '';
 				}
-				$replaceRegex[]="/{".$field_tag."}/is"; 
+				$replaceRegex[]="/{".$field_tag."}/is";
 				$replaceValue[] = $value;
-				
+
 			}
 		}
-		
+
 		$html=preg_replace($replaceRegex, $replaceValue, $html);
-		
+
 		return $html;
 	}
-	
+
 	function check_for_read_more_link($fields, $editor_id)
 	{
 		$is_defined = 0;
@@ -752,7 +986,7 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		}
 		return $is_defined;
 	}
-	
+
 	function get_custom_itemtype_field_content($field, $intro_or_full, $readmore_type=0, $editor_id=0){
 		//explode params
 		$html = '';
@@ -760,18 +994,18 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		$temp = $field->params;
 		$temp = explode( '[;-)# ]', $temp);
 		for($n = 0; $n < count($temp)-1; $n++){
-			list($var,$value) = split('-=-',$temp[$n]); 
-			$field_params[$var] = trim($value); 
+			list($var,$value) = split('-=-',$temp[$n]);
+			$field_params[$var] = trim($value);
 		}
-					
+
 		//explode values
 		$temp = $field->value;
 		$temp = explode('[;-)# ]', $temp);
 		for($n = 0; $n < count($temp)-1; $n++){
-			list($var,$value) = split('-=-',$temp[$n]); 
-			$values[$var] = trim($value); 
+			list($var,$value) = split('-=-',$temp[$n]);
+			$values[$var] = trim($value);
 		}
-		
+
 		//get output
 		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'includes'.DS.'extensions'.DS.'helper.php');
 		//$fieldtypes = ExtensionHelper::importExtension('fieldtype',null, $field->plugin,true,null,true);
@@ -784,10 +1018,10 @@ class PagesAndItemsModelCustomItemtype extends PagesAndItemsModelBase
 		$results = $dispatcher->trigger('onRender_field_output', array (&$html,$field, $intro_or_full, $readmore_type, $editor_id));
 		//fix old editors html
 		$html = str_replace('<br>','<br />', $html);
-		
-		
+
+
 		return $html;
 	}
-	
+
 }
 

@@ -1,3 +1,87 @@
+body {
+	margin:0px !important;
+}
+
+html {
+	overflow-y: hidden !important;
+}
+
+/*
+
+.clr {
+	clear: both;
+}
+
+.clr_none {
+	clear: none;
+}
+
+.clr_left {
+	clear: left;
+}
+
+.clr_right {
+	clear: right;
+}
+*/
+fieldset.popup_fieldset{
+/*border-radius: 5px 5px 5px; */
+}
+/*
+.icon-32-pi 
+{
+	background-repeat: no-repeat;
+	margin-left: 10px;
+	padding-left: 42px;
+	background-image: url("../media/images/icons/icon-32-pi.png");
+	min-height: 32px;
+}
+
+h1.pi_h1
+{
+	margin:0;
+	padding:0;
+	padding-bottom: 0px;
+	line-height: 32px;
+}
+
+h1.pi_h1 img
+{
+	margin-top:1px;
+	margin-bottom:0;
+	padding:0;
+	padding-bottom: 0px;
+	vertical-align: middle;
+	/*line-height: 32px;*/
+}
+*/
+/*
+html
+{
+	overflow-y:hidden !important;
+}
+*/
+
+div#contentcontainer, div.contentcontainer
+{
+	float: left;
+	height:100%;
+	overflow-x: auto;
+	overflow-y: auto;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+div.contentcontainer
+{
+	float:left;
+	height: 100%;
+	width: 100%;
+	overflow:auto;
+	padding:0;
+	margin: 0;
+}
 
 div#header, table.menubar, div.footer, div#border-top, div#header-box, div#toolbar-box, div#footer, div.t, div.b,  div#border-bottom{
 	display: none;
@@ -6,7 +90,7 @@ div#header, table.menubar, div.footer, div#border-top, div#header-box, div#toolb
 div.m{
 	margin: 0;
 }
-		
+
 div.centermain{
 	text-align: left;
 }
@@ -23,5 +107,5 @@ div.centermain{
 }
 
 html#minwidth, body#minwidth{
-	min-width: 0;	
+	min-width: 0;
 }

@@ -1,8 +1,8 @@
 <?php
 /**
-* @version		2.0.0
+* @version		2.1.0
 * @package		PagesAndItems com_pagesanditems
-* @copyright	Copyright (C) 2006-2011 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
 */
@@ -22,7 +22,7 @@ require_once(dirname(__FILE__).'/../../../../includes/extensions/html.php');
 */
 class PagesAndItemsExtensionHtmlCci_templateHide_in_intro_view extends PagesAndItemsExtensionHtml
 {
-	
+
 	//function onGetHtmlelement(&$htmlelement,$htmlelementVars=null,$name = null, $template = 'intro', $fields)
 	//function onGetHtmlelement(&$htmlelement,$name = null, $template = 'intro', $fields)
 	function onGetHtmlelement(&$htmlelement,$name = null, $htmlOptions = null)
