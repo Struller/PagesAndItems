@@ -11,6 +11,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
+jimport( 'joomla.database.table');
 //require_once(dirname(__FILE__).'/base.php');
 /**
 
@@ -60,7 +61,7 @@ class PagesAndItemsModelPage extends JModel //extends MenusModelItem     PagesAn
 		//$modelMenutypes = new PagesAndItemsModelMenutypes();
 		//$this->menuItemsTypes = $modelMenutypes->getTypeListComponents();
 		//$this->menuItemsTypes = PagesAndItemsHelper::getMenuItemsTypes();
-
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'tables');
 	}
 
 	//remove?
@@ -393,7 +394,10 @@ from view/page/view.html.php
 				$app->setUserState('com_menus.edit.item.type',	null);
 				$app->setUserState('com_menus.edit.item.link',	null);
 
-				$modelMenu = &new MenusModelItem();
+				//add addIncludePath
+				//to set the correct type we need to tell the model ignore_request
+				$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
+				//$modelMenu = &new MenusModelItem();
 				
 
 				

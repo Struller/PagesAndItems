@@ -11,6 +11,8 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
+jimport( 'joomla.database.table');
+JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'tables');
 //require_once(dirname(__FILE__).DS.'page.php');
 /**
 
@@ -27,6 +29,7 @@ class PagesAndItemsModelCategory extends JModel //PagesAndItemsModelPage
 	function __construct()
 	{
 		parent::__construct();
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'tables');
 	}
 
 	
