@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="fieldtype" method="upgrade">
+	<name>Image_multisize (Pages and Items fieldtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		fieldtype Image_multisize (Pages and Items)
+	</description>
+	<files>
+		<filename fieldtype="image_multisize">image_multisize.php</filename>
+		<filename >index.html</filename>
+		<filename>validation_image_multisize_not_empty.js</filename>
+	</files>
+	
+	<params addpath="/administrator/components/com_pagesanditems/elements">
+		<param name="show_field_name" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="image_dir" type="text" default="images/stories/" size="60" label="COM_PAGESANDITEMS_IMAGE_DIR" description="COM_PAGESANDITEMS_IMAGE_DIR_EXAMPLE">
+		</param>
+		<!--
+		<param name="show_src" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		-->
+		<param name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;1" label="test">
+		</param>
+		
+		<param name="max_width_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+
+		<param name="show_src_1" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source_1" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="resize_1" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+
+		<param name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;2" label="test">
+		</param>		
+		<param name="max_width_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+
+		<param name="show_src_2" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source_2" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="resize_2" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+
+		<param name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;3" label="test">
+		</param>		
+		<param name="max_width_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+
+		<param name="show_src_3" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source_3" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="resize_3" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+		
+		<param name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;4" label="test">
+		</param>		
+		<param name="max_width_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+
+		<param name="show_src_4" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source_4" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="resize_4" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+		
+		<param name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;5" label="test">
+		</param>
+		<param name="max_width_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+
+		<param name="show_src_5" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source_5" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="resize_5" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+	</params>
+
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_pagesanditems/models/fields" >
+				<field name="show_field_name" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+					<option value="0">JNo</option>
+					<option value="1">JYes</option>
+				</field>
+
+				<field name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
+					<option value="0">JNo</option>
+					<option value="1">JYes</option>
+				</field>
+
+				<field name="image_dir" type="text" default="images/stories/" size="60" label="COM_PAGESANDITEMS_IMAGE_DIR" description="COM_PAGESANDITEMS_IMAGE_DIR_EXAMPLE">
+				</field>
+				<!--
+				<field name="show_src" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">JNo</option>
+					<option value="1">JYes</option>
+				</field>
+				-->
+			</fieldset>
+
+			<fieldset name="size1" label="COM_PAGESANDITEMS_IMAGE" label_two="COM_PAGESANDITEMS_SIZE" label_three="1" >
+				<!--
+				<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;1" label="test">
+				</field>
+				-->
+				<field name="max_width_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+
+				<field name="max_height_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+
+				<field name="show_src_1" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name_1" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source_1" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+
+				<field name="resize_1" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+				<!--			
+				<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;2" label="test">
+				</field>		
+				-->
+			</fieldset>
+			<fieldset name="size2" label="COM_PAGESANDITEMS_IMAGE" label_two="COM_PAGESANDITEMS_SIZE" label_three="2" >
+
+				<!--
+					<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;1" label="test">
+					</field>
+				-->
+				<field name="max_width_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+		
+				<field name="max_height_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+
+				<field name="show_src_2" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name_2" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source_2" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+
+				<field name="resize_2" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+			</fieldset>
+
+			<fieldset name="size3" label="COM_PAGESANDITEMS_IMAGE" label_two="COM_PAGESANDITEMS_SIZE" label_three="3" >
+				<!--
+				<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;3" label="test">
+				</field>
+				-->
+				<field name="max_width_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+		
+				<field name="max_height_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+
+				<field name="show_src_3" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name_3" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source_3" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+
+				<field name="resize_3" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+			</fieldset>
+
+			<fieldset name="size4" label="COM_PAGESANDITEMS_IMAGE" label_two="COM_PAGESANDITEMS_SIZE" label_three="4" >
+				<!--		
+				<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;4" label="test">
+				</field>		
+				-->
+				<field name="max_width_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+		
+				<field name="max_height_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+
+				<field name="show_src_4" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name_4" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source_4" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+
+				<field name="resize_4" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+			</fieldset>
+
+			<fieldset name="size5" label="COM_PAGESANDITEMS_IMAGE" label_two="COM_PAGESANDITEMS_SIZE" label_three="5" >
+				<!--
+				<field name="@spacerx" type="spacerjtext" default="COM_PAGESANDITEMS_IMAGE;COM_PAGESANDITEMS_SIZE;5" label="test">
+				</field>
+				-->
+				<field name="max_width_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+		
+				<field name="max_height_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+
+				<field name="show_src_5" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name_5" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source_5" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+			
+				<field name="resize_5" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+	
+			</fieldset>
+		</fields>
+	</config>
+</extension>

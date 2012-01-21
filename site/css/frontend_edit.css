@@ -1,0 +1,41 @@
+/* CSS Document */
+
+#adminForm label{
+	display: inline-block;
+    vertical-align: top;
+    width: 13em;
+}
+
+#adminForm li{
+	list-style-type: none;
+}
+
+legend#toggle_content, legend#content_details, #adminForm fieldset.adminform legend{
+	/* ms: do not hidde
+	*/
+	/*
+	display: none;
+	*/
+}
+
+/*ms: add */
+#adminForm fieldset.adminform {
+	margin-bottom: 10px;
+	border: 1px #ccc solid;
+	padding: 5px;
+	margin: 5px;
+	text-align: left;
+}
+
+/*ms: add */
+#adminForm legend {
+	color: #146295;
+	font-size: 1.182em;
+	font-weight: bold;
+}
+
+
+#pi_content_pane{
+	margin-left: 16px;
+}
+

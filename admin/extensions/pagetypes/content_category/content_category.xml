@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="pagetype" method="upgrade">
+	<name>ContentCategory (Pages and Items pagetype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		pagetype ContentCategory (Pages and Items)
+	</description>
+	<files>
+		<filename pagetype="content_category">content_category.php</filename>
+		<filename >index.html</filename>
+		<filename >config.xml</filename>
+	</files>
+	<params>
+	</params>
+
+	<config>
+		<fields name="params">
+
+		</fields>
+	</config>
+</extension>

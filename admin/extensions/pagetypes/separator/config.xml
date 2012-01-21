@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<icons group="icons" description="separator-icons">
+		<icon type="text" name="default" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator.png"></icon>
+		<icon type="text" name="items" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator.png"></icon>
+		<icon type="text" name="pagepropertys" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator.png"></icon>
+		<icon type="text" name="pagepropertys_new" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_new.png"></icon>
+		<icon type="text" name="new" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_new.png"></icon>
+		<icon type="text" name="add" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_add.png"></icon>
+		<icon type="text" name="delete" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_delete.png"></icon>
+		<icon type="text" name="edit" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_edit.png"></icon>
+		<icon type="text" name="no_access" folder="separator" pi_icons="1" folder_type="pi_icons" image="icon-16-separator_no_access.png"></icon>
+	</icons>
+</config>

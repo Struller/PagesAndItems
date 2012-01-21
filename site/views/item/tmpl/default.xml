@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_PAGESANDITEMS_ITEM_SUBMISSION_LAYOUT">
+		<message>
+			<![CDATA[COM_PAGESANDITEMS_ITEM_SUBMISSION_LAYOUT_DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_PAGESANDITEMS_ITEM_SUBMISSION_LAYOUT</name>
+		<description>COM_PAGESANDITEMS_ITEM_SUBMISSION_LAYOUT_DESC</description>
+		<params>
+		</params>
+	</state>
+</metadata>

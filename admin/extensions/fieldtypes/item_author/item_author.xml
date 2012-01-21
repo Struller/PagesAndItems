@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="fieldtype" method="upgrade">
+	<name>Item_author (Pages and Items fieldtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		fieldtype Item_author (Pages and Items)
+	</description>
+	<files>
+		<filename fieldtype="item_author">item_author.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params>
+		<param name="name_type" type="radio" default="0" label="COM_PAGESANDITEMS_DISPLAY">
+			<option value="username">COM_PAGESANDITEMS_USERNAME</option>
+			<option value="name">COM_PAGESANDITEMS_NAME</option>
+		</param>
+		<param name="only_once" type="hidden" default="1">
+		</param>
+		<param name="no_pi_fish_table" type="hidden" default="1">
+		</param>
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" >
+				<field name="name_type" type="radio" default="0" label="COM_PAGESANDITEMS_DISPLAY">
+			<option value="username">COM_PAGESANDITEMS_USERNAME</option>
+			<option value="name">COM_PAGESANDITEMS_NAME</option>
+				</field>
+				<field name="only_once" type="hidden" default="1">
+				</field>
+				<field name="no_pi_fish_table" type="hidden" default="1">
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

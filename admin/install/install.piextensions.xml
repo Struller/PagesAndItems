@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+<!-- here are all core pagesanditems extensions -->
+	
+	<!-- fieldtypes -->
+	<extension>
+		<name>calendar</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>checkbox</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>editor</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>html</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>image</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>image_gallery</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>image_multisize</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_author</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_creation_date</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_modified_date</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_publish_date</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_title</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>item_version</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>php</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>radio</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>select</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>text</name>
+		<type>fieldtype</type>
+	</extension>
+	<extension>
+		<name>textarea</name>
+		<type>fieldtype</type>
+	</extension>
+
+	<!-- htmls -->
+	
+	<!-- ms: must check if we integrate -->
+	<!-- 
+		folder cci_fields 
+		display in config_custom_itemtypes
+	-->
+	<!--
+	<extension>
+		<name>archive</name>
+		<folder>cci_fields</folder>
+		<type>html</type>
+	</extension>
+	-->
+	<!-- ms: must check if we integrate -->
+	<!--
+	<extension>
+		<name>delete</name>
+		<folder>cci_fields</folder>
+		<type>html</type>
+	</extension>
+	-->
+	<!-- ms: must check if we integrate -->
+	<!--
+	<extension>
+		<name>trash</name>
+		<folder>cci_fields</folder>
+		<type>html</type>
+	</extension>
+	-->
+	
+	<!-- 
+		folder cci_template 
+		display in config_custom_itemtypes under template 'intro' and 'full'
+	-->
+	<!-- must check if we integrate -->
+	<!--
+	<extension>
+		<name>display_template</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	-->
+	
+	<extension>
+		<name>div</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>hide_in_full_view</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>hide_in_intro_view</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>insert_field_code</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>insert_if_empty_code</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>insert_ifnot_empty_code</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>insert_other_code</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>insert_own_code</name>
+		<folder>cci_template</folder>
+		<type>html</type>
+	</extension>
+
+	<!-- 
+		folder item_base 
+		not used at this moment
+		must check if we integrate
+	-->
+	<!--
+	<extension>
+		<name>menuitemtypeselect</name>
+		<folder>item_base</folder>
+		<type>html</type>
+	</extension>
+	-->
+	<!-- 
+		folder page_childs 
+		display in view page in underlaying pages
+		
+	-->
+	<extension>
+		<name>alias</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_archive</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_article</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_categories</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_category_blog</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_featured</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>content_form_edit</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+
+	<extension>
+		<name>separator</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>url</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>menuitemtypeselect</name>
+		<folder>page_childs</folder>
+		<type>html</type>
+	</extension>
+
+	<!-- 
+		folder page_items 
+		display in view page in  Item(s) on this page
+		
+		we must check which extensions we integrated
+	-->
+	<!-- ms: must check if we integrate -->
+	<!-- 
+	<extension>
+		<name>convert</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	-->
+
+	<!-- ms: must check if we integrate -->
+	<!-- 
+	<extension>
+		<name>copy</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	-->
+	<!-- ms: must check if we integrate -->
+	<!-- 
+	<extension>
+		<name>move</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	-->
+
+	<extension>
+		<name>publish</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>unpublish</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>archive</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>trash</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>delete</name>
+		<folder>page_items</folder>
+		<type>html</type>
+	</extension>	
+	
+<!-- 
+		folder page_actions 
+		display in view page in  Item(s) on this page
+		
+		we must check which extensions we integrated
+	-->
+	<extension>
+		<name>publish</name>
+		<folder>page_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>unpublish</name>
+		<folder>page_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>trash</name>
+		<folder>page_actions</folder>
+		<type>html</type>
+	</extension>
+	<extension>
+		<name>delete</name>
+		<folder>page_actions</folder>
+		<type>html</type>
+	</extension>		
+	
+	<!-- itemtypes -->
+	<!-- ms: must check if we remove -->
+	<!--
+	<extension>
+		<name>content</name>
+		<type>itemtype</type>
+	</extension>
+	-->
+	<extension>
+		<name>custom</name>
+		<type>itemtype</type>
+	</extension>
+	<extension>
+		<name>html</name>
+		<type>itemtype</type>
+	</extension>
+	<extension>
+		<name>other_item</name>
+		<type>itemtype</type>
+	</extension>
+	<extension>
+		<name>text</name>
+		<type>itemtype</type>
+	</extension>
+	
+	<!-- managers -->
+	<!-- ms: replace with manager archivetrash ? -->
+	<!--
+	<extension>
+		<name>archive</name>
+		<type>manager</type>
+	</extension>
+	-->
+	<!-- ms: replace with manager archivetrash ? -->
+	<!--
+	<extension>
+		<name>trash</name>
+		<type>manager</type>
+	</extension>
+	-->
+	<extension>
+		<name>extensions</name>
+		<type>manager</type>
+	</extension>
+	
+	<extension>
+		<name>archivetrash</name>
+		<type>manager</type>
+	</extension>
+
+
+	<!-- pagetypes -->
+	<extension>
+		<name>alias</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>component</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_archive</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_article</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_categories</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_category</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_category_blog</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_featured</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>content_form_edit</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>separator</name>
+		<type>pagetype</type>
+	</extension>
+	<extension>
+		<name>url</name>
+		<type>pagetype</type>
+	</extension>
+</extensions>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<icons group="icons" description="alias-icons">
+		<icon type="text" name="default" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink.png"></icon>
+		<icon type="text" name="items" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink.png"></icon>
+		<icon type="text" name="pagepropertys" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink.png"></icon>
+		<icon type="text" name="pagepropertys_new" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_new.png"></icon>
+		<icon type="text" name="new" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_new.png"></icon>
+		<icon type="text" name="add" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_add.png"></icon>
+		<icon type="text" name="delete" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_delete.png"></icon>
+		<icon type="text" name="edit" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_edit.png"></icon>
+		<icon type="text" name="no_access" folder="menulink" pi_icons="1" folder_type="pi_icons" image="icon-16-menulink_no_access.png"></icon>
+	</icons>
+</config>

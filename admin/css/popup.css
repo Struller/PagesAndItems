@@ -1,0 +1,27 @@
+
+div#header, table.menubar, div.footer, div#border-top, div#header-box, div#toolbar-box, div#footer, div.t, div.b,  div#border-bottom{
+	display: none;
+}
+
+div.m{
+	margin: 0;
+}
+		
+div.centermain{
+	text-align: left;
+}
+
+#content-box .padding{
+	padding: 0;
+	margin: 0;
+}
+
+#content-box, div#element-box div.m, body{
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+html#minwidth, body#minwidth{
+	min-width: 0;	
+}

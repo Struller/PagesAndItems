@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="html" folder="page_actions" method="upgrade">
+	<name>Publish (Pages and Items Html)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		html Publish for pageItems in view page in underlaying pages (Pages and Items)
+	</description>
+	<files>
+		<filename html="publish">publish.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params>
+	</params>
+
+	<config>
+		<fields name="params">
+
+		</fields>
+	</config>
+</extension>

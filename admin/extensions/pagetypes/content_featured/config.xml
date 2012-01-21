@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<icons group="icons" description="content-featured-icons">
+		<icon type="text" name="default" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage.png"></icon>
+		<icon type="text" name="items" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage.png"></icon>
+		<icon type="text" name="pagepropertys" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage.png"></icon>
+		<icon type="text" name="pagepropertys_new" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_new.png"></icon>
+		<icon type="text" name="new" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_new.png"></icon>
+		<icon type="text" name="add" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_add.png"></icon>
+		<icon type="text" name="delete" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_delete.png"></icon>
+		<icon type="text" name="edit" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_edit.png"></icon>
+		<icon type="text" name="no_access" folder="components/content/frontpage" pi_icons="1" folder_type="pi_icons" image="icon-16-frontpage_no_access.png"></icon>
+	</icons>
+</config>

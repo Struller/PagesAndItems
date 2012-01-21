@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="1.6" method="upgrade">
+	<name>COM_PAGESANDITEMS</name>
+	<creationDate>august 2011</creationDate>
+	<author>Carsten Engel</author>
+	<copyright>Copyright (C) 2008-2011 Engelweb. All rights reserved.</copyright>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>2.0.0</version>
+	<description>Pages-and-Items = menu-manager + content-manager</description>
+	
+	<installfile>install.php</installfile>
+	<uninstallfile>uninstall.php</uninstallfile>
+	
+	<files folder="site">
+		<folder>views</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<folder>css</folder>
+		<filename>index.html</filename>
+		<filename>pagesanditems.php</filename>
+		<filename>controller.php</filename>		
+	</files>
+	<administration>
+		<menu img="components/com_pagesanditems/media/images/icons/icon-16-pi.png">COM_PAGESANDITEMS</menu>
+		<files folder="admin">
+			<folder>controllers</folder>
+			<folder>css</folder>
+			<folder>elements</folder>
+
+			<!-- ms: i have rewrite the install routine for the pi extensions so we need not the complete folder extensions -->
+			<!-- <folder>extensions</folder> -->
+			<filename>extensions/language/index.html</filename>
+			<!-- better move this to includes/install.php -->
+			<!--
+			<filename>extensions/language/en-GB/index.html</filename>
+			<filename>extensions/language/en-GB/en-GB.xml</filename>
+			-->
+			
+			<folder>helpers</folder>
+			<folder>images</folder>			
+			<folder>includes</folder>
+			<folder>install</folder>
+			<folder>javascript</folder>
+			<folder>media</folder>
+			<folder>models</folder>
+			
+			<!--
+			folder>plugin_content</folder>
+			<folder>plugin_system</folder>
+			ms: we copy only 4 files the other will install and not copy to the component admin dir
+			-->
+			<filename>plugin_content/plugin_content.php</filename>
+			<filename>plugin_content/index.html</filename>
+			<filename>plugin_system/plugin_system.php</filename>
+			<filename>plugin_system/index.html</filename>
+			
+			<folder>tables</folder>
+			<folder>views</folder>
+			
+			<filename>pagesanditems.php</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+		</files>
+		<languages folder="admin">			
+			<language tag="af-ZA">language/af-ZA.com_pagesanditems.ini</language>
+			<language tag="af-ZA">language/af-ZA.com_pagesanditems.sys.ini</language>
+			<language tag="ar-EG">language/ar-EG.com_pagesanditems.ini</language>
+			<language tag="ar-EG">language/ar-EG.com_pagesanditems.sys.ini</language>
+			<language tag="be-BE">language/be-BE.com_pagesanditems.ini</language>
+			<language tag="be-BE">language/be-BE.com_pagesanditems.sys.ini</language>
+			<language tag="bg-BG">language/bg-BG.com_pagesanditems.ini</language>
+			<language tag="bg-BG">language/bg-BG.com_pagesanditems.sys.ini</language>
+			<language tag="ca-ES">language/ca-ES.com_pagesanditems.ini</language>
+			<language tag="ca-ES">language/ca-ES.com_pagesanditems.sys.ini</language>
+			<language tag="cs-CZ">language/cs-CZ.com_pagesanditems.ini</language>
+			<language tag="cs-CZ">language/cs-CZ.com_pagesanditems.sys.ini</language>
+			<language tag="cy-GB">language/cy-GB.com_pagesanditems.ini</language>
+			<language tag="cy-GB">language/cy-GB.com_pagesanditems.sys.ini</language>
+			<language tag="da-DK">language/da-DK.com_pagesanditems.ini</language>
+			<language tag="da-DK">language/da-DK.com_pagesanditems.sys.ini</language>
+			<language tag="de-DE">language/de-DE.com_pagesanditems.ini</language>
+			<language tag="de-DE">language/de-DE.com_pagesanditems.sys.ini</language>
+			<language tag="el-GR">language/el-GR.com_pagesanditems.ini</language>
+			<language tag="el-GR">language/el-GR.com_pagesanditems.sys.ini</language>
+			<language tag="en-GB">language/en-GB.com_pagesanditems.ini</language>
+			<language tag="en-GB">language/en-GB.com_pagesanditems.sys.ini</language>
+			<language tag="es-ES">language/es-ES.com_pagesanditems.ini</language>
+			<language tag="es-ES">language/es-ES.com_pagesanditems.sys.ini</language>
+			<language tag="et-EE">language/et-EE.com_pagesanditems.ini</language>
+			<language tag="et-EE">language/et-EE.com_pagesanditems.sys.ini</language>
+			<language tag="fa-IR">language/fa-IR.com_pagesanditems.ini</language>
+			<language tag="fa-IR">language/fa-IR.com_pagesanditems.sys.ini</language>
+			<language tag="fi-FI">language/fi-FI.com_pagesanditems.ini</language>
+			<language tag="fi-FI">language/fi-FI.com_pagesanditems.sys.ini</language>
+			<language tag="fr-FR">language/fr-FR.com_pagesanditems.ini</language>
+			<language tag="fr-FR">language/fr-FR.com_pagesanditems.sys.ini</language>
+			<language tag="ga-IE">language/ga-IE.com_pagesanditems.ini</language>
+			<language tag="ga-IE">language/ga-IE.com_pagesanditems.sys.ini</language>
+			<language tag="gl-ES">language/gl-ES.com_pagesanditems.ini</language>
+			<language tag="gl-ES">language/gl-ES.com_pagesanditems.sys.ini</language>
+			<language tag="he-IL">language/he-IL.com_pagesanditems.ini</language>
+			<language tag="he-IL">language/he-IL.com_pagesanditems.sys.ini</language>
+			<language tag="hi-IN">language/hi-IN.com_pagesanditems.ini</language>
+			<language tag="hi-IN">language/hi-IN.com_pagesanditems.sys.ini</language>
+			<language tag="hr-HR">language/hr-HR.com_pagesanditems.ini</language>
+			<language tag="hr-HR">language/hr-HR.com_pagesanditems.sys.ini</language>
+			<language tag="ht-NG">language/ht-NG.com_pagesanditems.ini</language>
+			<language tag="ht-NG">language/ht-NG.com_pagesanditems.sys.ini</language>
+			<language tag="hu-HU">language/hu-HU.com_pagesanditems.ini</language>
+			<language tag="hu-HU">language/hu-HU.com_pagesanditems.sys.ini</language>
+			<language tag="id-ID">language/id-ID.com_pagesanditems.ini</language>
+			<language tag="id-ID">language/id-ID.com_pagesanditems.sys.ini</language>
+			<language tag="is-IS">language/is-IS.com_pagesanditems.ini</language>
+			<language tag="is-IS">language/is-IS.com_pagesanditems.sys.ini</language>
+			<language tag="it-IT">language/it-IT.com_pagesanditems.ini</language>
+			<language tag="it-IT">language/it-IT.com_pagesanditems.sys.ini</language>
+			<language tag="ja-JP">language/ja-JP.com_pagesanditems.ini</language>
+			<language tag="ja-JP">language/ja-JP.com_pagesanditems.sys.ini</language>
+			<language tag="ko-KR">language/ko-KR.com_pagesanditems.ini</language>
+			<language tag="ko-KR">language/ko-KR.com_pagesanditems.sys.ini</language>
+			<language tag="lt-LT">language/lt-LT.com_pagesanditems.ini</language>
+			<language tag="lt-LT">language/lt-LT.com_pagesanditems.sys.ini</language>
+			<language tag="lv-LV">language/lv-LV.com_pagesanditems.ini</language>
+			<language tag="lv-LV">language/lv-LV.com_pagesanditems.sys.ini</language>
+			<language tag="mk-MK">language/mk-MK.com_pagesanditems.ini</language>
+			<language tag="mk-MK">language/mk-MK.com_pagesanditems.sys.ini</language>
+			<language tag="ms-MY">language/ms-MY.com_pagesanditems.ini</language>
+			<language tag="ms-MY">language/ms-MY.com_pagesanditems.sys.ini</language>
+			<language tag="mt-MT">language/mt-MT.com_pagesanditems.ini</language>
+			<language tag="mt-MT">language/mt-MT.com_pagesanditems.sys.ini</language>
+			<language tag="nl-NL">language/nl-NL.com_pagesanditems.ini</language>
+			<language tag="nl-NL">language/nl-NL.com_pagesanditems.sys.ini</language>
+			<language tag="no-NO">language/no-NO.com_pagesanditems.ini</language>
+			<language tag="no-NO">language/no-NO.com_pagesanditems.sys.ini</language>
+			<language tag="pl-PL">language/pl-PL.com_pagesanditems.ini</language>
+			<language tag="pl-PL">language/pl-PL.com_pagesanditems.sys.ini</language>
+			<language tag="pt-BR">language/pt-BR.com_pagesanditems.ini</language>
+			<language tag="pt-BR">language/pt-BR.com_pagesanditems.sys.ini</language>
+			<language tag="pt-PT">language/pt-PT.com_pagesanditems.ini</language>
+			<language tag="pt-PT">language/pt-PT.com_pagesanditems.sys.ini</language>
+			<language tag="ro-RO">language/ro-RO.com_pagesanditems.ini</language>
+			<language tag="ro-RO">language/ro-RO.com_pagesanditems.sys.ini</language>
+			<language tag="ru-RU">language/ru-RU.com_pagesanditems.ini</language>
+			<language tag="ru-RU">language/ru-RU.com_pagesanditems.sys.ini</language>
+			<language tag="sk-SK">language/sk-SK.com_pagesanditems.ini</language>
+			<language tag="sk-SK">language/sk-SK.com_pagesanditems.sys.ini</language>
+			<language tag="sl-SI">language/sl-SI.com_pagesanditems.ini</language>
+			<language tag="sl-SI">language/sl-SI.com_pagesanditems.sys.ini</language>
+			<language tag="sq-AL">language/sq-AL.com_pagesanditems.ini</language>
+			<language tag="sq-AL">language/sq-AL.com_pagesanditems.sys.ini</language>
+			<language tag="sr-RS">language/sr-RS.com_pagesanditems.ini</language>
+			<language tag="sr-RS">language/sr-RS.com_pagesanditems.sys.ini</language>
+			<language tag="sv-SE">language/sv-SE.com_pagesanditems.ini</language>
+			<language tag="sv-SE">language/sv-SE.com_pagesanditems.sys.ini</language>
+			<language tag="sw-TZ">language/sw-TZ.com_pagesanditems.ini</language>
+			<language tag="sw-TZ">language/sw-TZ.com_pagesanditems.sys.ini</language>
+			<language tag="th-TH">language/th-TH.com_pagesanditems.ini</language>
+			<language tag="th-TH">language/th-TH.com_pagesanditems.sys.ini</language>
+			<language tag="tl-PH">language/tl-PH.com_pagesanditems.ini</language>
+			<language tag="tl-PH">language/tl-PH.com_pagesanditems.sys.ini</language>
+			<language tag="tr-TR">language/tr-TR.com_pagesanditems.ini</language>
+			<language tag="tr-TR">language/tr-TR.com_pagesanditems.sys.ini</language>
+			<language tag="uk-UA">language/uk-UA.com_pagesanditems.ini</language>
+			<language tag="uk-UA">language/uk-UA.com_pagesanditems.sys.ini</language>
+			<language tag="vi-VN">language/vi-VN.com_pagesanditems.ini</language>
+			<language tag="vi-VN">language/vi-VN.com_pagesanditems.sys.ini</language>
+			<language tag="yi-IL">language/yi-IL.com_pagesanditems.ini</language>
+			<language tag="yi-IL">language/yi-IL.com_pagesanditems.sys.ini</language>
+			<language tag="zh-CN">language/zh-CN.com_pagesanditems.ini</language>
+			<language tag="zh-CN">language/zh-CN.com_pagesanditems.sys.ini</language>
+			<language tag="zh-TW">language/zh-TW.com_pagesanditems.ini</language>
+			<language tag="zh-TW">language/zh-TW.com_pagesanditems.sys.ini</language>
+
+		</languages>
+	</administration>
+	<!-- install for plugins -->
+	<plugins>
+		<!-- system plugin -->
+		<plugin plugin="pagesanditems" group="system" name="System - Pages and Items">
+			<files folder="plugin_system">
+				<file>pagesanditems.php</file>
+				<file>pagesanditems.xml</file>
+			</files>
+		</plugin>
+
+		<!-- content plugin -->
+		<plugin plugin="pagesanditems" group="content" name="Content - Pages and Items">
+			<files folder="plugin_content">
+				<file>pagesanditems.php</file>
+				<file>pagesanditems.xml</file>
+			</files>
+		</plugin>
+	</plugins>
+</extension>

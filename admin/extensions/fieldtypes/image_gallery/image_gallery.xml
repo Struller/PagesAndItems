@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="fieldtype" method="upgrade">
+	<name>Image_gallery (Pages and Items fieldtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		fieldtype Image_gallery (Pages and Items)
+	</description>
+	<files>
+		<filename fieldtype="image_gallery">image_gallery.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params>
+		<param name="show_field_name" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="resize" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_RESIZE3">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="max_width" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		</param>
+		
+		<param name="max_height" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		</param>
+		
+		
+		<param name="max_width_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
+		</param>
+		
+		<param name="max_height_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
+		</param>
+		
+		<param name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="show_src" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="class_name" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="class_name_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_CLASS_NAME_THUMB2" description="COM_PAGESANDITEMS_CLASS_NAME2">
+		</param>
+
+		<param name="only_source" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+		<param name="image_dir" type="text" default="images/stories/" size="60" label="COM_PAGESANDITEMS_IMAGE_DIR" description="COM_PAGESANDITEMS_IMAGE_DIR_EXAMPLE">
+		</param>
+		
+		<param name="auto_alt" type="radio" default="1" label="COM_PAGESANDITEMS_AUTO_ADD_SRC_TO_ALT" description="COM_PAGESANDITEMS_AUTO_ADD_SRC_TO_ALT2">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="crop" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_CROP3" description="COM_PAGESANDITEMS_FIELD_CROP3_INFO">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" >
+				<field name="show_field_name" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+
+				<field name="resize" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_RESIZE3">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+		
+				<field name="max_width" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+				</field>
+		
+				<field name="max_height" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				</field>
+		
+		
+				<field name="max_width_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
+				</field>
+		
+				<field name="max_height_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
+				</field>
+		
+				<field name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+
+				<field name="show_src" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+		
+				<field name="class_name" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="class_name_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_CLASS_NAME_THUMB2" description="COM_PAGESANDITEMS_CLASS_NAME2">
+				</field>
+
+				<field name="only_source" type="radio" default="0" label="COM_PAGESANDITEMS_OUTPUT_ONLY_SOURCE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+
+				<field name="image_dir" type="text" default="images/stories/" size="60" label="COM_PAGESANDITEMS_IMAGE_DIR" description="COM_PAGESANDITEMS_IMAGE_DIR_EXAMPLE">
+				</field>
+		
+				<field name="auto_alt" type="radio" default="1" label="COM_PAGESANDITEMS_AUTO_ADD_SRC_TO_ALT" description="COM_PAGESANDITEMS_AUTO_ADD_SRC_TO_ALT2">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+		
+				<field name="crop" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_CROP3" description="COM_PAGESANDITEMS_FIELD_CROP3_INFO">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+
+			</fieldset>
+		</fields>
+	</config>
+</extension>

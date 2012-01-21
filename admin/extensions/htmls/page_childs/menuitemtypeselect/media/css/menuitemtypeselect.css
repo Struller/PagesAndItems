@@ -1,0 +1,195 @@
+/**
+* @version1.6.2.2$Id: popup-imagemanager.css 10387 2008-06-03 10:59:16Z pasamio $
+* @copyright Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
+* @license GNU/GPL, see LICENSE.php
+* Joomla! is free software. This version may have been modified pursuant
+* to the GNU General Public License, and as distributed it includes or
+* is derivative of works licensed under the GNU General Public License or
+* other free or open source software licenses.
+* See COPYRIGHT.php for copyright notices and details.
+*/
+
+/**
+ * XtdManager javascript behavior styling
+ */
+
+
+.clr {
+	clear: both;
+}
+
+.clr_none {
+	clear: none;
+}
+
+.clr_left {
+	clear: left;
+}
+
+.clr_right {
+	clear: right;
+}
+
+h1.pi_h1
+{
+	margin:0;
+	padding:0;
+	padding-bottom: 0px;
+	/*line-height: 32px;*/
+}
+
+h1.pi_h1 img
+{
+	margin-top:1px;
+	margin-bottom:0;
+	padding:0;
+	padding-bottom: 0px;
+	vertical-align: middle;
+	/*line-height: 32px;*/
+}
+
+html
+{
+    overflow-y: hidden  !important;
+}
+
+
+body
+{
+	 margin:5px !important;
+}
+
+
+
+.contentcontainer
+{
+	float: left;
+	height: 320px;
+	overflow-x: auto;
+	overflow-y: auto;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	width: 100%;
+}
+
+/*
+.contentcontainer li
+{
+	padding-bottom: 2px;
+	display:block;
+	list-style-type: none;
+}
+
+
+.contentcontainer li a.child
+{
+	color:blue;
+}
+
+.contentcontainer li a.parent:hover
+{
+	text-decoration: none;
+}
+
+.contentcontainer dt
+{
+	font-size: 14px;
+	font-weight: bold;
+	 margin-bottom: 2px;
+}
+
+.contentcontainer dd
+{
+	margin-left: 5px;
+	margin-start-value: 10px;
+
+}
+
+.contentcontainer dd
+{
+	margin-bottom: 5px;
+}
+.contentcontainer ul
+{
+	float: left;
+	width:98%;
+	padding-left: 6px;
+	margin-bottom: 2px;
+	padding-bottom: 2px;
+	clear: left;
+}
+
+.contentcontainer ul ul
+{
+	padding-left: 12px;
+	margin-bottom: 2px;
+}
+*/
+
+/* -- MODAL STYLES ----------- */
+
+h2.modal-title 
+{
+	margin-left: 15px;
+	margin-bottom: 0;
+	margin-top: 5px;
+}
+
+ul.menu_types 
+{
+	padding: 0 0 0 15px;
+	width: 95%;
+	margin: 0;
+}
+
+ul.menu_types li 
+{
+	width: 46% !important;
+}
+
+ul.menu_types li,
+dl.menu_type dd ul li 
+{
+	width: 240px !important;
+	list-style: none;
+	display: block;
+	float: left;
+	margin-right: 10px;
+}
+
+
+
+dl.menu_type
+{
+	width: 240px;
+	margin: 0;
+	padding: 0;
+}
+
+dl.menu_type dt {
+	font-weight: bold;
+	font-size: 1.091em;
+	float: left;
+	margin: 13px 0 5px 0;
+	border-bottom: 1px solid #666;
+	width: 240px;
+}
+
+dl.menu_type dd {
+	clear: left;
+	margin: 0;
+}
+
+dl.menu_type dd ul li {
+	margin: 0;
+}
+
+dl.menu_type dd ul 
+{
+	/*margin-left: -40px;*/
+	padding-start-value: 0 !important;
+	margin-left: 0 !important;
+}
+

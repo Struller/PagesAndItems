@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="fieldtype" method="upgrade">
+	<name>Text (Pages and Items fieldtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		fieldtype Text (Pages and Items)
+	</description>
+	<files>
+		<filename fieldtype="text">text.php</filename>
+		<filename >index.html</filename>
+		<filename>validation_text_not_empty.js</filename>
+		<filename>validation_text_emailadress.js</filename>
+	</files>
+	<params>
+		<param name="max_chars" type="text" size="50" default="" label="COM_PAGESANDITEMS_FIELD_MAX_CHARS" ></param>
+		<param name="validation" type="radio" default="0" label="COM_PAGESANDITEMS_VALIDATION">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" >
+				<field name="max_chars" type="text" size="50" default="" label="COM_PAGESANDITEMS_FIELD_MAX_CHARS" >
+				</field>
+				<field name="validation" type="radio" default="0" label="COM_PAGESANDITEMS_VALIDATION">
+					<option value="0">No</option>
+				<option value="1">Yes</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

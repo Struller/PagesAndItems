@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="manager"  method="upgrade">
+	<name>Archive/Trash (Pages and Items Manager)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		Manager Archive/Trash for Pages and Items
+	</description>
+	<extensionslanguage folder="language">
+		<language tag="af-ZA">af-ZA/af-ZA.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ar-EG">ar-EG/ar-EG.pi_extension_manager_archivetrash.ini</language>
+		<language tag="be-BE">be-BE/be-BE.pi_extension_manager_archivetrash.ini</language>
+		<language tag="bg-BG">bg-BG/bg-BG.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ca-ES">ca-ES/ca-ES.pi_extension_manager_archivetrash.ini</language>
+		<language tag="cs-CZ">cs-CZ/cs-CZ.pi_extension_manager_archivetrash.ini</language>
+		<language tag="cy-GB">cy-GB/cy-GB.pi_extension_manager_archivetrash.ini</language>
+		<language tag="da-DK">da-DK/da-DK.pi_extension_manager_archivetrash.ini</language>
+		<language tag="de-DE">de-DE/de-DE.pi_extension_manager_archivetrash.ini</language>
+		<language tag="el-GR">el-GR/el-GR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="en-GB">en-GB/en-GB.pi_extension_manager_archivetrash.ini</language>
+		<language tag="es-ES">es-ES/es-ES.pi_extension_manager_archivetrash.ini</language>
+		<language tag="et-EE">et-EE/et-EE.pi_extension_manager_archivetrash.ini</language>
+		<language tag="fa-IR">fa-IR/fa-IR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="fi-FI">fi-FI/fi-FI.pi_extension_manager_archivetrash.ini</language>
+		<language tag="fr-FR">fr-FR/fr-FR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ga-IE">ga-IE/ga-IE.pi_extension_manager_archivetrash.ini</language>
+		<language tag="gl-ES">gl-ES/gl-ES.pi_extension_manager_archivetrash.ini</language>
+		<language tag="he-IL">he-IL/he-IL.pi_extension_manager_archivetrash.ini</language>
+		<language tag="hi-IN">hi-IN/hi-IN.pi_extension_manager_archivetrash.ini</language>
+		<language tag="hr-HR">hr-HR/hr-HR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ht-NG">ht-NG/ht-NG.pi_extension_manager_archivetrash.ini</language>
+		<language tag="hu-HU">hu-HU/hu-HU.pi_extension_manager_archivetrash.ini</language>
+		<language tag="id-ID">id-ID/id-ID.pi_extension_manager_archivetrash.ini</language>
+		<language tag="is-IS">is-IS/is-IS.pi_extension_manager_archivetrash.ini</language>
+		<language tag="it-IT">it-IT/it-IT.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ja-JP">ja-JP/ja-JP.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ko-KR">ko-KR/ko-KR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="lt-LT">lt-LT/lt-LT.pi_extension_manager_archivetrash.ini</language>
+		<language tag="lv-LV">lv-LV/lv-LV.pi_extension_manager_archivetrash.ini</language>
+		<language tag="mk-MK">mk-MK/mk-MK.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ms-MY">ms-MY/ms-MY.pi_extension_manager_archivetrash.ini</language>
+		<language tag="mt-MT">mt-MT/mt-MT.pi_extension_manager_archivetrash.ini</language>
+		<language tag="nl-NL">nl-NL/nl-NL.pi_extension_manager_archivetrash.ini</language>
+		<language tag="no-NO">no-NO/no-NO.pi_extension_manager_archivetrash.ini</language>
+		<language tag="pl-PL">pl-PL/pl-PL.pi_extension_manager_archivetrash.ini</language>
+		<language tag="pt-BR">pt-BR/pt-BR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="pt-PT">pt-PT/pt-PT.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ro-RO">ro-RO/ro-RO.pi_extension_manager_archivetrash.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sk-SK">sk-SK/sk-SK.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sl-SI">sl-SI/sl-SI.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sq-AL">sq-AL/sq-AL.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sr-RS">sr-RS/sr-RS.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sv-SE">sv-SE/sv-SE.pi_extension_manager_archivetrash.ini</language>
+		<language tag="sw-TZ">sw-TZ/sw-TZ.pi_extension_manager_archivetrash.ini</language>
+		<language tag="th-TH">th-TH/th-TH.pi_extension_manager_archivetrash.ini</language>
+		<language tag="tl-PH">tl-PH/tl-PH.pi_extension_manager_archivetrash.ini</language>
+		<language tag="tr-TR">tr-TR/tr-TR.pi_extension_manager_archivetrash.ini</language>
+		<language tag="uk-UA">uk-UA/uk-UA.pi_extension_manager_archivetrash.ini</language>
+		<language tag="vi-VN">vi-VN/vi-VN.pi_extension_manager_archivetrash.ini</language>
+		<language tag="yi-IL">yi-IL/yi-IL.pi_extension_manager_archivetrash.ini</language>
+		<language tag="zh-CN">zh-CN/zh-CN.pi_extension_manager_archivetrash.ini</language>
+		<language tag="zh-TW">zh-TW/zh-TW.pi_extension_manager_archivetrash.ini</language>
+	</extensionslanguage>
+	<files>
+		<filename manager="archivetrash">archivetrash.php</filename>
+		<filename >index.html</filename>
+		<filename >controller.php</filename>
+		
+		<!--
+		<folder>controllers</folder>
+		<folder>language</folder>
+		-->
+		<folder>media</folder>
+		<folder>models</folder>
+		<folder>views</folder>
+		
+	</files>
+	<params>
+	</params>
+	<config>
+		<fields name="params">
+		</fields>
+	</config>
+</extension>

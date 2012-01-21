@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_PAGESANDITEMS_SELECT_ITEMTYPE_FOR_NEW_ITEM">
+		<message>
+			<![CDATA[COM_PAGESANDITEMS_SELECT_ITEMTYPE_FOR_NEW_ITEM]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_PAGESANDITEMS_SELECT_ITEMTYPE_FOR_NEW_ITEM</name>
+		<description>COM_PAGESANDITEMS_SELECT_ITEMTYPE_FOR_NEW_ITEM</description>
+	</state>
+</metadata>

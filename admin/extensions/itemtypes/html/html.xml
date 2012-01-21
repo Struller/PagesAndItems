@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="itemtype" method="upgrade">
+	<name>Html (Pages and Items itemtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		itemtype Html (Pages and Items)
+	</description>
+	<files>
+		<filename itemtype="html">html.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params group="advanced">
+		<param name="translatable" type="radio" default="0" label="COM_PAGESANDITEMS_LANGUAGE_TRANSLATE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="display_type" type="list" default="namesplusimages" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_TYPE">
+			<option value="names">COM_PAGESANDITEMS_LANGUAGE_NAMES</option>
+			<option value="namesplusimages">COM_PAGESANDITEMS_LANGUAGE_NAMES_WITH_IMAGE</option>
+			<option value="images">COM_PAGESANDITEMS_LANGUAGE_IMAGE</option>
+		</param>
+		<param name="display_status" type="radio" default="1" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_STATUS">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="display_status_published" type="radio" default="1" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_STATUS_PUBLISHED">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="display_inactive" type="radio" default="0" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_INAKTIVE_LANGUAGE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		
+		<param name="content_table" type="hidden" default="conten_pi_html" >
+		</param>
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="hidden" >
+				<field name="translatable" type="radio" default="0" label="COM_PAGESANDITEMS_LANGUAGE_TRANSLATE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+				<field name="display_type" type="list" default="namesplusimages" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_TYPE">
+			<option value="names">COM_PAGESANDITEMS_LANGUAGE_NAMES</option>
+			<option value="namesplusimages">COM_PAGESANDITEMS_LANGUAGE_NAMES_WITH_IMAGE</option>
+			<option value="images">COM_PAGESANDITEMS_LANGUAGE_IMAGE</option>
+				</field>
+				<field name="display_status" type="radio" default="1" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_STATUS">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+				<field name="display_status_published" type="radio" default="1" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_STATUS_PUBLISHED">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+				<field name="display_inactive" type="radio" default="0" label="COM_PAGESANDITEMS_LANGUAGE_DISPLAY_INAKTIVE_LANGUAGE">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+		
+				<field name="content_table" type="hidden" default="conten_pi_html" >
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="html" folder="cci_template" method="upgrade">
+	<name>Insert_field_code (Pages and Items Html)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		html Insert_field_code for Template in view config_custom_itemtype (Pages and Items)
+	</description>
+	<files>
+		<filename html="insert_field_code">insert_field_code.php</filename>
+		<filename >index.html</filename>
+	</files>
+	<params>
+		<param name="show_in" type="radio" default="0" label="show_in_template">
+			<option value="0">intro/full</option>
+			<option value="1">intro</option>
+			<option value="2">full</option>
+		</param>
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic" >
+				<field name="show_in" type="radio" default="0" label="show_in_template">
+			<option value="0">intro/full</option>
+			<option value="1">intro</option>
+			<option value="2">full</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

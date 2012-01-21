@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.6" type="plugin" group="system" method="upgrade">
+	<name>System - Pages and Items</name>	
+	<author>Carsten Engel</author>
+	<creationDate>august 2011</creationDate>
+	<copyright>(C) 2011 Carsten Engel. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>2.0.0</version>
+	<description>PLG_SYSTEM_PAGES_AND_ITEMS_DESCRIPTION</description>
+	<files>
+		<filename plugin="pagesanditems">pagesanditems.php</filename>
+	</files>	
+</extension>

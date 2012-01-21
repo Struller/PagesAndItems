@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="1.5" type="itemtype" method="upgrade">
+	<name>Custom (Pages and Items itemtype)</name>
+	<author>Carsten Engel</author>
+	<creationDate>December 2010</creationDate>
+	<copyright>(Copyright (C) 2009 Engelweb. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>-</authorEmail>
+	<authorUrl>www.pages-and-items.com</authorUrl>
+	<version>integrated</version>
+	<description>
+		itemtype Custom (Pages and Items)
+	</description>
+	<files>
+		<filename itemtype="custom">custom.php</filename>
+		<filename >index.html</filename>
+	</files>
+	
+	
+	
+	<params group="advanced">
+		<param name="translatable" type="radio" default="0" label="translatable">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	</params>
+
+	<config>
+		<fields name="params">
+			<fieldset name="hidden" >
+				<field name="translatable" type="radio" default="0" label="translatable">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

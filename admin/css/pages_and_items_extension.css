@@ -1,0 +1,94 @@
+html
+{
+	overflow-y: hidden; /*scroll;*/
+}
+
+body
+{
+/*    font-size: 100%;*/
+	margin: 0;
+}
+
+
+h1.pi_h1 
+{
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+
+h1.pi_h1 img 
+{
+	margin-bottom: 0;
+	margin-top: 1px;
+	padding: 0;
+	vertical-align: middle;
+	float: left;
+}
+
+.formHeader img
+{
+	margin-bottom: 0;
+	margin-top: 1px;
+	padding: 0;
+	vertical-align: middle;
+}
+
+.formHeader
+{
+	/*
+	border-color: #CCCCCC;
+	border-style: solid;
+	border-width: 1px;
+	margin-bottom: 10px;
+	padding: 5px;
+	
+	text-align: left;
+	*/
+	/*
+	height: 33px;
+	*/
+}
+
+.formContent
+{
+	/*
+	border-color: #CCCCCC;
+	border-style: solid;
+	border-width: 1px;
+	margin-bottom: 10px;
+	padding: 5px;
+	*/
+	overflow-y: auto;
+}
+
+.formFooter
+{
+	/*
+	border-color: #CCCCCC;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	*/
+	/*
+	height: 33px;
+	*/
+}
+
+.formFooter button
+{
+	float: right;
+}
+
+
+input.button
+{
+	padding: 3px 3px 3px 15px;
+	min-height: 16px;
+	background-repeat: no-repeat;
+	background-position:3px center;
+	margin-left: 0;
+	margin-right: 6px;
+}
+
+

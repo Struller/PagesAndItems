@@ -1,0 +1,306 @@
+/**
+* @package PI!Fish
+ translating custom itemtype field from Pages and Items using Joom!Fish
+* @version 1.6.2.2
+* @copyright Copyright (C) 2009-2010 Michael Struller. All rights reserved.
+* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author http://gecko.struller.de
+*/
+
+html, body 
+{
+	background-color: white;
+	font: 11px Tahoma, Verdana, sans-serif;/* !important;*/
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#translateFormDiv
+{
+	padding: 5px; 
+}
+.select_cgp
+{
+	max-width:180px;
+}
+
+.select_g_p
+{
+	max-width:200px;
+}
+
+.ginkgo_h1
+{
+	padding-bottom: 0px;
+	color:#0B55C4;
+	font-size:20px;
+	font-weight:bold;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
+	margin-top:0;
+}
+.ginkgo_icon
+{
+	vertical-align: text-top;
+}
+
+
+div.line
+{
+	border-bottom: 2px solid #CCCCCC;
+	width: 100%;
+	height: 5px;
+	margin-bottom: 5px;
+}
+
+img
+{ 
+	border: 0 none; 
+}
+
+form
+{
+	padding: 0px; 
+	margin: 0 auto; 
+	width: 100%; 
+}
+
+fieldset 
+{
+	border-top: 1px solid #CCCCCC; 
+	border-bottom: 1px solid #CCCCCC; 
+}
+
+
+#fieldset_top, #fieldset_content
+{
+	margin-bottom:10px;
+	margin-top:0px;
+	padding-bottom:5px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top:5px;
+	text-align:left;
+}
+
+fieldset.ginkgo
+{
+	margin-bottom:10px;
+	margin-top:0px;
+	padding-bottom:5px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top:5px;
+	text-align:left;
+}
+
+select,input,button 
+{ 
+	font: 11px Tahoma, Verdana, sans-serif; 
+}
+
+iframe 
+{
+	width: 100%;  
+	overflow-x: hidden;
+	border: 0 none;  
+	margin: 0 0 0.5em 0; 
+	padding: 0;
+	background-color: white;
+}
+
+a
+{
+	padding: 5px; 
+}
+
+a:hover 
+{
+	border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight; 
+}
+
+a:link 
+{
+	color:#000000;
+	text-decoration:none;
+}
+
+.clr 
+{
+	clear: both;
+}
+
+.clr_none 
+{
+	clear: none;
+}
+
+.clr_left 
+{
+	clear: left;
+}
+
+.clr_right 
+{
+	clear: right;
+}
+
+
+.myclassWindow
+{
+	padding:2px;/* !important;*/
+	border-radius:1px;/* !important;*/
+	-moz-border-radius:1px;/* !important;*/
+	-webkit-border-radius:1px;/* !important;*/
+}
+
+#sbox-windowx
+{
+	padding:2px;/* !important;*/
+	border-radius:1px;/* !important;*/
+	-moz-border-radius:1px;/* !important;*/
+	-webkit-border-radius:1px;/* !important;*/
+}
+
+.buttons, .submit 
+{ 
+	text-align: center; 
+}
+
+.div_button
+{
+	position: relative;
+	float: right;
+}
+
+.div_button_left
+{
+	position: relative;
+	float: left
+	margin:6px;
+}
+
+button:hover 
+{ 
+	border: 1px solid #0B55C4;
+	cursor: pointer;
+}
+
+.button_action
+{
+	float: right; 
+	text-align: center;
+	margin-bottom:2px;
+}
+
+button.button_action_disabled
+{
+	cursor:default;
+	border:1px solid #CCCCCC;
+	color:#CCCCCC;
+}
+
+.button_action_disabled.on:hover
+{
+	cursor:default;
+	border:1px solid #CCCCCC;
+	color:#CCCCCC;
+}
+
+fieldset.bottom
+{
+	border:1px solid #CCCCCC;
+	bottom:10px;
+	margin-bottom:0;
+	margin-top:10px;
+	padding:5px;
+	position: static;
+	text-align:left;
+}
+
+iframe#languageiframe.normal, iframe#contentlanguageiframe.normal
+{ 
+	/*height: 195px; */
+	/*height: 674px;*/
+	/*height: 474px;*/
+	/*height: 410px;*/
+	height: 475px;
+	overflow-x:auto;
+	display:block;
+}
+
+iframe#languageiframe.disabled, iframe#contentlanguageiframe.diabled
+{ 
+	/*height: 195px; */
+	/*height: 674px;*/
+	/*height: 474px;
+	height: 410px;
+	overflow-x:auto;
+	*/
+	/*height: 410px;*/
+	height: 475px;
+	display:none;
+}
+
+/*
+.jpane-toggler .jpane-slider .content
+{
+	height: 0px;
+}
+
+.jpane-toggler-down .jpane-slider .content
+{
+	height: 410px;
+}
+*/
+
+#parent_content
+{
+	float: left; 
+	width:100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	height: 480px;
+}
+
+button
+{ 
+	padding: 3px;
+	margin: 2px; 
+	border: 1px solid #CCCCCC; 
+	font-weight: bold; 
+	color: #0B55C4; 
+	background-color: white; 
+	font-size:10px;
+}
+
+
+fieldset.actions 
+{
+	margin-bottom:5px;
+}
+
+
+
+.button_action_div
+{ 
+	border: 1px solid silver;
+	background-color:buttonface;
+	display: block; 
+	float: left;
+	margin:3px;
+	padding:3px;
+}
+
+.button_action_div a
+{ 
+	border:0 none;
+}
+
+
+.div_left_bottom
+{
+	float: left;
+}

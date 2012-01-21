@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<icons group="icons" description="component-icons">
+		<icon type="text" name="default" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component.png"></icon>
+		<icon type="text" name="items" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component.png"></icon>
+		<icon type="text" name="pagepropertys" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component.png"></icon>
+		<icon type="text" name="pagepropertys_new" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_new.png"></icon>
+		<icon type="text" name="new" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_new.png"></icon>
+		<icon type="text" name="add" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_add.png"></icon>
+		<icon type="text" name="delete" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_delete.png"></icon>
+		<icon type="text" name="edit" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_edit.png"></icon>
+		<icon type="text" name="no_access" folder="components" pi_icons="1" folder_type="pi_icons" image="icon-16-component_no_access.png"></icon>
+	</icons>
+</config>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension version="1.6" type="pilanguage" method="upgrade">
+	<tag>mt-MT</tag>
+	<version>1.0.0</version>
+	
+	<administration>
+		<languages>
+			<language tag="mt-MT">mt-MT.com_pagesanditems.ini</language>
+			<language tag="mt-MT">mt-MT.com_pagesanditems.sys.ini</language>
+		</languages>
+	</administration>
+
+	<extensionslanguage>		
+		<language tag="mt-MT">mt-MT.pi_extension_fieldtype_calendar.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_cci_template_insert_own_code.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_page_actions_delete.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_page_actions_trash.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_page_items_archive.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_page_items_delete.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_html_page_items_trash.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_manager_archivetrash.ini</language>
+		<language tag="mt-MT">mt-MT.pi_extension_manager_extensions.ini</language>
+	</extensionslanguage>
+	
+</extension>

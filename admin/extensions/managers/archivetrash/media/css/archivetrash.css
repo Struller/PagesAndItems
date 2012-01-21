@@ -1,0 +1,15 @@
+/* CSS Document */
+
+
+.button_table
+{
+	/*border-color: silver;*/
+}
+
+.button_table.active
+{
+	border-color: #146295;
+	color: #146295;
+	font-weight: bold;
+}
+
