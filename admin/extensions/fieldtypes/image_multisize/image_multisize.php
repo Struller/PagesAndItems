@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.2
+* @version		2.1.3
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -241,7 +241,7 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=2<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=2}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
 			$field_content = '{field_multisize_'.$field_id.' size=2}';
 		}
@@ -913,11 +913,7 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 			}else{
 				//horizontal image
 				$new_height = $old_height/$widthratio;
-			}
-
-			//round numbers
-			$new_width = round($new_width);
-			$new_height = round($new_height);
+			}			
 
 			if($new_width>$old_width){
 				//no resize for this image
@@ -929,6 +925,10 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 			$new_width = $new_width;
 			$new_height = $new_height;
 		}
+		
+		//round numbers
+		$new_width = round($new_width);
+		$new_height = round($new_height);
 
 		$imgnew = imagecreatetruecolor($new_width,$new_height);
 		if($extension=='jpg'){

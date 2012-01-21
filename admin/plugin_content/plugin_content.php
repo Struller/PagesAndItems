@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.2
+* @version		2.1.3
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -342,6 +342,13 @@ class plgContentPagesanditems extends JPlugin
 			}
 			*/
 			//$article->text = $article->id;
+			
+			//load modal stuff when a fieldtype image gallery is on the page
+			if(strpos($article->text, 'pi_image_gallery_fieldtype')){
+				JHTML::_('behavior.modal');
+				$document =& JFactory::getDocument();	
+				$document->addStyleSheet('administrator/components/com_pagesanditems/extensions/fieldtypes/image_gallery/image_gallery.css');
+			}
 
 		}
 

@@ -4,12 +4,10 @@ import the icons stylesheet
 */
 @import "pagesanditems_icons.css";
 
-/*
-TEST
-*/
-/*
-@import "customitemtype.css";
-*/
+.radiolong fieldset{
+	clear: left;
+	float: left;	
+}
 
 .page_tree {
 	margin-top: 8px;

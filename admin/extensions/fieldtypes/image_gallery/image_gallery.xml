@@ -13,6 +13,7 @@
 		<filename fieldtype="image_gallery">image_gallery.php</filename>
 		<filename>index.html</filename>
 		<filename>photo-album.png</filename>
+		<filename>image_gallery.css</filename>
 
 	</files>
 	<params>
@@ -20,23 +21,28 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-
+	<!--
 		<param name="resize" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_RESIZE3">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-		
-		<param name="max_width" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
+		-->
+		<param name="resize" type="radio" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+			<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+			<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+			<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+		</param>
+		<param name="max_width" type="text" default="750" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
 		</param>
 		
-		<param name="max_height" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+		<param name="max_height" type="text" default="500" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
 		</param>
 		
 		
-		<param name="max_width_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
+		<param name="max_width_thumb" type="text" default="250" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
 		</param>
 		
-		<param name="max_height_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
+		<param name="max_height_thumb" type="text" default="100" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
 		</param>
 		
 		<param name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
@@ -68,11 +74,17 @@
 			<option value="1">Yes</option>
 		</param>
 		
+		<param name="modal_width" type="text" default="" size="60" label="COM_PAGESANDITEMS_MODAL_WIDTH">
+		</param>
+		
+		<param name="modal_height" type="text" default="" size="60" label="COM_PAGESANDITEMS_MODAL_HEIGHT">
+		</param>
+		<!--
 		<param name="crop" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_CROP3" description="COM_PAGESANDITEMS_FIELD_CROP3_INFO">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-
+		-->
 	</params>
 
 	<config>
@@ -85,34 +97,40 @@
 				<!--<field name="show_field_name" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_FIELD_NAME" >
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
-				</field>-->
+				</field>
 
 				<field name="resize" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_RESIZE3">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+				</field>-->
+				
+				<field name="resize" class="radiolong" type="radiolong" default="resize" label="COM_PAGESANDITEMS_RESIZE_OPTIONS">
+					<option value="none">COM_PAGESANDITEMS_NO_RESIZE</option>
+					<option value="resize">COM_PAGESANDITEMS_DO_RESIZE</option>
+					<option value="force">COM_PAGESANDITEMS_FORCE_RESIZE</option>
+				</field>
+				
+				<field name="max_width" type="text" default="750" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
 				</field>
 		
-				<field name="max_width" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_WIDTH">
-				</field>
-		
-				<field name="max_height" type="text" default="" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
+				<field name="max_height" type="text" default="500" size="60" label="COM_PAGESANDITEMS_MAX_HEIGHT">
 				</field>
 		
 		
-				<field name="max_width_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
+				<field name="max_width_thumb" type="text" default="250" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_WIDTH_THUMB3">
 				</field>
 		
-				<field name="max_height_thumb" type="text" default="" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
+				<field name="max_height_thumb" type="text" default="100" size="60" label="COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3">
 				</field>
 		
 				<field name="delete_old_image" type="radio" default="0" label="COM_PAGESANDITEMS_DELETE_OLD_IMAGE">
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 
 				<field name="show_src" type="radio" default="0" label="COM_PAGESANDITEMS_SHOW_SRC">
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
 				</field>
 		
 				<field name="class_name" type="text" default="" size="60" label="COM_PAGESANDITEMS_CLASS_NAME" description="COM_PAGESANDITEMS_CLASS_NAME2">
@@ -133,13 +151,21 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 				</field>
-		
+		<!--
 				<field name="crop" type="radio" default="0" label="COM_PAGESANDITEMS_FIELD_CROP3" description="COM_PAGESANDITEMS_FIELD_CROP3_INFO">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				
+				-->
 				<field name="uiImage" type="hidden" default="photo-album.png">
 				</field>
+				
+				<field name="modal_width" type="text" default="800" size="60" label="COM_PAGESANDITEMS_MODAL_WIDTH">
+				</field>
+				
+				<field name="modal_height" type="text" default="600" size="60" label="COM_PAGESANDITEMS_MODAL_HEIGHT">
+				</field>				
 
 			</fieldset>
 		</fields>

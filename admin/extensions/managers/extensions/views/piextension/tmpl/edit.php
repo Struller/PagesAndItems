@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.2
+* @version		2.1.3
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -27,6 +27,7 @@ JHTML::_('behavior.tooltip');
 	*/
 	$tmpl = JRequest::getVar('tmpl', 0 );
 ?>
+
 <script language="javascript" type="text/javascript">
 	Joomla.submitbutton = function(pressbutton)
 	{
@@ -244,7 +245,7 @@ $hasTipType = JText::_('COM_PAGESANDITEMS_MANAGE_EXTENSIONS_TIP_'.strtoupper ($t
 	<fieldset class="adminform">
 	<legend><?php echo JText::_( 'JFIELD_PARAMS_LABEL');//Parameters' ); ?></legend>
 	*/
-	?>
+	?>	
 	<?php echo JHtml::_('sliders.start','plugin-sliders-'.$this->item->extension_id); ?>
 	<?php echo $this->loadTemplate('options'); ?>
 	<?php echo JHtml::_('sliders.end'); ?>

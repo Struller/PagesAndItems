@@ -1,0 +1,26 @@
+
+/* borders around thumbnails */
+div.pi_image_gallery_fieldtype img{
+	border: 1px solid #000;
+}
+
+/* for vertical alignment of image in modal window */
+/* do not change under this line */
+div.pi_outer{
+	display: table; 
+	#position: relative; 
+	overflow: hidden;
+	width: 100%;
+}
+
+div.pi_middle{
+	display: table-cell; 
+	#position: absolute;	
+	#top: 50%; 
+	vertical-align: middle;
+}
+
+div.pi_inner{
+	#position: relative; 
+	#top: -50%;
+}

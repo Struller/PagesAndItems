@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.2
+* @version		2.1.3
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -19,8 +19,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 	function display_config_form($plugin, $type_id, $name, $field_params, $field_id){
 		if(!$field_id){
 			//new field, set defaults here
-			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0
-			//$field_params['show_field_name'] = $this->params->get('show_field_name'); //0
+			$field_params['showFieldName'] = $this->params->get('showFieldName'); //0		
 			$field_params['resize'] = $this->params->get('resize'); //0
 			$field_params['max_width'] = $this->params->get('max_width'); //''
 			$field_params['max_height'] = $this->params->get('max_height'); //''
@@ -35,22 +34,21 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 			$field_params['crop'] = $this->params->get('crop'); //0
 		}
 		
+		$modal_width = '800';
+		if(isset($field_params['modal_width'])){
+			$modal_width = $field_params['modal_width'];
+		}
+		$modal_height = '600';
+		if(isset($field_params['modal_height'])){
+			$modal_height = $field_params['modal_height'];
+		}
+		
 		$html = '';
 		
 		//New show field name
 		$html .= $this->makeShowFieldName($field_id,$field_params);
 		//description
-		$html .= $this->display_field_description($field_params);
-		/*
-		//show field name
-		$field_name = JText::_('COM_PAGESANDITEMS_SHOW_FIELD_NAME');
-		$field_content = '<input type="checkbox" ';
-		if($this->check_if_field_param_is_present($field_params, 'show_field_name')){
-			$field_content .= ' checked="checked"';
-		}
-		$field_content .= 'name="field_params[show_field_name]" value="1" />';
-		$html .= $this->display_field($field_name, $field_content);
-		*/
+		$html .= $this->display_field_description($field_params);		
 		//validation
 		$field_name = JText::_('COM_PAGESANDITEMS_VALIDATION');
 		$field_content = '<input type="checkbox" class="checkbox" ';
@@ -71,15 +69,29 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$field_name = JText::_('COM_PAGESANDITEMS_FIELD_MAX_HEIGHT_THUMB3');
 		$field_content = '<input type="text" class="width200" value="'.$field_params['max_height_thumb'].'" name="field_params[max_height_thumb]" />';
 		$html .= $this->display_field($field_name, $field_content);
-		//resize
-		$field_name = JText::_('COM_PAGESANDITEMS_FIELD_RESIZE3');
-		$field_content = '<input type="checkbox" class="checkbox" ';
-		if($this->check_if_field_param_is_present($field_params, 'resize')){
-			if($field_params['resize']){
-				$field_content .= ' checked="checked"';
-			}
+		//resize		
+		$field_name = JText::_('COM_PAGESANDITEMS_RESIZE_OPTIONS');
+		$field_content = '<label><input type="radio" class="radio" value="none" name="field_params[resize]"';
+		if($field_params['resize']=='none'){
+			$field_content .= 'checked="checked"';
 		}
-		$field_content .= 'name="field_params[resize]" value="1" />';
+		$field_content .= ' />';
+		$field_content .= JText::_('COM_PAGESANDITEMS_NO_RESIZE');
+		$field_content .= '</label><br />';
+		$field_content .= '<label><input type="radio" class="radio" value="resize" name="field_params[resize]"';
+		if($field_params['resize']!='none' && $field_params['resize']!='force'){
+			$field_content .= 'checked="checked"';
+		}
+		$field_content .= ' />';
+		$field_content .= JText::_('COM_PAGESANDITEMS_DO_RESIZE').'.';
+		$field_content .= '</label><br />';
+		$field_content .= '<label><input type="radio" class="radio" value="force" name="field_params[resize]"';
+		if($field_params['resize']=='force'){
+			$field_content .= 'checked="checked"';
+		}
+		$field_content .= ' />';
+		$field_content .= JText::_('COM_PAGESANDITEMS_FORCE_RESIZE').'.';
+		$field_content .= '</label><br />';		
 		$html .= $this->display_field($field_name, $field_content);
 		//width
 		$field_name = JText::_('COM_PAGESANDITEMS_MAX_WIDTH');
@@ -88,17 +100,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		//height
 		$field_name = JText::_('COM_PAGESANDITEMS_MAX_HEIGHT');
 		$field_content = '<input type="text" class="width200" value="'.$field_params['max_height'].'" name="field_params[max_height]" />';
-		$html .= $this->display_field($field_name, $field_content);
-		//crop
-		$field_name = JText::_('COM_PAGESANDITEMS_FIELD_CROP3');
-		$field_content = '<input type="checkbox" class="checkbox" ';
-		if($this->check_if_field_param_is_present($field_params, 'crop')){
-			if($field_params['crop']){
-				$field_content .= ' checked="checked"';
-			}
-		}
-		$field_content .= 'name="field_params[crop]" value="1" /> '.JText::_('COM_PAGESANDITEMS_FIELD_CROP3_INFO');
-		$html .= $this->display_field($field_name, $field_content);
+		$html .= $this->display_field($field_name, $field_content);		
 		//old image
 		$field_name = JText::_('COM_PAGESANDITEMS_DELETE_OLD_IMAGE');
 		$field_content = '<input type="checkbox" class="checkbox" ';
@@ -139,6 +141,15 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$field_name = JText::_('COM_PAGESANDITEMS_IMAGE_DIR');
 		$field_content = '<input type="text" class="width200" value="'.$field_params['image_dir'].'" name="field_params[image_dir]" /> '.JText::_('COM_PAGESANDITEMS_IMAGE_DIR_EXAMPLE');
 		$html .= $this->display_field($field_name, $field_content);
+		//modal width
+		$field_name = JText::_('COM_PAGESANDITEMS_MODAL_WIDTH');
+		$field_content = '<input type="text" class="width200" value="'.$modal_width.'" name="field_params[modal_width]" />';
+		$html .= $this->display_field($field_name, $field_content);
+		//modal height
+		$field_name = JText::_('COM_PAGESANDITEMS_MODAL_HEIGHT');
+		$field_content = '<input type="text" class="width200" value="'.$modal_height.'" name="field_params[modal_height]" />';
+		$html .= $this->display_field($field_name, $field_content);		
+		
 		return $html;
 	}
 
@@ -164,18 +175,8 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 			$image_dir = $field_params['image_dir'];
 		}
 
-		$html .= '<div class="field_type_image fieldtype">';
+		$html .= '<div class="field_type_image fieldtype">';		
 		
-		/*
-		if($this->check_if_field_param_is_present($field_params, 'show_field_name')){
-			$html .= '<div>'.$field->name.'</div>';
-		}
-		*/
-		/*
-		if($field_params['description']){
-			$html .= '<div>'.$field_params['description'].'</div>';
-		}
-		*/
 		//TODO as includes/html/tableitems???
 		$images_array = explode('[:-)# ]',$field_value);
 		for($n = 0; $n < (count($images_array)-1); $n++){
@@ -237,36 +238,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 			$html .= '</div>';
 			$html .= '</div>';
 			$html .= '</div>';
-		}
-		/*
-		//display one empty set of fields for one image
-		$html .= '<div class="pi_form_wrapper">';
-		$html .= '<div class="pi_width20">';
-		$html .= '<span onmouseover="return overlib(\''.JText::_('COM_PAGESANDITEMS_IMAGE_TIP').'\', CAPTION, \''.JText::_('COM_PAGESANDITEMS_IMAGE').'\', BELOW, RIGHT);" onmouseout="return nd();"  class="editlinktip">';
-		$html .= JText::_('COM_PAGESANDITEMS_IMAGE');
-		$html .= '</span>';
-		$html .= '</div>';
-		$html .= '<div class="pi_width70">';
-		$html .= '<input type="file" name="'.$field_id.'_src[]" onchange="check_extension_'.$field_id.'(this);" />';
-		$html .= '</div>';
-		$html .= '</div>';
-		$html .= '<div class="pi_form_wrapper">';
-		$html .= '<div class="pi_width20">';
-		$html .= JText::_('COM_PAGESANDITEMS_ALT_TEXT');
-		$html .= ':</div>';
-		$html .= '<div class="pi_width70">';
-		$html .= '<input type="text" class="width200" value="" name="'.$field_id.'_alt[]" />';
-		$html .= '</div>';
-		$html .= '</div>';
-		$html .= '<div class="pi_form_wrapper">';
-		$html .= '<div class="pi_width20">';
-		$html .= strtolower(JText::_('COM_PAGESANDITEMS_DESCRIPTION'));
-		$html .= ':</div>';
-		$html .= '<div class="pi_width70">';
-		$html .= '<textarea class="width200 ig_comment" name="'.$field_id.'_description[]"></textarea>';
-		$html .= '</div>';
-		$html .= '</div>';
-		*/
+		}		
 
 		$html .= '<script language="javascript"  type="text/javascript">'."\n";
 		//function to check extension
@@ -275,9 +247,10 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$html .= 'pos_jpg = value.indexOf(".jpg");'."\n";
 		$html .= 'pos_jpeg = value.indexOf(".jpeg");'."\n";
 		$html .= 'pos_gif = value.indexOf(".gif");'."\n";
-		$html .= 'if(pos_jpg==-1 && pos_jpeg==-1 && pos_gif==-1){'."\n";
+		$html .= 'pos_png = value.indexOf(".png");'."\n";
+		$html .= 'if(pos_jpg==-1 && pos_jpeg==-1 && pos_gif==-1 && pos_png==-1){'."\n";
 		$html .= 'thisthing.value = \'\';'."\n";
-		$html .= 'alert(\'wrong file-type. allowed are: gif, jpg and jpeg\')'."\n";
+		$html .= 'alert(\'wrong file-type. allowed are: gif, png, jpg and jpeg\')'."\n";
 		$html .= '}'."\n";
 		$html .= '}'."\n";
 
@@ -313,14 +286,8 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$html .= '<input type="hidden" name="'.$field_id.'_max_width" value="'.$field_params['max_width'].'" />';
 		$html .= '<input type="hidden" name="'.$field_id.'_max_height" value="'.$field_params['max_height'].'" />';
 		$html .= '<input type="hidden" name="'.$field_id.'_max_width_thumb" value="'.$field_params['max_width_thumb'].'" />';
-		$html .= '<input type="hidden" name="'.$field_id.'_max_height_thumb" value="'.$field_params['max_height_thumb'].'" />';
-
-		$html .= '<input type="hidden" name="'.$field_id.'_crop" value="';
-		if($this->check_if_field_param_is_present($field_params, 'crop')){
-			$html .= $field_params['crop'];
-		}
-		$html .=  '" />';
-
+		$html .= '<input type="hidden" name="'.$field_id.'_max_height_thumb" value="'.$field_params['max_height_thumb'].'" />';		
+		
 		$html .= '<input type="hidden" name="'.$field_id.'_resize" value="';
 		if($this->check_if_field_param_is_present($field_params, 'resize')){
 			$html .= '1';
@@ -335,48 +302,84 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 	}
 
 	function render_field_output($field, $intro_or_full, $readmore_type=0, $editor_id=0){
+	
+		$modal_width = '800';
+		if($this->get_field_param($field->params, 'modal_width')){
+			$modal_width = $this->get_field_param($field->params, 'modal_width');			
+		}		
+		$modal_height = '600';		
+		if($this->get_field_param($field->params, 'modal_height')){
+			$modal_height = $this->get_field_param($field->params, 'modal_height');			
+		}
 		$html = '';
-
-		$html .= '<div id="pi_image_gallery_wrapper">';
-		$html .= '<div id="photos" class="galleryview">';
-
-
-		$images_array = explode('[:-)# ]',$field->value);
-		for($n = 0; $n < (count($images_array)-1); $n++){
-			$image = $images_array[$n];
-			$image_array = explode('-;-',$image);
-			$temp_src = $image_array[0];
-			$temp_alt = $image_array[1];
-			$temp_description = $image_array[2];
-			$src_id = str_replace('.','',$temp_src);
-			$html .= '<div class="panel">';
-			$html .= '<img src="'.$this->get_field_param($field->params, 'image_dir').'/'.$temp_src.'" />';
-			$html .= '<div class="panel-overlay">';
-			$html .= $temp_description;
+			
+		$html .= '<div class="pi_image_gallery_fieldtype">';
+		
+			$images_array = explode('[:-)# ]',$field->value);
+			$images_array2 = array();
+			for($n = 0; $n < (count($images_array)-1); $n++){
+				$image = $images_array[$n];
+				$image_array = explode('-;-',$image);
+				$temp_src = $image_array[0];
+				$temp_alt = $image_array[1];
+				$temp_description = $image_array[2];
+				$src_id = str_replace('.','',$temp_src);
+				$src_array = explode('.',$temp_src);
+				$temp_name = $src_array[0];
+				$temp_ext = $src_array[1];
+				$images_array2[] = array($src_id, $temp_src, $temp_description);			
+				$html .= '<a href="#pi_gallery_image_'.$src_id.'" class="modal" rel="{size: { x: '.$modal_width.' , y: '.$modal_height.'} }">';		
+				$html .= '<img src="'.$this->get_field_param($field->params, 'image_dir').$temp_name.'_thumb.'.$temp_ext.'" alt="'.addslashes($temp_alt).'" />';
+				$html .= '</a>&nbsp;';
+			}			
+	
+			$html .= '<div style="display: none;">';		
+			for($n = 0; $n < count($images_array2); $n++){
+				$src_id = $images_array2[$n][0];
+				$temp_src = $images_array2[$n][1];
+				$temp_description = $images_array2[$n][2];
+				$html .= '<div id="pi_gallery_image_'.$src_id.'">';
+					$html .= '<div style="text-align: center;">';
+						$html .= '&#8249; ';
+						if($n){	
+							$html .= '<a href="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n-1][0].'\').innerHTML;">';
+						}
+						$html .= $this->pi_strtolower(JText::_('JPREVIOUS'));
+						if($n){
+							$html .= '</a>';
+						}	
+						$html .= '  ';
+						if(isset($images_array2[$n+1][0])){							
+							$html .= '<a href="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n+1][0].'\').innerHTML;">';
+						}			
+						$html .= $this->pi_strtolower(JText::_('JNEXT'));
+						if(isset($images_array2[$n+1][0])){	
+							$html .= '</a>';
+						}
+						$html .= ' &#8250;';						
+						$html .= '<div style="height: '.($modal_height-40).'px;" class="pi_outer">';				
+							$html .= '<div class="pi_middle">';
+								$html .= '<div class="pi_inner">';
+									$html .= '<img src="'.$this->get_field_param($field->params, 'image_dir').'/'.$temp_src.'" />';
+								$html .= '</div>';
+							$html .= '</div>';	
+						$html .= '</div>';			
+						$html .= $temp_description;
+					$html .= '</div>';	
+				$html .= '</div>';			
+			}
 			$html .= '</div>';
-			$html .= '</div>';
-		}
-
-		$html .= '<ul class="filmstrip">';
-		$images_array = explode('[:-)# ]',$field->value);
-		for($n = 0; $n < (count($images_array)-1); $n++){
-			$image = $images_array[$n];
-			$image_array = explode('-;-',$image);
-			$temp_src = $image_array[0];
-			$temp_alt = $image_array[1];
-			$temp_description = $image_array[2];
-			$src_id = str_replace('.','',$temp_src);
-			$src_array = explode('.',$temp_src);
-			$temp_name = $src_array[0];
-			$temp_ext = $src_array[1];
-			$html .= '<li><img src="'.$this->get_field_param($field->params, 'image_dir').'/'.$temp_name.'_thumb.'.$temp_ext.'" alt="'.addslashes($temp_alt).'" /></li>';
-		}
-		$html .= '</ul>';
-
-		$html .= '</div>';
+		
 		$html .= '</div>';
 
-		return $html;
+		return addslashes($html);
+	}
+	
+	function pi_strtolower($string){
+		if(function_exists('mb_strtolower')){			
+			$string = mb_strtolower($string, 'UTF-8');
+		}
+		return $string;
 	}
 
 	function field_save($field, $insert_or_update){
@@ -392,11 +395,9 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$new_height = JRequest::getVar($value_name.'_max_height');
 		$new_width_thumb = JRequest::getVar($value_name.'_max_width_thumb');
 		$new_height_thumb = JRequest::getVar($value_name.'_max_height_thumb');
-		$resize = JRequest::getVar($value_name.'_resize');
+		$resizetype = JRequest::getVar($value_name.'_resize');
 		$delete_image = JRequest::getVar($value_name.'_delete_image', false);
-		$image_dir = JRequest::getVar($value_name.'_image_dir', false);
-		$crop = JRequest::getVar($value_name.'_crop', false);
-
+		$image_dir = JRequest::getVar($value_name.'_image_dir', false);		
 		//get arrays
 		$description_array = JRequest::getVar($value_name.'_description', array(), 'post', 'array');
 		$alt_array = JRequest::getVar($value_name.'_alt', array(), 'post', 'array');
@@ -405,26 +406,19 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$delete_array = JRequest::getVar($value_name.'_delete', array(), 'post', 'array');
 
 		//define allowed extensions
-		$allowed_extensions = array('jpg','gif','jpeg');
+		$allowed_extensions = array('jpg','gif','jpeg','png');
 
 		//make name_array and temp_name_array
 		$name_array = array();
 		$tmp_name_array = array();
-		if($_FILES[$image]['name']){
-			//echo 'er is een upload';
-			while(list($key,$value) = each($_FILES[$image]['name'])){
-				//if($value){
-					$name_array[] = $value;
-				///}
-				//$value = '';
+		if($_FILES[$image]['name']){			
+			while(list($key,$value) = each($_FILES[$image]['name'])){				
+				$name_array[] = $value;			
 			}
 			while(list($key,$value) = each($_FILES[$image]['tmp_name'])){
 				$tmp_name_array[] = $value;
 			}
 		}
-
-
-
 
 		//make array of already uploaded images for reordering
 		$images_array = array();
@@ -453,8 +447,6 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 			array_multisort($order, SORT_ASC, $images_array);
 		}
 
-		//exit;
-
 		//add the new images
 		for($n = $total_old_images; $n < count($alt_array); $n++){
 			//echo $n;
@@ -466,8 +458,6 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 			$temp_delete = 0;
 			$images_array[] = array('', $temp_name, $temp_tmp_name, $temp_alt, $temp_description, $temp_order, $temp_delete);
 		}
-
-		//exit;
 
 		//start doing the actual processing
 		$value_string = '';
@@ -515,24 +505,42 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 							$old_height = $sizes[1];
 							$aspect_ratio = $sizes[1]/$sizes[0];
 
+														
+							//resize normal							
+							$modify_normal = $this->modify_image($prod_img, $old_width, $old_height, $new_width, $new_height, $resizetype, $aspect_ratio, $extension);
+							if(is_array($modify_normal) && isset($modify_normal['error']))
+							{
+								return $modify_normal;
+							}
+							
 							//resize small
 							$prod_img_small = dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$file_name.'_thumb.'.$extension;
 							copy($prod_img,$prod_img_small);
 							
-							//TODO check width_thumb height_thumb ore in config?
-							$modify1 = $this->modify_image($prod_img_small, $old_width, $old_height, $new_width_thumb, $new_height_thumb, 1, $aspect_ratio, $extension);
-							if(is_array($modify1) && isset($modify1['error']))
+							
+							/*
+							 if we have crop:
+							 we do not need crop the thunbnail
+							 we must not crop the thumbnail we get the cropped $prod_img
+							 and we must get sizes from $prod_img
+							 
+							 ce:
+							 why not resize the thumbnails?
+							*/
+							//get sizes and ratio
+							$sizes = getimagesize($prod_img);
+							$old_width = $sizes[0];
+							$old_height = $sizes[1];
+							$aspect_ratio = $sizes[1]/$sizes[0];
+							
+							//$modify_thumbnail = $this->modify_image($prod_img_small, $old_width, $old_height, $new_width_thumb, $new_height_thumb, 0, $aspect_ratio, $extension);
+							$modify_thumbnail = $this->modify_image($prod_img_small, $old_width, $old_height, $new_width_thumb, $new_height_thumb, $resizetype, $aspect_ratio, $extension);
+							if(is_array($modify_thumbnail) && isset($modify_thumbnail['error']))
 							{
-								return $modify1;
+								return $modify_thumbnail;
 							}
 							
-							//resize normal
-							//TODO check width height
-							$modify2 = $this->modify_image($prod_img, $old_width, $old_height, $new_width, $new_height, 1, $aspect_ratio, $extension);
-							if(is_array($modify2) && isset($modify2['error']))
-							{
-								return $modify2;
-							}
+							
 						}
 						else
 						{
@@ -552,47 +560,30 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		}
 		return $value_string;
 	}
+	
+	function modify_image($prod_img, $old_width, $old_height, $new_width, $new_height, $resizetype, $aspect_ratio, $extension){		
 
-	function modify_image($prod_img, $old_width, $old_height, $new_width, $new_height, $crop, $aspect_ratio, $extension){
-		if(!$new_width)
-		{
+		if($resizetype=='none'){
+			//no resize for this image
 			$new_width = $old_width;
-		}
-		if(!$new_height)
-		{
 			$new_height = $old_height;
-		}
-		
-		$crop_width = $new_width;
-		$crop_height = $new_height;
 
-		$widthratio = $old_width/$new_width;
-		$heightratio = $old_height/$new_height;
-		if($crop){
-			$size_ratio_upload = $old_width/$old_height;
-			//if ratio==1 it is a square, if bigger then 1 image is wide, if smaller then 1 image is tall
-			if($size_ratio_upload <= 1){
-				//vertical image or square
-				//resize to the thumbnail-width, so only adjust the height
-				$resize_ratio = $old_width/$new_width;
-				$new_height = $old_height/$resize_ratio;
-				if($new_height<$crop_height){
-					$resize_ratio = $old_height/$new_height;
-					$new_width = $old_width/$resize_ratio;
-					$new_height = $crop_height;
-				}
+		}elseif($resizetype=='resize' || $resizetype=='1'){//1 is for backward compatibility with previous option 'resize'
+
+			//widthratio
+			if($new_width){
+				$widthratio = $old_width/$new_width;
 			}else{
-				//horizontal image
-				//resize to the thumbnail-height, so only adjust the width
-				$resize_ratio = $old_height/$new_height;
-				$new_width = $old_width/$resize_ratio;
-				if($new_width<$crop_width){
-					$resize_ratio = $old_width/$new_width;
-					$new_height = $old_height/$resize_ratio;
-					$new_width = $crop_width;
-				}
+				$widthratio = 0;
 			}
-		}else{
+
+			//height ratio
+			if($new_height){
+				$heightratio = $old_height/$new_height;
+			}else{
+				$heightratio = 0;
+			}
+
 			if($widthratio <= $heightratio){
 				//vertical image or squere
 				$new_width = $old_width/$heightratio;
@@ -600,102 +591,51 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 				//horizontal image
 				$new_height = $old_height/$widthratio;
 			}
+
+			if($new_width>$old_width){
+				//no resize for this image
+				$new_width = $old_width;
+				$new_height = $old_height;
+			}
+
+		}elseif($resizetype=='force'){
+			$new_width = $new_width;
+			$new_height = $new_height;
 		}
+		
+		//round numbers
 		$new_width = round($new_width);
 		$new_height = round($new_height);
 
-		if(!$imgnew = imagecreatetruecolor($new_width,$new_height))
-		{
-			return array('error'=>'Problem In creating new Image');
-		}
-		
-		
+		$imgnew = imagecreatetruecolor($new_width,$new_height);
 		if($extension=='jpg'){
-			if(!$srcimg=imagecreatefromjpeg($prod_img))
-			{//or die('Problem In opening Source Image');
-			return array('error'=>'Problem In opening Source Image');}
+			$srcimg=imagecreatefromjpeg($prod_img);
 		}elseif($extension=='gif'){
-			if(!$srcimg=imagecreatefromgif($prod_img))
-			{//or die('Problem In opening Source Image');
-			return array('error'=>'Problem In opening Source Image');}
+			$srcimg=imagecreatefromgif($prod_img);
+		}elseif($extension=='png'){
+			$srcimg=imagecreatefrompng($prod_img);
 		}
 		if(function_exists('imagecopyresampled')){
-			if(!imagecopyresampled($imgnew,$srcimg,0,0,0,0,$new_width,$new_height,ImageSX($srcimg),ImageSY($srcimg)))
-			{//or die('Problem In resizing');
-			return array('error'=>'Problem In resizing imagecopyresampled');}
+			imagecopyresampled($imgnew,$srcimg,0,0,0,0,$new_width,$new_height,ImageSX($srcimg),ImageSY($srcimg));
 		}else{
-			if(!imagecopyresized($imgnew,$srcimg,0,0,0,0,$new_width,$new_height,ImageSX($srcimg),ImageSY($srcimg)))
-			{//or die('Problem In resizing');
-			return array('error'=>'Problem In resizing imagecopyresized');}
+			imagecopyresized($imgnew,$srcimg,0,0,0,0,$new_width,$new_height,ImageSX($srcimg),ImageSY($srcimg));
 		}
 		if($extension=='jpg'){
-			if(!imagejpeg($imgnew,$prod_img,90)){
-			//or die('Problem In saving');
-			return array('error'=>'Problem In saving');}
+			imagejpeg($imgnew,$prod_img,90);
 		}elseif($extension=='gif'){
-			if(!imagegif($imgnew,$prod_img)){
-			//or die('Problem In saving');
-			return array('error'=>'Problem In saving');}
+			imagegif($imgnew,$prod_img);
+		}elseif($extension=='png'){
+			imagepng($imgnew,$prod_img);
 		}
-
-		if($crop){
-
-			$left = 0;
-			$top = 0;
-			$need_cropping = 0;
-			if($new_width>$crop_width){
-				//need to crop horizontally
-				$need_cropping = 1;
-				$extra_space = $new_width-$crop_width;
-				$left = round($extra_space/2);
-			}
-
-			if($new_height>$crop_height){
-				//need to crop vertically
-				$need_cropping = 1;
-				$extra_space = $new_height-$crop_height;
-				$top = round($extra_space/2);
-			}
-
-			if($need_cropping){
-				//set new size
-				$canvas = imagecreatetruecolor($crop_width, $crop_height);
-
-				//get image
-				if($extension=='jpg'){
-					if(!$current_image=imagecreatefromjpeg($prod_img)){
-					//or die('Problem In opening Source Image');
-					return array('error'=>'Problem In opening Source Image');}
-				}elseif($extension=='gif'){
-					if(!$current_image=imagecreatefromgif($prod_img)){
-					//or die('Problem In opening Source Image');
-					return array('error'=>'Problem In opening Source Image');}
-				}
-
-				//do crop
-				imagecopy($canvas, $current_image, 0, 0, $left, $top, $crop_width, $crop_height);
-
-				//put image away
-				if($extension=='jpg'){
-					if(!imagejpeg($canvas,$prod_img,100)){
-					//or die('Problem In saving');
-					return array('error'=>'Problem In saving');}
-				}elseif($extension=='gif'){
-					if(!imagegif($canvas,$prod_img)){
-					//or die('Problem In saving');
-						return array('error'=>'Problem In saving');}
-				}
-			}
-		}//end crop
-		return true;
 	}
 
 	function make_filename_unique($file_name, $extension, $image_dir){
 		if($file_name){
 			//rename file if already exist
-			if(file_exists(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$file_name.'.'.$extension)){
+			
+			if(file_exists(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$file_name.'.'.$extension)){
 				$j = 2;
-				while (file_exists(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$file_name.'-'.$j.".".$extension)){
+				while (file_exists(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$file_name.'-'.$j.".".$extension)){
 					$j = $j + 1;
 				}
 				$new_name = $file_name . "-" . $j;
@@ -715,11 +655,11 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		$temp_old_src_array = explode('.',$temp_old_src);
 		$temp_old_src_name = $temp_old_src_array[0];
 		$temp_old_src_extension = $temp_old_src_array[1];
-		if(file_exists(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$temp_old_src_name.'.'.$temp_old_src_extension)){
-			unlink(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$temp_old_src_name.'.'.$temp_old_src_extension);
+		if(file_exists(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$temp_old_src_name.'.'.$temp_old_src_extension)){
+			unlink(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$temp_old_src_name.'.'.$temp_old_src_extension);
 		}
-		if(file_exists(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$temp_old_src_name.'_thumb.'.$temp_old_src_extension)){
-			unlink(dirname(__FILE__).'/../../../../'.$image_dir.'/'.$temp_old_src_name.'_thumb.'.$temp_old_src_extension);
+		if(file_exists(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$temp_old_src_name.'_thumb.'.$temp_old_src_extension)){
+			unlink(dirname(__FILE__).'/../../../../../../'.$image_dir.'/'.$temp_old_src_name.'_thumb.'.$temp_old_src_extension);
 		}
 	}
 
@@ -746,8 +686,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		for($n = 0; $n < count($images_array); $n++){
 			$image_stuff = $images_array[$n];
 			$image_stuff_array = explode('-;-',$image_stuff);
-			$image = $image_stuff_array[0];
-			//echo $image.'<br />';
+			$image = $image_stuff_array[0];			
 			if($image){
 				$this->delete_image($image, $image_dir);
 			}
