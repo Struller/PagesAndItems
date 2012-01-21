@@ -42,7 +42,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 		if(isset($field_params['modal_height'])){
 			$modal_height = $field_params['modal_height'];
 		}
-		
+		$field_params['resize'] = $this->params->get('resize','resize'); //0
 		$html = '';
 		
 		//New show field name
@@ -305,11 +305,11 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 	
 		$modal_width = '800';
 		if($this->get_field_param($field->params, 'modal_width')){
-			$modal_width = $this->get_field_param($field->params, 'modal_width');			
+			$modal_width = $this->get_field_param($field->params, 'modal_width');
 		}		
 		$modal_height = '600';		
 		if($this->get_field_param($field->params, 'modal_height')){
-			$modal_height = $this->get_field_param($field->params, 'modal_height');			
+			$modal_height = $this->get_field_param($field->params, 'modal_height');
 		}
 		$html = '';
 			
@@ -327,9 +327,9 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 				$src_array = explode('.',$temp_src);
 				$temp_name = $src_array[0];
 				$temp_ext = $src_array[1];
-				$images_array2[] = array($src_id, $temp_src, $temp_description);			
+				$images_array2[] = array($src_id, $temp_src, $temp_description);
 				$html .= '<a href="#pi_gallery_image_'.$src_id.'" class="modal" rel="{size: { x: '.$modal_width.' , y: '.$modal_height.'} }">';		
-				$html .= '<img src="'.$this->get_field_param($field->params, 'image_dir').$temp_name.'_thumb.'.$temp_ext.'" alt="'.addslashes($temp_alt).'" />';
+				$html .= '<img src="'.$this->get_field_param($field->params, 'image_dir').'/'.$temp_name.'_thumb.'.$temp_ext.'" alt="'.addslashes($temp_alt).'" />';
 				$html .= '</a>&nbsp;';
 			}			
 	
@@ -342,7 +342,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 					$html .= '<div style="text-align: center;">';
 						$html .= '&#8249; ';
 						if($n){	
-							$html .= '<a href="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n-1][0].'\').innerHTML;">';
+							$html .= '<a href="#" onclick="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n-1][0].'\').innerHTML;">';
 						}
 						$html .= $this->pi_strtolower(JText::_('JPREVIOUS'));
 						if($n){
@@ -350,7 +350,7 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 						}	
 						$html .= '  ';
 						if(isset($images_array2[$n+1][0])){							
-							$html .= '<a href="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n+1][0].'\').innerHTML;">';
+							$html .= '<a href="#" onclick="javascript:document.getElementById(\'sbox-content\').innerHTML = document.getElementById(\'pi_gallery_image_'.$images_array2[$n+1][0].'\').innerHTML;">';
 						}			
 						$html .= $this->pi_strtolower(JText::_('JNEXT'));
 						if(isset($images_array2[$n+1][0])){	
@@ -722,6 +722,29 @@ class PagesAndItemsExtensionFieldtypeImage_gallery extends PagesAndItemsExtensio
 
 		}
 	}
+	
+	function onFieldtypeFrontend(&$article,$field, $item_id,$type_id)
+	{
+		
+		if($field->plugin != 'image_gallery')
+		{
+			return true;
+		}
+		
+		// Don't repeat the for each instance of this fieldtype in a page!
+		static $included_image_gallery;
+		if (!$included_image_gallery)
+		{
+			//FB::dump($field);
+			JHTML::_('behavior.modal');
+			$document =& JFactory::getDocument();	
+			$document->addStyleSheet('administrator/components/com_pagesanditems/extensions/fieldtypes/image_gallery/image_gallery.css');
+			$included_image_gallery = 1;
+		}
+		
+		return true;
+	}
+	
 }
 
 ?>
