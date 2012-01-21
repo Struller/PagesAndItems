@@ -2,7 +2,7 @@
 /**
 * @version		2.1.0
 * @package		PagesAndItems
-* @copyright	Copyright (C) 2006-2010 Carsten Engel. All rights reserved.
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * @author		www.pages-and-items.com
  * This is the special installer addon created by Andrew Eddie and the team of jXtended.
@@ -379,6 +379,8 @@ menus=mainmenu;Main Menu
 		
 		//language=en-GB
 		$configuration = 'useCheckedOut=false
+plugin_system_add_button=false
+plugin_system_hidde_button=false
 showSlider=-1
 enabled_view_category=false
 use_pi_frontend_editting=true
@@ -620,6 +622,20 @@ page_delete_items=
 			}
 		}
 		*/
+		if(strpos($pirow->config, 'plugin_system_add_button=') === false){
+			$config_needs_updating = 1;
+			$updated_config .= '
+plugin_system_add_button=false
+';
+		}
+		if(strpos($pirow->config, 'plugin_system_hidde_button=') === false){
+			$config_needs_updating = 1;
+			$updated_config .= '
+plugin_system_hidde_button=false
+';
+		}
+		
+		
 		if(strpos($pirow->config, 'useCheckedOut=') === false){
 			//added in version 2.1.0
 			$config_needs_updating = 1;

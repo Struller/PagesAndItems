@@ -1,9 +1,11 @@
 <?php
 /**
- * @version		$Id: file.json.php 21518 2011-06-10 21:38:12Z chdemko $
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
- */
+* @version		2.1.1
+* @package		PagesAndItems com_pagesanditems
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
+*/
 
 // No direct access
 defined('_JEXEC') or die;
@@ -242,8 +244,22 @@ class PagesAndItemsControllerFile extends JController
 			}
 			
 			//$file = (array) $object_file;
+			$type = $file['type'];
+			if (function_exists('finfo_open'))
+			{
+				// We have fileinfo
+				$finfo = finfo_open(FILEINFO_MIME);
+				$type = finfo_file($finfo, $file['tmp_name']);
+				finfo_close($finfo);
+			}
+			elseif (function_exists('mime_content_type')) 
+			{
+				// we have mime magic
+				$type = mime_content_type($file['tmp_name']);
+			}
+			$file['type'] = $type;
 			
-
+			
 			// Trigger the onContentBeforeSave event.
 			$object_file = new JObject($file);
 			$object_file->filepath = $filepath;
@@ -251,6 +267,7 @@ class PagesAndItemsControllerFile extends JController
 			if($extension)
 			{
 				//we have only the extension in dispatcher
+				//the extension can here check for size / mime type ....
 				$result = $dispatcher->trigger('onBeforeUpload', array($extensionName, &$object_file));
 				if (in_array(false, $result, true)) {
 					// There are some errors in the plugins

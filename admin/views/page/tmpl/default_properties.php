@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -24,15 +24,9 @@ defined('_JEXEC') or die;
 		
 		$db = JFactory::getDbo();
 
-		
-		//$checkedOut = JRequest::getVar('checkedOut', true); //false);
-		//|| !$checkedOut
-		//$config->get('checkedOut',1)
 		if($this->useCheckedOut && ( !$this->canCheckin || !$this->canEdit || $sub_task ==''))// ($sub_task !='new')))// && $sub_task !=='edit')))
 		{
 			//$user		= JFactory::getUser();
-
-			
 			// Join over the users.
 			$db		= JFactory::getDBO();
 			$query	= $db->getQuery(true);
@@ -50,7 +44,7 @@ defined('_JEXEC') or die;
 				$checkedOutText .= JHtml::_('jgrid.checkedout', 0, $result->editor, $this->menuItem->checked_out_time, 'page.', $this->canCheckin);
 			};
 			
-			//hide all panels if if(!$this->canDoMenu->get('core.edit')) || $this->menuItem->checked_out)
+			//hide all panels if (!$this->canDoMenu->get('core.edit')) || $this->menuItem->checked_out)
 			if(!$this->canDoMenu->get('core.edit'))
 			{
 				//$coreEditText .= 'not core.edit';
@@ -129,6 +123,8 @@ defined('_JEXEC') or die;
 			$this->form->setFieldAttribute('menuordering','readonly','true');
 
 			
+			
+			
 			$this->form->setFieldAttribute('browserNav','readonly','true');
 			if ($this->menuItem->type == 'component') :
 				$this->form->setFieldAttribute('home','type','radioreadonly');
@@ -137,7 +133,11 @@ defined('_JEXEC') or die;
 			$this->form->setFieldAttribute('language','readonly','true');
 			$this->form->setFieldAttribute('template_style_id','disabled','true');
 		}
+		/*
 		
+		
+		
+		*/
 
 
 		if(isset($this->menuItem->request['option']))
@@ -310,9 +310,29 @@ defined('_JEXEC') or die;
 											$html .= $this->form->getInput('link').'</li>';
 										endif;
 
+										if(version_compare(JVERSION, '2.5', 'ge'))
+										{
+											if ($this->menuItem->type == 'alias'):
+												$html .='<li>';
+													$html .= $this->form->getLabel('aliastip');
+												$html .='</li>';
+												endif;
+												if ($this->menuItem->type !='url'):
+												$html .='<li>';
+													$html .= $this->form->getLabel('alias');
+													$html .=$this->form->getInput('alias');
+												$html .='</li>';
+											endif;
+										}
+										else
+										{
 										$html .='<li>'.$this->form->getLabel('alias');
 										$html .= $this->form->getInput('alias').'</li>';
-
+										}
+										/*
+										
+										
+										*/
 										$html .='<li>'.$this->form->getLabel('note');
 										$html .= $this->form->getInput('note').'</li>';
 
@@ -329,7 +349,8 @@ defined('_JEXEC') or die;
 
 										$html .='<li>'.$this->form->getLabel('menutype');
 										$html .= $this->form->getInput('menutype').'</li>';
-
+										
+										
 										$html .='<li>'.$this->form->getLabel('parent_id');
 										$html .= $this->form->getInput('parent_id').'</li>';
 

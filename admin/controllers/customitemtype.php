@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -135,11 +135,18 @@ class PagesAndItemsControllerCustomItemType extends PagesAndItemsController
 					}
 				}
 			}
+			
+
 
 			//if choosen to update items by this itemtype in javascript alert on cit config page
 			//update items with ajax render script
 			if(JRequest::getVar('update_items', false))
 			{
+			
+			$database = JFactory::getDBO();		
+$database->setQuery( "UPDATE #__debug SET debug='update' WHERE id='1' ");
+$database->query();
+
 				$url = 'index.php?option=com_pagesanditems&view=render_items_by_custom_itemtype&type_id='.$type_id;
 				if(JRequest::getVar('sub_task', '')=='apply')
 				{
@@ -149,6 +156,7 @@ class PagesAndItemsControllerCustomItemType extends PagesAndItemsController
 				}
 				//$model->redirect_to_url( $url, '');
 				$this->setRedirect(JRoute::_($url, false)); //, $message);
+				return true;
 			}
 
 			//end update custom itemtype

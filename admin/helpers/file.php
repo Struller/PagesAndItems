@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -478,9 +478,15 @@ UPLOAD_ERR_NO_FILE
 	public static function getTmpDir()
 	{
 		$config = JFactory::getConfig();
-		$p_filename = $config->get('tmp_path');
-		//get the tmp_path can make problems
-		//make an own??
+		$p_filename = JPath::clean($config->get('tmp_path'));
+		$documentRoot = JPath::clean(isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] :substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['SCRIPT_NAME'])));
+		if(strpos($p_filename,$documentRoot) === false)
+		{
+			//an wrong tmp path
+			return false;
+		}
+
+		
 		$user = JFactory::getUser();
 		$userId = $user->get('id');
 		$app = JFactory::getApplication();
@@ -495,7 +501,15 @@ UPLOAD_ERR_NO_FILE
 		// Build the appropriate paths
 		$config = JFactory::getConfig();
 		$p_filename = $config->get('tmp_path');
-		//get the tmp_path can make problems
+		
+		$documentRoot = JPath::clean(isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] :substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['SCRIPT_NAME'])));
+		if(strpos($p_filename,$documentRoot) === false)
+		{
+			//an wrong tmp path
+			return false;
+		}
+		
+		
 		$user = JFactory::getUser();
 		$userId = $user->get('id');
 		$app = JFactory::getApplication();

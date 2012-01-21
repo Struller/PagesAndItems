@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -51,19 +51,8 @@ function select_parent(parent_id){
 	document.getElementById('new_parent_id').value = parent_id;
 }
 
-<?php
-if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
-{
-	$joomlaSubmit = '';
-	echo 'function submitbutton(pressbutton){'."\n";
-}
-else
-{
-	$joomlaSubmit = 'Joomla.';
-	echo 'Joomla.submitbutton = function(pressbutton){'."\n";
-}
-?>
-//function submitbutton(pressbutton) {
+Joomla.submitbutton = function(pressbutton) {
+
 	if (pressbutton == 'cancel')
 	{
 		<?php
@@ -73,15 +62,16 @@ else
 		*/
 		?>
 		document.location.href = "<?php echo PagesAndItemsHelper::toogleViewPageCategories('index.php?option=com_pagesanditems&view=item&sub_task=edit&pageId='.$pageId.'&itemId='.$item_id.'&categoryId='.$categoryId); ?>";
-	}
-	if (pressbutton == 'item_move_save')
+	}	
+	if (pressbutton == 'item.item_move_save')
 	{
+		
 		if (document.adminForm.new_parent_id.value == '' )
 		{
 			alert( '<?php echo JText::_('COM_PAGESANDITEMS_NEED_SELECT_PAGE'); ?>' );
 			return;
 		} else {
-			document.getElementById('task').value = pressbutton;
+			//document.getElementById('task').value = pressbutton;
 			document.adminForm.submit();
 			//submitform(pressbutton);
 		}
@@ -136,11 +126,10 @@ else
 		<td valign="top">
 		<form name="adminForm" method="post" action="">
 			<input type="hidden" name="option" value="com_pagesanditems" />
-			<input type="hidden" name="task" value="item_move_save" />
+			<input type="hidden" name="task" value="item.item_move_save" />
 			<input type="hidden" name="pageId" value="<?php echo $pageId; ?>">
 			<input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
-			<input type="hidden" name="old_cat_id" value="<?php echo $old_cat_id; ?>" />
-			<input type="hidden" name="new_parent_id" id="new_parent_id" value="" />
+			<input type="hidden" name="old_cat_id" value="<?php echo $old_cat_id; ?>" />			
 			<input type="hidden" name="categoryId" value="<?php echo $categoryId; ?>">
 			<?php
 			/*
@@ -160,7 +149,13 @@ else
 			<tbody>
 				<tr>
 					<td>
-						<p><?php echo JText::_('COM_PAGESANDITEMS_SELECT_PAGE'); ?>.</p>
+						<p><br /><?php 
+							echo JText::_('COM_PAGESANDITEMS_SELECT_PAGE').'. '.JText::_('COM_PAGESANDITEMS_MENUTYPE'); ?>
+							 'Category Blog'.
+						</p>
+						<p>
+							<input type="text" name="new_parent_id" id="new_parent_id"  value="" style="width: 50px;" />
+						</p>
 					</td>
 				</tr>
 				<tr>

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -173,6 +173,7 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 
 		//without we get no form-output do not know why
 		$state = $ContentModelArticle->getState();
+		//FB::dump($state);
 		//we need to set the state article.id the getForm is need this
 		$ContentModelArticle->setState('article.id',$item_id);
 		
@@ -197,7 +198,7 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 		
 		$this->form = $ContentModelArticle->getForm();
 		$this->item = $ContentModelArticle->getItem($item_id);
-		$this->state = $ContentModelArticle->getState($item_id);
+		$this->state = $ContentModelArticle->getState();//$item_id);
 
 		//load com_content language file
 		$lang = &JFactory::getLanguage();

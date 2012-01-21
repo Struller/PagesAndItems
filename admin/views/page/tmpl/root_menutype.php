@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -157,6 +157,20 @@ $lang->load('com_modules', JPATH_ADMINISTRATOR, null, false, false)
 					
 				}
 				
+				$modMenuId = 0;
+				if(version_compare(JVERSION, '2.5', 'ge'))
+				{
+					require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'menus.php');
+					$modelMenutypes = new MenusModelMenus();
+					$modMenuId = (int) $modelMenutypes->getModMenuId();
+				}
+				
+				if (isset($this->modules[$this->menutypeItem->menutype]) || $modMenuId) :
+				echo '<fieldset class="adminform">';
+						echo '<legend>';
+							echo JText::_('COM_MENUS_HEADING_LINKED_MODULES');
+						echo '</legend>';
+				endif;
 				
 				if (isset($this->modules[$this->menutypeItem->menutype])) :
 
@@ -167,14 +181,12 @@ $lang->load('com_modules', JPATH_ADMINISTRATOR, null, false, false)
 					$link .= '&amp;extensionFolder=page_tree';
 					$link .= '&amp;view=module';
 					$link .= '&amp;tmpl=component';
-
-					//$link .= '&amp;item_title='.$this->menutypeItem->title;
-					//$link .= '&amp;item_menutype='.$this->menutypeItem->menutype;
-					//$link .= '&amp;item_menutypeId='.$this->menutypeItem->id;
+					/*
 					echo '<fieldset class="adminform">';
 						echo '<legend>';
 							echo JText::_('COM_MENUS_HEADING_LINKED_MODULES');
 						echo '</legend>';
+					*/
 						echo '<ul>';
 							if($addModule)
 							{
@@ -225,9 +237,49 @@ $lang->load('com_modules', JPATH_ADMINISTRATOR, null, false, false)
 					*/
 							endforeach;
 						echo '</ul>';
+					//echo '</fieldset>';
+				//endif;
+				elseif ($modMenuId) : 
+					
+					//TODO as 
+					/*
+					<a class="modal" href="<?php echo JRoute::_('index.php?option=com_modules&task=module.edit&id='.$module->id.'&return='.$return.'&tmpl=component&layout=modal');?>" rel="{handler: 'iframe', size: {x: 1024, y: 450}, onClose: function() {window.location.reload()}}"  title="<?php echo JText::_('COM_MENUS_EDIT_MODULE_SETTINGS');?>">
+					
+					*/
+					?>
+					<a class="modal" href="<?php echo JRoute::_('index.php?option=com_modules&task=module.add&eid=' . $modMenuId . '&params[menutype]='.$this->menutypeItem->menutype.'&return='.$return.'&tmpl=component&layout=modal');?>" rel="{handler: 'iframe', size: {x: 1024, y: 450}, onClose: function() {window.location.reload()}}">
+						<?php echo JText::_('COM_MENUS_ADD_MENU_MODULE'); ?></a>
+					<?php 
+				endif;
+				
+				if (isset($this->modules[$this->menutypeItem->menutype]) || $modMenuId) :
 					echo '</fieldset>';
 				endif;
 				
+				/*
+				if(version_compare(JVERSION, '2.5', 'ge'))
+				{
+					require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'menus.php');
+					$modelMenutypes = new MenusModelMenus();
+					$modMenuId = (int) $modelMenutypes->getModMenuId();
+					elseif ($modMenuId) : 
+					<a href="<?php echo JRoute::_('index.php?option=com_modules&task=module.add&eid=' . $modMenuId . '&params[menutype]='.$item->menutype); ?>">
+						<?php echo JText::_('COM_MENUS_ADD_MENU_MODULE'); ?></a>
+					<?php endif; ?>
+				}
+				else
+				{
+				
+				}
+				
+				$modMenuId = (int) $this->get('ModMenuId');
+				<?php elseif ($modMenuId) : ?>
+					<a href="<?php echo JRoute::_('index.php?option=com_modules&task=module.add&eid=' . $modMenuId . '&params[menutype]='.$item->menutype); ?>">
+						<?php echo JText::_('COM_MENUS_ADD_MENU_MODULE'); ?></a>
+					<?php endif; ?>
+				
+				
+				*/
 				/*
 				echo '<fieldset class="adminform">';
 					echo '<legend>';

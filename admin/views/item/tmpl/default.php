@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -1119,6 +1119,69 @@ if($frontend)
 		$has_content = 'properties';
 	}
 	*/
+	
+	
+		$checkedOutText = '';
+		if($this->useCheckedOut && ( !$this->canCheckin || !$this->canEdit || $sub_task ==''))// ($sub_task !='new')))// && $sub_task !=='edit')))
+		{
+			//$user		= JFactory::getUser();
+
+			
+			// Join over the users.
+			$db		= JFactory::getDBO();
+			$query	= $db->getQuery(true);
+			$query->select('a.*');
+			$query->from('`#__content` AS a');
+			$query->select('u.name AS editor');
+			$query->join('LEFT', '`#__users` AS u ON u.id = a.checked_out'); //'.$userId); //a.checked_out');
+			$query->where("a.id = '".$this->item->id."'");
+			$db->setQuery($query);
+			$result = $db->loadObject();
+			if ($this->item->checked_out)
+			{
+				/*
+				$checkedOutText .= '<input type="hidden" value="0" id="boxchecked" >';
+				$checkedOutText .= '<input type="hidden" title="" onclick="isChecked(this.checked);" value="'.$this->menuItem->id.'" name="cid[]" id="cb0" >';
+				$checkedOutText .= JHtml::_('jgrid.checkedout', 0, $result->editor, $this->menuItem->checked_out_time, 'page.', $this->canCheckin);
+				
+				*/
+				$checkedOutText .= '<input type="hidden" value="0" id="boxchecked" >';
+				$checkedOutText .= '<input type="hidden" title="" onclick="isChecked(this.checked);" value="'.$this->item->id.'" name="cid[]" id="cb0" >';
+				$checkedOutText .= JHtml::_('jgrid.checkedout', 0, $result->editor, $this->item->checked_out_time, 'item.', $this->canCheckin);
+			//$checkedOutText
+			};
+			echo '<script>'."\n";
+			echo 'window.addEvent(\'domready\', function() {'."\n";
+					echo 'document.id(\'item_options\').addClass(\'display_none\');'."\n";
+					echo 'document.id(\'item_permissions\').addClass(\'display_none\');'."\n";
+			echo '});'."\n";
+			echo '</script>'."\n";
+
+
+			//$this->form->setFieldAttribute('type','type','text');
+			//$this->form->setFieldAttribute('type','class','readonly');
+			//$this->form->setFieldAttribute('type','readonly','true');
+
+			$this->form->setFieldAttribute('title','class','readonly');
+			$this->form->setFieldAttribute('title','readonly','true');
+
+			$this->form->setFieldAttribute('alias','class','readonly');
+			$this->form->setFieldAttribute('alias','readonly','true');
+
+			$this->form->setFieldAttribute('catid','disabled','true');
+
+			$this->form->setFieldAttribute('state','disabled','true');
+			
+			$this->form->setFieldAttribute('access','disabled','true');
+
+			$this->form->setFieldAttribute('featured','disabled','true');
+		
+			$this->form->setFieldAttribute('language','readonly','true');
+			
+			//$this->form->setFieldAttribute('description','type','textarea');
+			//$this->form->setFieldAttribute('description','disabled','true');
+			//$this->form->setFieldAttribute('description','readonly','true');
+		}	
 	?>
 	<table class="piadminform xadminform">
 	<thead class="piheader">
@@ -1177,7 +1240,9 @@ if($frontend)
 				//echo JText::_('COM_PAGESANDITEMS_ITEM_CAP').' '.$has_content;
 				//echo empty($this->item->id) ? JText::_('COM_CONTENT_NEW_ARTICLE') : JText::sprintf('COM_CONTENT_EDIT_ARTICLE', $this->item->id);
 				$titleTh =  empty($this->item->id) ? JText::_('COM_CONTENT_NEW_ARTICLE') : $sub_task == 'edit' ? JText::sprintf('COM_CONTENT_EDIT_ARTICLE', $this->item->id) : JText::_('COM_CONTENT_PAGE_VIEW_ARTICLE');
-				echo PagesAndItemsHelper::getThImageTitle($image,$titleTh);
+				//$imageDisplay = PagesAndItemsHelper::getThImageTitle($image,$checkedOutText.JText::_('COM_PAGESANDITEMS_PAGE_PROPERTIES').' ( '.$menu_item_name.' )',null,'thIcon16','thText');
+				echo PagesAndItemsHelper::getThImageTitle($image,$checkedOutText.$titleTh,null,'thIcon16','thText');
+				//echo PagesAndItemsHelper::getThImageTitle($image,$titleTh);
 			?>
 		</th>
 	</tr>
@@ -1312,9 +1377,9 @@ if($frontend)
 						*/
 
 
-						$params = null;
+						$paramsSliders = null;
 
-						$dispatcher->trigger('onGetParams',array(&$params, $item_type));
+						$dispatcher->trigger('onGetParams',array(&$paramsSliders, $item_type));
 						
 
 						//if($item_id)
@@ -1323,7 +1388,7 @@ if($frontend)
 							$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 							require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
 							$extensions = ExtensionManagerHelper::importExtension(null,null, true,null,true);
-							$dispatcher->trigger('onManagerItemtypeItemEdit', array (&$managerItemtypeItemEdit,$item_type,$item_id,$params,$new_or_edit ));
+							$dispatcher->trigger('onManagerItemtypeItemEdit', array (&$managerItemtypeItemEdit,$item_type,$item_id,$paramsSliders,$new_or_edit ));
 
 						//}
 
@@ -1339,9 +1404,9 @@ if($frontend)
 						//if not custom itemtype and have we an item_id
 						if(strpos($item_type, 'ustom_') === false && $item_id)
 						{
-							//$params = null;
-							//$dispatcher->trigger('onGetParams',array(&$params, $item_type));
-							if($params)
+							//$paramsSliders = null;
+							//$dispatcher->trigger('onGetParams',array(&$paramsSliders, $item_type));
+							if($paramsSliders)
 							{
 
 								//	ok we have the params let us get if the itemtype will translate
@@ -1354,7 +1419,7 @@ if($frontend)
 								//	for own tables and sub_tables the itemtype must manage this self
 
 
-								if($params->get('translatable',0))
+								if($paramsSliders->get('translatable',0))
 								{
 									//rewrite to helpers/language.php
 									//like
@@ -1362,11 +1427,11 @@ if($frontend)
 									$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 									require_once($path.DS.'helpers'.DS.'language.php');
 									//$languageParams = ???
-									$content_table = $params->get('content_table','content');
+									$content_table = $paramsSliders->get('content_table','content');
 									if($content_table)
 									{
 										//CHANGE ms: 02.05.2011
-										$languageItemtypeHtml->text = PagesAndItemsHelperLanguage::languageDisplayItemTypeItemEdit($item_type,$item_id,$content_table,$params);
+										$languageItemtypeHtml->text = PagesAndItemsHelperLanguage::languageDisplayItemTypeItemEdit($item_type,$item_id,$content_table,$paramsSliders);
 										//echo 'XXXXXXXXXXXXXXXXXX';
 									}
 									//
@@ -1380,7 +1445,7 @@ if($frontend)
 
 
 									//$itemtypeTranlateHtml = '';
-									//$content_table = $params->get('content_table','content');
+									//$content_table = $paramsSliders->get('content_table','content');
 									//$dispatcher->trigger('onPi_FishDisplayItemTypeItemEdit', array(&$itemtypeTranslateHtml,$item_type,$item_id,$content_table));
 
 
@@ -1424,61 +1489,7 @@ if($frontend)
 						*/
 						//echo plugin-specific fields
 
-		$checkedOutText = '';
-		if($this->useCheckedOut && ( !$this->canCheckin || !$this->canEdit || $sub_task ==''))// ($sub_task !='new')))// && $sub_task !=='edit')))
-		{
-			//$user		= JFactory::getUser();
 
-			
-			// Join over the users.
-			$db		= JFactory::getDBO();
-			$query	= $db->getQuery(true);
-			$query->select('a.*');
-			$query->from('`#__categories` AS a');
-			$query->select('u.name AS editor');
-			$query->join('LEFT', '`#__users` AS u ON u.id = a.checked_out'); //'.$userId); //a.checked_out');
-			$query->where("a.id = '".$this->item->id."'");
-			$db->setQuery($query);
-			$result = $db->loadObject();
-			if ($this->item->checked_out)
-			{
-				$checkedOutText = '<input type="hidden" title="" onclick="isChecked(this.checked);" value="'.$this->item->id.'" name="cid[]" id="cb0" >';
-				$checkedOutText .= JHtml::_('jgrid.checkedout', 0, $result->editor, $this->item->checked_out_time, 'category.', $this->canCheckin);
-			//$checkedOutText
-			};
-			
-			echo '<script>'."\n";
-			echo 'window.addEvent(\'domready\', function() {'."\n";
-					echo 'document.id(\'item_options\').addClass(\'display_none\');'."\n";
-					echo 'document.id(\'item_permissions\').addClass(\'display_none\');'."\n";
-			echo '});'."\n";
-			echo '</script>'."\n";
-
-
-			//$this->form->setFieldAttribute('type','type','text');
-			//$this->form->setFieldAttribute('type','class','readonly');
-			//$this->form->setFieldAttribute('type','readonly','true');
-
-			$this->form->setFieldAttribute('title','class','readonly');
-			$this->form->setFieldAttribute('title','readonly','true');
-
-			$this->form->setFieldAttribute('alias','class','readonly');
-			$this->form->setFieldAttribute('alias','readonly','true');
-
-			$this->form->setFieldAttribute('catid','disabled','true');
-
-			$this->form->setFieldAttribute('state','disabled','true');
-			
-			$this->form->setFieldAttribute('access','disabled','true');
-
-			$this->form->setFieldAttribute('featured','disabled','true');
-		
-			$this->form->setFieldAttribute('language','readonly','true');
-			
-			//$this->form->setFieldAttribute('description','type','textarea');
-			//$this->form->setFieldAttribute('description','disabled','true');
-			//$this->form->setFieldAttribute('description','readonly','true');
-		}
 
 
 
@@ -1628,18 +1639,29 @@ if($frontend)
 									echo '</div>';
 								}
 								
-								echo '<div';
-								if($item_type!='text' || !PagesAndItemsHelper::check_display('item_props_articletext')){
+								$hidden_articletext = '';
+								$articletextChanged = null;
+								//here we trigger so the item_type can change the articletext over $this->form
+								//at this moment only used for item_type = html
+								$dispatcher->trigger('onItemtypeDisplay_item_edit_articletext', array(&$articletextChanged,$this->form,$item_type));
+								if($articletextChanged && PagesAndItemsHelper::check_display('item_props_articletext'))
+								{
+									//$doc
+								}
+								else if($item_type !='text' || !PagesAndItemsHelper::check_display('item_props_articletext')){
 									//if itemtype is not 'text',, then still put the normal fields on the page
 									//but hidden, so the value gets parsed to the com_content save function
-									echo ' style="display: none;"';
+									$hidden_articletext = ' style="display: none;"';
 									//ms: only the textarea will output
 									$this->form->setFieldAttribute('articletext','type','textarea');
-
+									$this->form->setFieldAttribute('articletext','class','hide');
 								}
-								echo '>';
+								
+								//echo '<div'.$hidden_articletext.'>';
+								
 								echo $this->form->getInput('articletext');
-								echo '</div>';
+								
+								//echo '</div>';
 
 								echo '<div class="clr"></div>';
 
@@ -1685,6 +1707,17 @@ if($frontend)
 							if(!PagesAndItemsHelper::check_display('item_props_publishingoptions')){
 								$panels_to_hide[] = 'publishing-details';
 							}
+							
+							/*
+							TODO new attribs/params for j2.5
+							if(!PagesAndItemsHelper::check_display('item_props_configure-slidersoptions')){
+								$panels_to_hide[] = 'configure-sliders';
+							}
+							if(!PagesAndItemsHelper::check_display('item_props_urls_and_images-optionsoptions')){
+								$panels_to_hide[] = 'urls_and_images-options';
+							}
+							*/
+							
 							if(count($panels_to_hide)){
 								echo '<script>'."\n";
 								echo 'var panels_array = new Array(';
@@ -1710,14 +1743,54 @@ if($frontend)
 
 								echo '</script>'."\n";
 							}
+							
+// Create shortcut to parameters.
+$paramsSliders = $this->state->get('params');
+$paramsSliders = $paramsSliders->toArray();
 
-							?>
+/*
+TODO new for j2.5
+must do like for j1.6/1.7
+*/
+if(version_compare(JVERSION, '2.5', 'ge'))
+{
+
+	// This checks if the config options have ever been saved. If they haven't they will fall back to the original settings.
+	$editoroptions = isset($paramsSliders['show_publishing_options']);
+
+	if (!$editoroptions):
+		$paramsSliders['show_publishing_options'] = '1';
+		$paramsSliders['show_article_options'] = '1';
+		$paramsSliders['show_urls_images_backend'] = '0';
+		$paramsSliders['show_urls_images_frontend'] = '0';
+	endif;
+
+	// Check if the article uses configuration settings besides global. If so, use them.
+	if (!empty($this->item->attribs['show_publishing_options'])):
+		$paramsSliders['show_publishing_options'] = $this->item->attribs['show_publishing_options'];
+	endif;
+	if (!empty($this->item->attribs['show_article_options'])):
+		$paramsSliders['show_article_options'] = $this->item->attribs['show_article_options'];
+	endif;
+	if (!empty($this->item->attribs['show_urls_images_backend'])):
+		$paramsSliders['show_urls_images_backend'] = $this->item->attribs['show_urls_images_backend'];
+	endif;
+}
+else
+{
+	$paramsSliders['show_publishing_options'] = '1';
+	$paramsSliders['show_publishing_options'] = '1';
+	$paramsSliders['show_article_options'] = '1';
+	$paramsSliders['show_urls_images_backend'] = '0';
+	$paramsSliders['show_urls_images_frontend'] = '0';
+}
+?>
+
+						<?php echo JHtml::_('sliders.start','content-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
 
 
-							<?php echo JHtml::_('sliders.start','content-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
-
-
-
+							<?php // Do not show the publishing options if the edit form is configured not to. ?>
+							<?php if ($paramsSliders['show_publishing_options'] || ( $paramsSliders['show_publishing_options'] = '' && !empty($editoroptions)) ): ?>
 								<?php echo JHtml::_('sliders.panel',JText::_('COM_CONTENT_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 								<fieldset class="panelform">
 									<ul class="adminformlist" <?php echo !PagesAndItemsHelper::check_display('item_props_publishingoptions') ? $display_none : ''; //if(!$this->helper->check_display('item_props_publishingoptions'))){echo $display_none;} ?>>
@@ -1779,42 +1852,112 @@ if($frontend)
 										<?php endif; ?>
 									</ul>
 								</fieldset>
+							<?php endif; ?>
 
 
+							<?php $fieldSets = $this->form->getFieldsets('attribs');?>
+							<?php foreach ($fieldSets as $name => $fieldSet) :?>
+								<?php // If the parameter says to show the article options or if the parameters have never been set, we will show the article options. ?>
+	
+								<?php if ($paramsSliders['show_article_options'] || (( $paramsSliders['show_article_options'] == '' && !empty($editoroptions) ))): ?>
+									<?php // Go through all the fieldsets except the configuration and basic-limited, which are handled separately below. ?>
+									<?php if ($name != 'editorConfig' && $name != 'basic-limited') : ?>
 
-								<?php $fieldSets = $this->form->getFieldsets('attribs');?>
-								<?php foreach ($fieldSets as $name => $fieldSet) :?>
-									<?php echo JHtml::_('sliders.panel',JText::_($fieldSet->label), $name.'-options');?>
-									<?php if (isset($fieldSet->description) && trim($fieldSet->description)) :?>
-										<p class="tip"><?php echo $this->escape(JText::_($fieldSet->description));?></p>
-									<?php endif;?>
-									<fieldset class="panelform">
-										<ul class="adminformlist">
-										<?php
-										foreach ($this->form->getFieldset($name) as $field) : ?>
+										<?php echo JHtml::_('sliders.panel',JText::_($fieldSet->label), $name.'-options');?>
+										<?php if (isset($fieldSet->description) && trim($fieldSet->description)) :?>
+											<p class="tip"><?php echo $this->escape(JText::_($fieldSet->description));?></p>
+										<?php endif;?>
+										<fieldset class="panelform">
+											<ul class="adminformlist">
 											<?php
+											foreach ($this->form->getFieldset($name) as $field) : ?>
+												<?php
+											/*
 											$temp = $field->name;
 											$temp = str_replace('jform[attribs][', '', $temp);
 											$temp = str_replace(']', '', $temp);
 											$field_name = 'item_props_'.$temp;
-											?>
-											<li <?php
-											if($field_name!='item_props_spacer2'){
-												if(!PagesAndItemsHelper::check_display($field_name)){
+											*/
+												$field_name = 'item_props_'.$field->__get('fieldname');
+												?>
+												<li <?php
+												if($field_name!='item_props_spacer2'){
+													if(!PagesAndItemsHelper::check_display($field_name)){
+														echo $display_none;
+													}
+												}else{
+													//hide line
 													echo $display_none;
 												}
-											}else{
-												//hide line
-												echo $display_none;
-											}
-											?>>
-											<?php echo $field->label; ?><?php echo $field->input; ?></li>
-										<?php endforeach;
+												?>>
+												<?php echo $field->label; ?><?php echo $field->input; ?></li>
+											<?php endforeach;
+											?>
+											</ul>
+										</fieldset>
+									<?php endif ?>
+									<?php // If we are not showing the options we need to use the hidden fields so the values are not lost.  ?>
+								<?php elseif ($name == 'basic-limited'): ?>
+									<?php foreach ($this->form->getFieldset('basic-limited') as $field) : ?>
+										<?php  echo $field->input; ?>
+									<?php endforeach; ?>
 
-										?>
+								<?php endif; ?>
+							<?php endforeach; ?>
+						
+							<?php // only j2.5 
+									//We need to make a separate space for the configuration so that those fields always show to those wih permissions ?>
+							<?php if ( $this->canDo->get('core.admin') && count($this->form->getFieldset('editorConfig')) >0 ):  ?>
+								<?php  echo JHtml::_('sliders.panel',JText::_('COM_CONTENT_SLIDER_EDITOR_CONFIG'), 'configure-sliders'); ?>
+									<fieldset  class="panelform" >
+										<ul class="adminformlist">
+											<?php foreach ($this->form->getFieldset('editorConfig') as $field) : ?>
+												<li>
+													<?php echo $field->label; ?>
+													<?php echo $field->input; ?>
+												</li>
+											<?php endforeach; ?>
 										</ul>
 									</fieldset>
-								<?php endforeach; ?>
+							<?php endif ?>
+
+							<?php // The url and images fields only show if the configuration is set to allow them.  ?>
+							<?php // This is for legacy reasons. ?>
+							<?php if ($paramsSliders['show_urls_images_backend']): ?>
+								<?php echo JHtml::_('sliders.panel',JText::_('COM_CONTENT_FIELDSET_URLS_AND_IMAGES'), 'urls_and_images-options'); ?>
+									<fieldset class="panelform">
+										<ul class="adminformlist">
+										
+											<?php
+											/*
+											MS: i think this must be an error in J2.5
+											<li>
+												<?php echo $this->form->getLabel('images'); ?>
+												<?php echo $this->form->getInput('images'); ?>
+											</li>
+											*/
+											?>
+											<?php foreach($this->form->getGroup('images') as $field): ?>
+											<li>
+											<?php if (!$field->hidden): ?>
+												<?php echo $field->label; ?>
+											<?php endif; ?>
+												<?php echo $field->input; ?>
+											</li>
+											<?php endforeach; ?>
+											<?php foreach($this->form->getGroup('urls') as $field): ?>
+											<li>
+											<?php if (!$field->hidden): ?>
+												<?php echo $field->label; ?>
+											<?php endif; ?>
+												<?php echo $field->input; ?>
+											</li>
+											<?php endforeach; ?>
+										</ul>
+									</fieldset>
+								<?php endif; ?>
+
+
 
 
 
@@ -1836,10 +1979,13 @@ if($frontend)
 											<?php echo $field->input; ?>
 										<?php else: ?>
 											<?php
+											/*
 											$temp = $field->name;
 											$temp = str_replace('jform[metadata][', '', $temp);
 											$temp = str_replace(']', '', $temp);
 											$field_name = 'item_props_'.$temp;
+											*/
+											$field_name = 'item_props_'.$field->__get('fieldname');
 											?>
 											<div <?php if(!PagesAndItemsHelper::check_display($field_name)){echo $display_none;} ?>>
 											<?php echo $field->label; ?>
@@ -1848,7 +1994,6 @@ if($frontend)
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</fieldset>
-
 
 
 

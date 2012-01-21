@@ -1,8 +1,9 @@
 /**
 * @package Pages-and-Items (com_pagesanditems)
 * @version 2.1.0
-* @copyright	Copyright (C) . All rights reserved.
-* @license	GNU/GPL, see LICENSE.php
+* @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
+* @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
+* @author		www.pages-and-items.com
  */
 
 var popupExtension = 

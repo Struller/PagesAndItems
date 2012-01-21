@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -19,11 +19,14 @@ if($joomlaVersion < '1.6')
 	//require_once(dirname(__FILE__).DS.'../helpers'.DS.'menus.php');
 	require_once(dirname(__FILE__).DS.'base'.DS.'menutype15.php');
 }
-else
+elseif($joomlaVersion < '2.5')
 {
 	require_once(dirname(__FILE__).DS.'base'.DS.'menutype16.php');
 }
-
+else
+{
+	require_once(dirname(__FILE__).DS.'base'.DS.'menutype25.php');
+}
 
 /**
 

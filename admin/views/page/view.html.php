@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -282,6 +282,14 @@ class PagesAndItemsViewPage extends PagesAndItemsViewDefault //JView //PagesView
 			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'helpers'.DS.'menus.php');
 			$this->canDoMenutype = MenusHelper::getActions(); //$menutypeId);
 			
+			/*
+			if(version_compare(JVERSION, '2.5', 'ge'))
+			{
+				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'menus.php');
+				$modelMenutypes = new MenusModelMenus();
+				
+			}
+			*/
 			if($this->canDoMenutype->get('core.create') || $this->canDoMenutype->get('core.edit') )
 			{
 				//$menutypeId = JRequest::getVar('menutypeId',0);

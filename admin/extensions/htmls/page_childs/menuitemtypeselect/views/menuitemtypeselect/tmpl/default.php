@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -104,6 +104,7 @@ defined('_JEXEC') or die('Restricted access');
 	echo "<link href=\"".JURI::root(true).'/'.$path."/css/pagesanditems2.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
 	*/
 	$path = PagesAndItemsHelper::getDirCSS(); //here no juri JHTML make the juri
+
 	JHtml::stylesheet($path.'/pagesanditems2.css');
 ?>
 	</form>

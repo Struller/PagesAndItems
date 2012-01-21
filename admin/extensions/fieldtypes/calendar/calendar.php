@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -129,7 +129,6 @@ class PagesAndItemsExtensionFieldtypeCalendar extends PagesAndItemsExtensionFiel
 		// Get some system objects.
 		$config = JFactory::getConfig();
 		$user	= JFactory::getUser();
-
 		// Convert a date to UTC based on the user timezone.
 		if (intval($field_value)) {
 			// Get a date object based on the correct timezone.
@@ -177,13 +176,10 @@ class PagesAndItemsExtensionFieldtypeCalendar extends PagesAndItemsExtensionFiel
 
 		$value_name = 'calendarfield_values_'.$field->id;
 
-
-
 		$value = JRequest::getVar($value_name,'','post');
 		if($value==JText::_('COM_PAGESANDITEMS_NOW') || $value=='')
 		{
 			$value = PagesAndItemsHelper::get_date_now(true,$format);
-
 		}
 		else
 		{
@@ -197,7 +193,6 @@ class PagesAndItemsExtensionFieldtypeCalendar extends PagesAndItemsExtensionFiel
 
 
 		$value = PagesAndItemsHelper::get_date_ready_for_database($value,false);
-
 		return $value;
 	}
 

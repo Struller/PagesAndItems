@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -300,7 +300,13 @@ class PagesAndItemsControllerPage extends PagesAndItemsController //JControllerF
 			$db->query();
 		}
 
-		$model->cleanCache();
+		//in 2.5 this function is protected, so can no longer call it like this
+		//$model->cleanCache();
+		$cache = & JFactory::getCache('com_modules');
+		$cache->clean();
+		$cache = & JFactory::getCache('mod_menu');
+		$cache->clean();
+		
 
 		//redirect
 		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();

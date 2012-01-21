@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -171,9 +171,9 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=1}<br />{field_multisize_121 size=1 output=alt}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=1}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
-			$field_content = '{field_multisize_'.$field_id.' size=1}<br />{field_multisize_'.$field_id.' size=1 output=alt}';
+			$field_content = '{field_multisize_'.$field_id.' size=1}';
 		}
 
 		$html .= $this->display_field($field_name, $field_content);
@@ -241,9 +241,9 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=2}<br />{field_multisize_121 size=1 output=alt}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=2<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
-			$field_content = '{field_multisize_'.$field_id.' size=2}<br />{field_multisize_'.$field_id.' size=2 output=alt}';
+			$field_content = '{field_multisize_'.$field_id.' size=2}';
 		}
 
 		$html .= $this->display_field($field_name, $field_content);
@@ -310,9 +310,9 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=3}<br />{field_multisize_121 size=3 output=alt}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=3}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
-			$field_content = '{field_multisize_'.$field_id.' size=3}<br />{field_multisize_'.$field_id.' size=3 output=alt}';
+			$field_content = '{field_multisize_'.$field_id.' size=3}';
 		}
 
 		$html .= $this->display_field($field_name, $field_content);
@@ -379,9 +379,9 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=4}<br />{field_multisize_121 size=4 output=alt}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=4}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
-			$field_content = '{field_multisize_'.$field_id.' size=4}<br />{field_multisize_'.$field_id.' size=4 output=alt}';
+			$field_content = '{field_multisize_'.$field_id.' size=4}';
 		}
 
 		$html .= $this->display_field($field_name, $field_content);
@@ -447,9 +447,9 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		//template code
 		$field_name = JText::_('COM_PAGESANDITEMS_TEMPLATE_CODE');
 		if(!$field_id){
-			$field_content = '{field_multisize_121 size=5}<br />{field_multisize_121 size=5 output=alt}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
+			$field_content = '{field_multisize_121 size=5}<br />'.JText::_('COM_PAGESANDITEMS_EXAMPLE_MULTISIZE');
 		}else{
-			$field_content = '{field_multisize_'.$field_id.' size=5}<br />{field_multisize_'.$field_id.' size=5 output=alt}';
+			$field_content = '{field_multisize_'.$field_id.' size=5}';
 		}
 
 		$html .= $this->display_field($field_name, $field_content);
@@ -650,15 +650,13 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 			$file_name_stuff = $file_name_array[0];
 			$file_name_base_array = explode('_size',$file_name_stuff);
 			$file_name_base = $file_name_base_array[0];
+
 			$file_name_extension = $file_name_array[1];
-			if(isset($field->output)){
-				if($field->output=='alt'){
 
-					$html .= $this->get_field_value($field->value, 'alt');
-
-				}
-			}else{
 				$only_source = $this->get_field_param($field->params, 'only_source_'.$field->size);
+			$temp = 'only_source'.$only_source.' '.$field->size;
+
+
 				$image_dir = $this->get_field_param($field->params, 'image_dir');
 				$image_dir = $this->alter_image_dir($image_dir, $field->item_id);
 				if(!$only_source){
@@ -672,11 +670,12 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 					}
 					$html .= ' />';
 				}else{
+			
 					//only output source
 					$html .= $image_dir;
 					$html .= '/'.$file_name_base.'_size'.$field->size.'.'.$file_name_extension;
 				}
-			}
+			
 		}
 
 		return $html;

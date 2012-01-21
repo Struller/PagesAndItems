@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -96,6 +96,52 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		
 		$this->setRedirect(JRoute::_($url, false));
 		//$model->redirect_to_url( $url);
+	}
+
+	function checkin()
+	{
+		//JRequest::setVar('task', 'category_apply'); //, 'cmd');
+		//JRequest::setVar('checkin', true);
+		//JRequest::setVar('useCheckin', 1);
+		//$this->category_save();
+		dump(JRequest::get());
+		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		$pageId = JRequest::getVar('pageId', 0 );
+		
+		$menutype = JRequest::getVar('menutype', '');
+		$menutype = $menutype ? '&menutype='.$menutype : '';
+
+		$itemId = JRequest::getVar('itemId', '');
+		//$itemId = $itemId ? '&itemId='.$itemId : '';
+		
+		if($useCheckedOut)
+		{
+			$user = JFactory::getUser();
+			//TODO realice it over the model
+			// Get an instance of the row to checkin.
+			$table = JTable::getInstance('content'); //, $prefix, $config); //'content';
+			if (!$table->load($itemId)) 
+			{
+				//$this->setError($table->getError());
+				//return false;
+			}
+
+			// Check if this is the user having previously checked out the row.
+			if ($table->checked_out > 0 && $table->checked_out != $user->get('id') && !$user->authorise('core.admin', 'com_checkin')) 
+			{
+				//$this->setError(JText::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'));
+				//return false;
+			}
+
+			// Attempt to check the row in.
+			if (!$table->checkin($itemId)) 
+			{
+				//$this->setError($table->getError());
+				//return false;
+			}
+		}
+		$url = 'index.php?option=com_pagesanditems&view=item&pageId='.$pageId.'&itemId='.$itemId.$menutype;
+		$this->setRedirect(JRoute::_($url, false)); //, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
 	}
 
 	
@@ -195,11 +241,18 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			PagesAndItemsHelper::die_when_no_permission('4');
 		}
 
-
-
+		/*
+		if(isset($data['introtext']) && $data['introtext'])
+		{
+			$data['articletext'] = $data['introtext'];
+		}
+		*/
+		
 		//workaround to get past validation in com_content
 		$text = $data['articletext'];
 		if($text==''){
+			
+			
 			$data['articletext'] = '&nbsp;';
 		}
 

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -38,7 +38,24 @@ class PagesAndItemsExtensionItemtypeHtml extends PagesAndItemsExtensionItemtype
 		return true;
 	}
 
-
+	function onItemtypeDisplay_item_edit_articletext(&$articletextChanged,$form,$item_type)
+	{
+		if($item_type != 'html')
+		{
+			return true;
+		}
+		$articletextChanged = true;
+		$form->setFieldAttribute('articletext','type','textarea');
+		$form->setFieldAttribute('articletext','cols','50');
+		$form->setFieldAttribute('articletext','rows','10');
+		$form->setFieldAttribute('articletext','class','width-100');
+		$doc =&JFactory::getDocument();
+		$doc->addStyleDeclaration('fieldset.adminform textarea.width-100 {width: 100%;}');
+		
+		return true;
+	}
+	
+	/*
 	function onItemtypeDisplay_item_edit(&$itemtypeHtml,$item_type,$item_id,$text,$itemIntroText,$itemFullText)
 	{
 		if($item_type != 'html')
@@ -46,10 +63,16 @@ class PagesAndItemsExtensionItemtypeHtml extends PagesAndItemsExtensionItemtype
 			return false;
 		}
 		$html = '';
-		$html .= 'HTML:<br /><textarea name="introtext" cols="85" rows="10">'.$itemIntroText.'</textarea>';
+		$html .= '<script>';
+		$html .= '';
+		$html .= '</script>';
+		
+		$html .= 'HTML:<br /><textarea name="jform[introtext]" cols="85" rows="10">'.$itemIntroText.'</textarea>';
 		$itemtypeHtml->text = $itemtypeHtml->text.$html;
+		
 		return true;
 	}
+	*/
 }
 
 ?>

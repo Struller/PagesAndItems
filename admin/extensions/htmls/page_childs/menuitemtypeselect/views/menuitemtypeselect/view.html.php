@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.0
+* @version		2.1.1
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -37,8 +37,9 @@ class PagesAndItemsViewMenuItemTypeSelect extends PagesAndItemsViewDefault
 		$path = PagesAndItemsHelper::getDirCSS();
 		JHTML::stylesheet('popup.css', $path.'/');
 		//JHTML::stylesheet('pagesanditems2.css', $path.'/');
+		
 		$path = str_replace(DS,'/',str_replace(JPATH_ROOT.DS,'',realpath(dirname(__FILE__).'/../../media/css/').DS));
-			JHTML::stylesheet('menuitemtypeselect.css', $path);
+		JHTML::stylesheet($path.'/menuitemtypeselect.css');
 /*
 		}
 		else
