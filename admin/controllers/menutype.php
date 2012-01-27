@@ -42,7 +42,7 @@ class PagesAndItemsControllerMenutype extends JControllerForm
 		$url = "index.php?option=com_pagesanditems&view=page&layout=root".$menutype;
 		//$app = JFactory::getApplication();
 		$this->setMessage(JText::_('COM_PAGESANDITEMS_PAGE_CANCEL'));
-		$this->setRedirect(JRoute::_($url, false), $message);
+		$this->setRedirect(JRoute::_($url, false));
 	}
 
 
