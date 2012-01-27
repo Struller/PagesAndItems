@@ -243,14 +243,44 @@ class ButtonMaker
 				//$html = 'TODO buttonType: '.$this->buttonType;
 			break;
 
+			
+			//
+			/*
+			 TODO 
+			 for more browser compatible
+			 if $this->text = '' || $this->text = '&nbsp;'
+			
+			 input type="image
+			 or <button></button>
+			 
+			  <button name="Klickmich" type="button"
+      value="Überraschung" onclick="alert('Überraschung!');">
+      <p>
+        <img src="selfhtml.gif" width="106" height="109" alt="SELFHTML Logo"><br>
+        <b>Was passiert wohl?</b>
+      </p>
+    </button>
+			 
+			*/
 			case 'input':
+				
 				$html .= '<input type="button" ';
-
+				if($this->text == '' || $this->text == '&nbsp;')
+				{
+					//$html .= '<input type="image" ';
+					//$this->text = '&nbsp;';
+				}
+				else
+				{
+					
+				}
 				$html .= 'value="'.$this->text.'" ';
+
 
 				if($this->disabled)
 				{
 					$html .= 'disabled="disabled" ';
+
 				}
 				
 				if($this->id)
@@ -328,7 +358,16 @@ class ButtonMaker
 					//$html .= 'background-position:center center;';
 					//$html .= 'background-repeat: no-repeat; ';
 					//$html .= 'background-position:3px center;';
-					$html .= 'background-image: url('.$this->imagePath.$this->imageName.'); ';
+					/*
+					if($this->text == '' || $this->text == '&nbsp;')
+					{
+						$html .= 'src="'.$this->imagePath.$this->imageName.'" ';
+					}
+					else
+					{
+					*/
+						$html .= 'background-image: url('.$this->imagePath.$this->imageName.'); ';
+					//}
 					/*
 					$html .= 'background-repeat: no-repeat;';
 					*/

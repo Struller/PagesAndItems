@@ -195,7 +195,8 @@ if(!$frontend)
 				echo '</div>';
 			}
 
-			$itemtypeHtml = & new JObject();
+			//$itemtypeHtml = & new JObject();
+			$itemtypeHtml = new JObject();
 			$itemtypeHtml->text = '';
 			$results = $dispatcher->trigger('onItemtypeDisplay_item_subtask', array(&$itemtypeHtml,$item_type,$sub_task,$extensionSubTask)); //,$this->model));
 			echo $itemtypeHtml->text;

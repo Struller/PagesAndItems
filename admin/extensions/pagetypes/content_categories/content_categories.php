@@ -136,6 +136,9 @@ class PagesAndItemsExtensionPagetypeContentCategories extends PagesAndItemsExten
 			//." metadata='{\"author\":\"\",\"robots\":\"\"}', "
 			
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'categoriescategory.php');
+			jimport( 'joomla.database.table');
+			JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'tables');
+			
 			$modelCategory = new PagesAndItemsModelCategoriesCategory();
 			// set the form path
 			JForm::addFormPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'forms');

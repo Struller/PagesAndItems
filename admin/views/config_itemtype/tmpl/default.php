@@ -97,7 +97,8 @@ $item_type = JRequest::getVar('item_type');
 		$itemtype = ExtensionItemtypeHelper::importExtension(null, $item_type,true,null,true);
 
 		$dispatcher = &JDispatcher::getInstance();
-		$itemtypeHtml = & new JObject();
+		//$itemtypeHtml = & new JObject();
+		$itemtypeHtml = new JObject();
 		$itemtypeHtml->text = '';
 
 		$results = $dispatcher->trigger('onItemtypeDisplay_config_form', array(&$itemtypeHtml,$item_type));

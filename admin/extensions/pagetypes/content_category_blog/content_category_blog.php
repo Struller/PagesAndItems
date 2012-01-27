@@ -285,7 +285,6 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 			//$title = JRequest::getVar('jform[title]', '');
 			$jform = JRequest::getVar('jform', array(), 'post', 'array');
 			
-			
 			//ms: change
 			$app = JFactory::getApplication();
 			$parent_id = $jform['request']['id'];
@@ -300,7 +299,10 @@ class PagesAndItemsExtensionPagetypeContentCategoryBlog extends PagesAndItemsExt
 			//." params='{\"category_layout\":\"\",\"image\":\"\"}', "
 			//." metadata='{\"author\":\"\",\"robots\":\"\"}', "
 			
+			jimport( 'joomla.database.table');
+			JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'tables');
 			require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'models'.DS.'categoriescategory.php');
+			
 			$modelCategory = new PagesAndItemsModelCategoriesCategory();
 			// set the form path
 			JForm::addFormPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'forms');

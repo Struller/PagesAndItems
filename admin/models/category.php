@@ -12,7 +12,6 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
 jimport( 'joomla.database.table');
-JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'tables');
 //require_once(dirname(__FILE__).DS.'page.php');
 /**
 

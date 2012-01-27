@@ -11,6 +11,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
+//jimport( 'joomla.form.form' );
 //require_once(dirname(__FILE__).DS.'page.php');
 /**
 
@@ -18,7 +19,14 @@ jimport( 'joomla.application.component.model' );
 
 class PagesAndItemsModelItem extends JModel //PagesAndItemsModelPage
 {
-
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		//FB::dump('test');
+		//JForm::addFormPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'forms');
+		//JForm::addFieldPath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'fields');
+	}
+	
 	function get_itemtype_config($item_type)
 	{
 		$path = realpath(dirname(__FILE__).DS.'..');

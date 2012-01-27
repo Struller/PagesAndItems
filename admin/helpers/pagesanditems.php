@@ -2053,6 +2053,7 @@ new for tree
 
 		//check if menuitem is content-category-blog, and if so, get cat_id
 		$content_category_blog = false;
+		$config = PagesAndItemsHelper::getConfig();
 		$db =& JFactory::getDBO();
 		$db->setQuery("SELECT link, type FROM #__menu WHERE id='$deletePageId' LIMIT 1");
 		$rows = $db->loadObjectList();

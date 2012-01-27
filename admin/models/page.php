@@ -302,7 +302,8 @@ from view/page/view.html.php
 				{
 					JRequest::setVar( 'url',  $url);
 					JRequest::setVar( 'edit', false );
-					$modelMenu = &new MenusModelItem();
+					//$modelMenu = &new MenusModelItem();
+					$modelMenu = new MenusModelItem();
 					$item = $modelMenu->getItem();
 				}
 				else
@@ -312,15 +313,16 @@ from view/page/view.html.php
 					$app->setUserState('com_menus.edit.item.link',	null);
 
 					$parent_id = JRequest::getVar('pageId', '');
-					$app->setUserState('com_menus.edit.item.parent_id',	$parent_id);
+					$app->setUserState('com_menus.edit.item.parent_id', $parent_id);
 					
 					
 					//to set the correct type we need to tell the model ignore_request
-					$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
+					//$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
+					$modelMenu = new MenusModelItem(array('ignore_request'=>true));
 					JRequest::setVar( 'id', 0 );
 					$modelMenu->setState('item.type',$pageTypeType->type);
 					$modelMenu->setState('item.menutype',$menutype);
-
+					$modelMenu->setState('item.parent_id',$parent_id);
 					// Check if the link is in the form of index.php?...
 
 					if($url)
@@ -384,7 +386,8 @@ from view/page/view.html.php
 				JRequest::setVar( 'edit', true );
 				//JRequest::setVar( 'cid',  array(PagesAndItemsHelper::getPageId()));
 				JRequest::setVar( 'cid',  array($pageId));
-				$modelMenu = &new MenusModelItem();
+				//$modelMenu = &new MenusModelItem();
+				$modelMenu = new MenusModelItem();
 				$item = $modelMenu->getItem();
 			}
 			else
@@ -396,7 +399,8 @@ from view/page/view.html.php
 
 				//add addIncludePath
 				//to set the correct type we need to tell the model ignore_request
-				$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
+				//$modelMenu = &new MenusModelItem(array('ignore_request'=>true));
+				$modelMenu = new MenusModelItem(array('ignore_request'=>true));
 				//$modelMenu = &new MenusModelItem();
 				
 

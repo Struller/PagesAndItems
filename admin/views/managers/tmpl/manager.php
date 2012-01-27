@@ -132,7 +132,8 @@ if($popup)
 
 			<?php
 
-			$content = & new JObject();
+			//$content = & new JObject();
+			$content = new JObject();
 			$content->text = '';
 			$results = $dispatcher->trigger('onDisplayContent', array(&$content,$extension,$sub_task); //,$this->model));
 			echo $content->text;
