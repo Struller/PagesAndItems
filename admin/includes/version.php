@@ -9,7 +9,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class PagesAndItemsVersion{
-	var $_version	= '2.1.3';
+	var $_version	= '2.1.4';
 	/*
 	var $_versionid	= 'Twinkle';
 	var $_date		= '2009-11-15';
