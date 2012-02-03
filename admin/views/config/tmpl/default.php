@@ -351,10 +351,10 @@ general
 			<tr>
 				<td>
 					<p>
-						Pages-and-Items <?php echo JText::_('COM_PAGESANDITEMS_ACL_A'); ?>.
-					</p>
-					<p>
-						<?php echo JText::_('COM_PAGESANDITEMS_ACL_F').' com_menus '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
+						<br />
+						<?php echo JText::_('COM_PAGESANDITEMS_ACL_H') ?>:
+						'create', 'edit', 'edit.state' 
+						<?php echo JText::_('COM_PAGESANDITEMS_ACL_I').' com_menus '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
 						<br />
 						<a class="modal" href="index.php?option=com_config&amp;view=component&amp;component=com_menus&amp;path=&amp;tmpl=component" rel="{handler: 'iframe', size: {x: 875, y: 550}, onClose: function() {}}">
 							<span class="icon-32-options" style="width: 32px; height: 32px; display: block; float: left; ">
@@ -365,7 +365,9 @@ general
 						</a>
 					</p>
 					<p>
-						<?php echo JText::_('COM_PAGESANDITEMS_ACL_C').' com_content '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
+						<?php echo JText::_('COM_PAGESANDITEMS_ACL_H') ?>:
+						'create', 'edit', 'edit.state', 'edit.own', 'delete' 
+						<?php echo JText::_('COM_PAGESANDITEMS_ACL_G').' com_content '.JText::_('COM_PAGESANDITEMS_ACL_B'); ?>:
 						<br />
 						<a class="modal" href="index.php?option=com_config&view=component&component=com_content&path=&tmpl=component" rel="{handler: 'iframe', size: {x: 875, y: 550}, onClose: function() {}}">
 							<span class="icon-32-options" style="width: 32px; height: 32px; display: block; float: left;">

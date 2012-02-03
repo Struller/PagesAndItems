@@ -215,20 +215,7 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 
 		$category_id = $this->item->catid;
 		$canDo = ContentHelper::getActions($category_id, $item_id);
-		//check_acl
-		/*
-		//ms: in tmpl/default.php we have an acl check
-		if(!$canDo->get('core.edit')){
-			$message = JText::_('COM_PAGESANDITEMS_NO_PERMISSION_TO_EDIT_THIS_ITEM')';
-			JError::raiseWarning(403, $message);
-			//redirect
-			$app = JFactory::getApplication();
-			$app->redirect('index.php?option=com_pagesanditems&view=page&layout=root');
 
-			echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_TO_EDIT_THIS_ITEM');
-			exit;
-		}
-		*/
 		$this->assignRef('canDo', $canDo);
 
 
@@ -244,6 +231,13 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 		$userName	= $user->get('name');
 		$this->canCreate	= $this->canDo->get('core.create');
 		$this->canEdit	= $this->canDo->get('core.edit');
+		
+		$this->canEditOwn	= $this->canDo->get('core.edit.own') && $this->item->created_by == $userId;
+		//ms: i am not sure is this the right way
+		if(!$this->canEdit)
+		{
+			$this->canEdit = $this->canEditOwn;
+		}
 		
 		$this->canCheckin	= $user->authorise('core.manage', 'com_checkin') && ($this->item->checked_out==$user->get('id')|| $this->item->checked_out==0);
 		// || !$countAdminUsers);
@@ -275,7 +269,8 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 		{
 			if($sub_task=='edit')
 			{
-				if($this->canDo->get('core.edit') ) 
+				//if($this->canDo->get('core.edit') ) 
+				if($this->canEdit ) 
 				{
 					//JToolBarHelper::custom('category.category_checkin','checkin','checkin', JText::_('JTOOLBAR_APPLY').' & '.JText::_('JTOOLBAR_CHECKIN'), false);
 					JRequest::setVar('hidemainmenu', true);
@@ -288,7 +283,8 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 			}
 			else
 			{
-				if ($this->canDo->get('core.edit') && $this->canCheckin) 
+				//if ($this->canDo->get('core.edit') && $this->canCheckin) 
+				if ($this->canEdit && $this->canCheckin) 
 				{
 					JToolBarHelper::custom('item.item_edit','edit','edit', 'JTOOLBAR_EDIT', false);
 					JToolBarHelper::divider();

@@ -178,7 +178,7 @@ class PagesAndItemsExtensionPagetypeContentCategories extends PagesAndItemsExten
 			if($itemCategory = $modelCategory->getItem()) //$controller->item_save($data))
 			{
 				//update menu-item to new category id
-				$database->setQuery( "UPDATE #__menu SET link='index.php?option=com_content&view=category&layout=blog&id=$itemCategory->id' WHERE id='$menu_id' ");
+				$database->setQuery( "UPDATE #__menu SET link='index.php?option=com_content&view=categories&id=$itemCategory->id' WHERE id='$menu_id' ");
 				$database->query();
 				return true;
 			}

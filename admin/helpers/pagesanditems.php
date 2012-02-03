@@ -14,37 +14,11 @@ defined('_JEXEC') or die;
 
 class PagesAndItemsHelper{
 
-
-
 /*
 *******************
 * config
 ******************
 */
-
-
-	//public $app;
-	//public $db;
-	//public $version = '2.1.0';
-	//public $config;
-	//public $itemtypes;
-	//public $dirIcons;
-	//public $pathPluginsItemtypes; //ms: this can remove
-
-
-	function __construct(){
-		/*
-		$this->app = &JFactory::getApplication();
-		$this->db = JFactory::getDBO();
-		
-		
-		//remove
-		$this->config = $this->getConfig();
-		*/
-		//$this->dirIcons = $this->getDirIcons();
-		//$this->pathPluginsItemtypes = JPATH_PLUGINS.DS.'pages_and_items'.DS.'itemtypes'; //ms: this can remove
-	}
-
 
 	function getPathExtensions()
 	{
@@ -64,9 +38,7 @@ class PagesAndItemsHelper{
 		if($folder && $folder != '')
 		{
 			$extension_folder = str_replace('/','_',$folder);
-			$prefix = $type.'_'.$extension_folder;//.DS;
-
-
+			$prefix = $type.'_'.$extension_folder;
 			$path = $pathExtensions.DS.$type.'s'.DS.$folder;
 		}
 		else
@@ -80,21 +52,12 @@ class PagesAndItemsHelper{
 
 		$lang = &JFactory::getLanguage();
 		$defaultLang = $lang->getDefault();
-		/*
-		if($defaultLang != 'en-GB')
-		{
-			$defaultLang = 'en-GB';
-		}
-		*/
-
-		$lang->load(strtolower($extension), $path, null, false) //, false)
-		||	$lang->load(strtolower($extension), $pathExtensions, null, false) //ms: add)
-
-		||	$lang->load(strtolower($extension), $path, $defaultLang, false) //, false)
-		||	$lang->load(strtolower($extension), $pathExtensions, $defaultLang, false) //ms: add)
+		$lang->load(strtolower($extension), $path, null, false)
+		||	$lang->load(strtolower($extension), $pathExtensions, null, false)
+		||	$lang->load(strtolower($extension), $path, $defaultLang, false)
+		||	$lang->load(strtolower($extension), $pathExtensions, $defaultLang, false)
 		;
 	}
-
 
 	function getdTreeIcons($dtree)
 	{
@@ -114,10 +77,8 @@ class PagesAndItemsHelper{
 		$html .= "nlPlus	: '".PagesAndItemsHelper::getdirIcons()."nolines_plus.gif',\n";
 		$html .= "nlMinus	: '".PagesAndItemsHelper::getdirIcons()."nolines_minus.gif'\n";
 		$html .= "};\n";
-
 		return $html;
 	}
-
 
 	function getApp()
 	{
@@ -145,34 +106,6 @@ class PagesAndItemsHelper{
 		PagesAndItemsHelper::getApp()->redirect($url, $message);
 	}
 
-	function getJoomlaVersion()
-	{
-		static $joomlaVersion;
-		if (isset($joomlaVersion))
-		{
-			return $joomlaVersion;
-		}
-		$version = new JVersion();
-		$joomlaVersion = $version->getShortVersion();
-		return $joomlaVersion;
-	}
-	
-	function getPagesAndItemsVersion()
-	{
-		static $PagesAndItemsVersion;
-		if (isset($PagesAndItemsVersion))
-		{
-			return $PagesAndItemsVersion;
-		}
-		
-		require_once(realpath(dirname(__FILE__).DS.'..'.DS.'includes').DS.'version.php');
-		$version = new PagesAndItemsVersion();
-		return $PagesAndItemsVersion = $version->getVersionNr();
-		
-		//get from this is not an good idea an helper will not must __construct use PagesAndItemsHelper::
-	}
-	
-	
 	function checkPlugin($plugin)
 	{
 		
@@ -219,22 +152,75 @@ class PagesAndItemsHelper{
 
 	}
 	
+	//TODO as version_compare
+	/*
+	version_compare ( string $version1 , string $version2 [, string $operator ] )
 	
+	The possible operators are: <, lt, <=, le, >, gt, >=, ge, ==, =, eq, !=, <>, ne respectively.
+	This parameter is case-sensitive, so values should be lowercase.
+	
+	By default, version_compare() returns -1 if the first version is lower than the second, 0 if they are equal, and 1 if the second is lower.
+	When using the optional operator argument, the function will return TRUE if the relationship is the one specified by the operator, FALSE otherwise.
+
+	
+	
+	function getIsJoomlaVersion($typ = '>=',$version = '2.5')
+	{
+		//$joomlaVersion = PagesAndItemsHelper::getJoomlaVersion();
+		switch($typ)
+		{
+			case '<':
+			case 'lt':
+			case '<=':
+			case 'le':
+			case '>':
+			case 'gt':
+			case '>=':
+			case 'ge':
+			case '!=':
+			case '<>':
+			case '==':
+			case '=':
+			case 'eq':
+				return version_compare ( JVERSION, $version, $type );
+			break;
+			
+			default:
+				
+			break;
+		}
+	}
+	
+	
+	
+	*/
 	function getIsJoomlaVersion($typ = '<',$version = '1.6')
 	{
 		$joomlaVersion = PagesAndItemsHelper::getJoomlaVersion();
 		switch($typ)
 		{
 			case '<':
+			case 'lt': //?
 				return $joomlaVersion < $version;
 			break;
 			
+			case '<=':
+			case 'le': //?
+				return $joomlaVersion > $version;
+			break;
+			
 			case '>':
+			case 'gt': //?
 				return $joomlaVersion > $version;
 			break;
 			
 			case '>=':
+			case 'ge': //?
 				return $joomlaVersion >= $version;
+			break;
+			
+			case '!=':
+				return $joomlaVersion != $version;
 			break;
 			
 			case '<>':
@@ -242,17 +228,42 @@ class PagesAndItemsHelper{
 			break;
 			
 			case '==':
+			case '=':
+			case 'eq': //?
 				return $joomlaVersion == $version;
 			break;
 			
+		}
+	}
 
+	function getJoomlaVersion()
+	{
+		//return JVERSION
+		static $joomlaVersion;
+		if (isset($joomlaVersion))
+		{
+			return $joomlaVersion;
+		}
+		$version = new JVersion();
+		$joomlaVersion = $version->getShortVersion();
+		return $joomlaVersion;
 		}
 		
+	function getPagesAndItemsVersion()
+	{
+		static $PagesAndItemsVersion;
+		if (isset($PagesAndItemsVersion))
+		{
+			return $PagesAndItemsVersion;
+		}
 		
+		require_once(realpath(dirname(__FILE__).DS.'..'.DS.'includes').DS.'version.php');
+		$version = new PagesAndItemsVersion();
+		return $PagesAndItemsVersion = $version->getVersionNr();
 	}
 
 
-	//ms: add
+
 	function saveConfig($config = null)
 	{
 		if(!$config)

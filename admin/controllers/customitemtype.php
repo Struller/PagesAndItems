@@ -76,7 +76,7 @@ class PagesAndItemsControllerCustomItemType extends PagesAndItemsController
 		if(!$type_id)
 		{
 			//start insert custom itemtype
-			$db->setQuery( "INSERT INTO #__pi_customitemtypes SET name='$name', read_more='$read_more', template_intro='$template_intro', template_full='$template_full', editor_id='$editor_id', html_after='$html_after', html_before='$html_before', params='$params' ");
+			$db->setQuery( "INSERT INTO #__pi_customitemtypes SET name='$name', read_more='4', template_intro='$template_intro', template_full='$template_full', editor_id='$editor_id', html_after='$html_after', html_before='$html_before', params='$params' ");
 			if (!$db->query()) {
 				echo "<script> alert('".$db->getErrorMsg()."'); window.history.go(-1); </script>";
 				exit();
@@ -154,6 +154,7 @@ $database->query();
 				}else{
 					$url .= '&futuretask=config';
 				}
+				$url .= '&tmpl=component';
 				//$model->redirect_to_url( $url, '');
 				$this->setRedirect(JRoute::_($url, false)); //, $message);
 				return true;

@@ -11,6 +11,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.model' );
+jimport( 'joomla.database.table');
 require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'models'.DS.'category.php');
 /**
 This model is need to set some variables
@@ -28,6 +29,7 @@ class PagesAndItemsModelCategoriesCategory extends CategoriesModelCategory
 			$this->option = $config['option'];
 		}
 		parent::__construct($config);
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_categories'.DS.'tables');
 		
 		//$context = $this->option.'.'.$this->name;
 	}

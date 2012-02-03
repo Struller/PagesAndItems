@@ -245,7 +245,10 @@ class plgSystemPagesanditems extends JPlugin
 				//only redirect if in pi-config use_pi_frontend_editting is activated
 				if($use_pi_frontend_editting)
 				{
-					$id = JRequest::getVar('id', JRequest::getVar('a_id', '', 'get'), 'get');
+					//$id = JRequest::getVar('id', JRequest::getVar('a_id', '', 'get'), 'get'); 
+					//ce: this line parses the wrong id when SEF urls are used
+					$id = JRequest::getVar('a_id', '');
+					
 					if(strpos($id, ':'))
 					{
 						$pos = strpos($id, ':');
@@ -255,6 +258,8 @@ class plgSystemPagesanditems extends JPlugin
 					{
 						$item_id = intval($id);
 					}
+					
+				
 
 					if($use_pi_frontend_editting == 2)
 					{

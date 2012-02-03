@@ -156,7 +156,7 @@ class PagesAndItemsControllerCustomItemTypeField extends PagesAndItemsController
 			}else{
 				$url .= '&futuretask=config_custom_itemtype&from=field';
 			}
-			//$model->redirect_to_url( $url, '');
+			$url .= '&tmpl=component';
 			$this->setRedirect(JRoute::_($url, false));
 		}else{
 			//redirect without updateing items

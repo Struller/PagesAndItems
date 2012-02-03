@@ -1,7 +1,7 @@
 <?php
 /**
 * @package plugin Pages-and-Items (plugin for component Pages-and-Items)
-* @version 2.0.0
+* @version 2.1.0
 * @copyright Copyright (C) 2011 Carsten Engel. All rights reserved.
 * @license GNU/GPL http://www.gnu.org/licenses/gpl-2.0.html 
 * @author http://www.pages-and-items.com

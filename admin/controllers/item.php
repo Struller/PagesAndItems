@@ -215,21 +215,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 				$canDo_delete = 1;
 			}
 		}
-		/*
-		//ms: replace for PI ACL?
-		else
-		{
-			//get Joomla ACL for this article
-			//include com_content helper
-			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php');
-			$ContentHelper = new ContentHelper;
-			$canDo = ContentHelper::getActions($cat_id, $item_id);
-			if(!$canDo->get('core.create')){
-				echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_CREATE_NEW_ITEM');
-				exit;
-			}
-		}
-		*/
 		//ms: ???
 		//PI ACL
 		if(!$item_id){
@@ -240,18 +225,9 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			PagesAndItemsHelper::die_when_no_permission('4');
 		}
 
-		/*
-		if(isset($data['introtext']) && $data['introtext'])
-		{
-			$data['articletext'] = $data['introtext'];
-		}
-		*/
-		
 		//workaround to get past validation in com_content
 		$text = $data['articletext'];
 		if($text==''){
-			
-			
 			$data['articletext'] = '&nbsp;';
 		}
 
@@ -274,19 +250,13 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 		//take 'featured' out of array as com_contents model chokes on that on line 223
 		//after the article is saved we do the feature-stuff
+		$featured_was_parsed = 0;
+		if(isset($data['featured'])){
+			//need to check for this as registered users do not get the featured option when submitting an article
 		$featured = $data['featured'];
 		unset($data['featured']);
-
-
-		//ms: remove next 7 lines see lines 166-168
-		/*if($new_or_edit=='new'){
-			//make array or article-id's to find the id of the new article after the insert
-			//else there is no way to get the item_id after com_content has saved the article, as this function only returns 'true'.
-			//crazy workarounds!
-			$this->helper->db->setQuery( "SELECT id FROM #__content ");
-			$article_ids_array_old = $this->helper->db->loadResultArray();
-		}*/
-
+			$featured_was_parsed = 1;
+		}
 
 		//get the com_content model (controller?) and save the article
 		//then update later if the article is a CCK
@@ -342,7 +312,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		}
 
 		$data = $validData;
-		//ms: ADD End
 		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		if($useCheckedOut)
 		{
@@ -433,7 +402,12 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 				$db->query();
 			}
 
-			//'featured' stuff
+			
+		}
+		
+		//update featured as that creates an error if that is processed the normal way (see line 252)
+		if($featured_was_parsed){
+			//only consider featured action when user had the featured select on the edit page, like for 'registrered' users 			
 			$db->setQuery("SELECT content_id FROM #__content_frontpage WHERE content_id='$item_id' LIMIT 1");
 			$rows_frontpage = $db->loadObjectList();
 			$is_on_frontpage = false;
@@ -517,6 +491,8 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			$dispatcher->trigger('onManagerItemtypeItemSave', array ($item_type,$item_id, $new_or_edit)); //$delete_item
 
 		}
+
+		 
 
 		//sanitize item-index-table
 		$model->keep_item_index_clean();
@@ -665,7 +641,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$itemId = JRequest::getVar('itemId', 0);
 		$menutype = JRequest::getVar('menutype');
 		$sub_task = JRequest::getVar('sub_task');
-		$categoryId = JRequest::getVar('categoryId', 0 );
 		
 		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		if($useCheckedOut)
@@ -696,6 +671,8 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		if(JRequest::getVar('edit_from_frontend', '', 'post'))
 		{
 			//frontend
+			$catid = JRequest::getVar('cat_id', 0 );
+			//$catid = JRequest::getVar('catid', 0 );
 			$model = &$this->getModel('Item','PagesAndItemsModel');
 			$config = PagesAndItemsHelper::getConfig();
 			$pageId = JRequest::getVar('pageId', 0, 'post');
@@ -730,14 +707,14 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			}
 			else{
 				//redirect to item in full view
-				$url = 'index.php?option=com_content&amp;view=article&amp;id='.$item_id.'&amp;catid='.$cat_id.'&amp;Itemid='.$pageId;
+				$url = 'index.php?option=com_content&amp;view=article&amp;id='.$itemId.'&amp;catid='.$catid.'&amp;Itemid='.$pageId;
 			}
 			
 		}
 		else
 		{
 			//backend
-		
+			$categoryId = JRequest::getVar('categoryId', 0 ); //need for backend
 		$subTask = $useCheckedOut ? '' : '&sub_task=edit';
 		if($useCheckedOut && $sub_task == 'edit')
 		{
@@ -764,7 +741,10 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 		
 		//$model->redirect_to_url($url, JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
+
 		$this->setRedirect(JRoute::_($url, false), JText::_('COM_PAGESANDITEMS_ACTION_CANCELED'));
+
+
 		/*
 		
 		*/

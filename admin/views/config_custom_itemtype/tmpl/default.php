@@ -24,7 +24,7 @@ if(!$type_id){
 
 		$type_id = '';
 		$name = '';
-		$read_more = '1';
+		$read_more = '4';
 		$items_of_this_type = 0;
 		$editor_id = 0;
 		$html_after = '';
@@ -198,7 +198,7 @@ echo 'Joomla.submitbutton = function(pressbutton)'."\n";
 	{
 		if(confirm("<?php echo addslashes(JText::_('COM_PAGESANDITEMS_WANT_TO_UPDATE_ITEMS')); ?>"))
 		{
-			document.location.href = 'index.php?option=com_pagesanditems&view=render_items_by_custom_itemtype&type_id=<?php echo $type_id; ?>&futuretask=config_custom_itemtype';
+			document.location.href = 'index.php?option=com_pagesanditems&view=render_items_by_custom_itemtype&type_id=<?php echo $type_id; ?>&futuretask=config_custom_itemtype&tmpl=component';
 		}
 	}
 	if (pressbutton == 'customitemtype.config_custom_itemtype_apply')
@@ -450,6 +450,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 		*/
 		?>
 		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?></a>
+		 &#8250; 
 		<?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?>
 		<h2><?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?></h2>
 		<div class="pi_form_wrapper">

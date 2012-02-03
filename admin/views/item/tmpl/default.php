@@ -548,17 +548,19 @@ readmore=
 	//must rewrite??
 	//if($this->model->user_type=='Author'){
 		//check if the item to edit is the authors own article
-			
+		/*	
 		$canDoContent = PagesAndItemsHelper::canDoContent($cat_id, $item_id);
 		$user		= JFactory::getUser();
 		$userId		= $user->get('id');
 		$canEdit	= $canDoContent->get('core.edit');
 		$canEditOwn	= $canDoContent->get('core.edit.own') && $created_by == $userId;
-		if((!$canEdit && !$canEditOwn))
+		*/
+		//if((!$canEdit && !$canEditOwn))
+		if(!$this->canEdit)
 		{
 //			echo JText::_('COM_PAGESANDITEMS_NO_PERMISSION_TO_EDIT_THIS_ITEM');
 //			exit;
-			echo "<script> alert('".JText::_('COM_PAGESANDITEMS_NOITEMACCESS')."XX'); window.history.go(-1); </script>";
+			echo "<script> alert('".JText::_('COM_PAGESANDITEMS_NOITEMACCESS')."'); window.history.go(-1); </script>";
 			exit();
 		}
 
@@ -1122,7 +1124,8 @@ if($frontend)
 	
 	
 		$checkedOutText = '';
-		if($this->useCheckedOut && ( !$this->canCheckin || !$this->canEdit || $sub_task ==''))// ($sub_task !='new')))// && $sub_task !=='edit')))
+		$disableItem = false;
+		if($this->useCheckedOut && ( !$this->canCheckin || !$this->canEdit || $sub_task =='') && !$frontend)// ($sub_task !='new')))// && $sub_task !=='edit')))
 		{
 			//$user		= JFactory::getUser();
 
@@ -1156,7 +1159,11 @@ if($frontend)
 					echo 'document.id(\'item_permissions\').addClass(\'display_none\');'."\n";
 			echo '});'."\n";
 			echo '</script>'."\n";
+			$disableItem = true;
+		}
 
+		if($disableItem)
+		{
 
 			//$this->form->setFieldAttribute('type','type','text');
 			//$this->form->setFieldAttribute('type','class','readonly');
