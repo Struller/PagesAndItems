@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.3
+* @version		2.1.5
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -243,7 +243,7 @@ class installPlugins
 				}
 			}else{
 				//insert plugin and enable it
-				$manifest_cache = '{"legacy":false,"name":"System - Pages and Items","type":"plugin","creationDate":"may 2011","author":"Carsten Engel","copyright":"Copyright (C) 2011 Carsten Engel, pages-and-items","authorEmail":"-","authorUrl":"www.pages-and-items.com","version":"1.0.0","description":"Don\'t forget to ENABLE this plugin.","group":""}';
+				$manifest_cache = '{"legacy":false,"name":"System - Pages and Items","type":"plugin","creationDate":"may 2011","author":"Carsten Engel","copyright":"Copyright (C) 2011 Carsten Engel, pages-and-items","authorEmail":"-","authorUrl":"www.pages-and-items.com","version":"2.1.5","description":"Don\'t forget to ENABLE this plugin.","group":""}';
 				$manifest_cache = addslashes($manifest_cache);
 				$database->setQuery( "INSERT INTO #__extensions SET name='System - Pages and Items', type='plugin', element='pagesanditems', folder='system', enabled='1', manifest_cache='$manifest_cache' ");
 				$database->query();
@@ -285,7 +285,7 @@ class installPlugins
 				}
 			}else{
 				//insert plugin and enable it
-				$manifest_cache = '{"legacy":false,"name":"Content - Pages and Items","type":"plugin","creationDate":"may 2011","author":"Carsten Engel","copyright":"Copyright (C) 2011 Carsten Engel, pages-and-items","authorEmail":"-","authorUrl":"www.pages-and-items.com","version":"2.0.0","description":"Don\'t forget to ENABLE this plugin.","group":""}';
+				$manifest_cache = '{"legacy":false,"name":"Content - Pages and Items","type":"plugin","creationDate":"may 2011","author":"Carsten Engel","copyright":"Copyright (C) 2011 Carsten Engel, pages-and-items","authorEmail":"-","authorUrl":"www.pages-and-items.com","version":"2.1.5","description":"Don\'t forget to ENABLE this plugin.","group":""}';
 				$manifest_cache = addslashes($manifest_cache);
 				$database->setQuery( "INSERT INTO #__extensions SET name='Content - Pages and Items', type='plugin', element='pagesanditems', folder='content', enabled='1', manifest_cache='$manifest_cache' ");
 				$database->query();

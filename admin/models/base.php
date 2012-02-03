@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.3
+* @version		2.1.5
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -44,7 +44,7 @@ class PagesAndItemsModelBase extends JModel
 	public $isSuperAdmin = 0;
 
 	public $app;
-	//public $version = ''; //'1.5.9 mvc';//
+	//public $version = ''; //'2.1.5 mvc';//
 	/**
 	 * Overridden constructor
 	 * @access	protected
