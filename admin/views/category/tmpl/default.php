@@ -583,10 +583,11 @@ $html = '';
 
 			$this->form->setFieldAttribute('published','readonly','true');
 
-			//$this->form->setFieldAttribute('access','disabled','true');
+			//$this->form->setFieldAttribute('access','readonly','true');
+			$this->form->setFieldAttribute('access','disabled','true');
 		
 			//$this->form->setFieldAttribute('menutype','readonly','true');
-			//$this->form->setFieldAttribute('parent_id','readonly','true');
+			$this->form->setFieldAttribute('parent_id','readonly','true');
 			//$this->form->setFieldAttribute('browserNav','readonly','true');
 			
 			$this->form->setFieldAttribute('language','readonly','true');

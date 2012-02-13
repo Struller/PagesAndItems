@@ -114,6 +114,9 @@ class PagesAndItemsViewCategory extends PagesAndItemsViewDefault
 			else
 			{
 				$this->form = $modelCategory->getForm();
+				
+				$this->form->setFieldAttribute('parent_id','parent','true');
+				
 				$this->item = $modelCategory->getItem($categoryId);
 				$this->categoryId = $categoryId;
 				$this->parentCategoryId = $categoryId;
