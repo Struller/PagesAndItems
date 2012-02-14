@@ -24,18 +24,16 @@ class PagesAndItemsViewArchiveTrash extends PagesAndItemsViewDefault
 {
 	function display($tpl = null)
 	{
-
-
-
 		$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'..');
 		require_once($path.DS.'includes'.DS.'extensions'.DS.'managerhelper.php');
-		$typeName = 'ExtensionManagerHelper';
-		$typeName::importExtension(null, 'archivetrash',true,null,true);
+		//$typeName = 'ExtensionManagerHelper';
+		ExtensionManagerHelper::importExtension(null, 'archivetrash',true,null,true);
 
 		PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_MANAGERS').': ['.JText::_('PI_EXTENSION_MANAGER_ARCHIVETRASH_NAME').']</small>');
 		//$archiveType = JRequest::getVar('archiveType','all');
 		//$this->assignRef('archiveType', $archiveType);
-		if ($model = &$this->getModel('archivetrash'))
+		//if ($model = &$this->getModel('archivetrash'))
+		if ($model = $this->getModel('archivetrash'))
 		{
 			$this->assignRef( 'model',$model);
 		}
@@ -47,7 +45,8 @@ class PagesAndItemsViewArchiveTrash extends PagesAndItemsViewDefault
 		$this->assignRef( 'table_id',$table_id);
 
 
-		$doc =& JFactory::getDocument();
+		//$doc =& JFactory::getDocument();
+		$doc = JFactory::getDocument();
 
 		$js = 'window.addEvent(\'domready\',function(){'."\n";
 		//on reload the page we must reset
@@ -78,7 +77,8 @@ class PagesAndItemsViewArchiveTrash extends PagesAndItemsViewDefault
 		{
 			$stateTypes = $table->stateTypes;
 		}
-		$dispatcher = &JDispatcher::getInstance();
+		//$dispatcher = &JDispatcher::getInstance();
+		$dispatcher = JDispatcher::getInstance();
 		/*
 			in the model 'archivetrash'
 			we have call importExtension where load all extensions from pi

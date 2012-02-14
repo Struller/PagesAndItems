@@ -168,7 +168,9 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 			$path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS.'..');
 			require_once($path.DS.'includes'.DS.'extensions'.DS.$row->type.'helper.php');
 			$extensionHelper = 'Extension'.ucfirst($row->type).'Helper';
-			$extension = $extensionHelper::importExtension($row->folder, $row->element,true,null,true);
+			$extensionHelper = new $extensionHelper();
+			//$extension = $extensionHelper::importExtension($row->folder, $row->element,true,null,true);
+			$extensionHelper->importExtension($row->folder, $row->element,true,null,true);
 
 			if($extension && is_object($extension))
 			{
