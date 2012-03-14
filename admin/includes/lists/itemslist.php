@@ -618,7 +618,7 @@ class ItemsList
 			# [string] orderby_sec = "front"
 			# [string] order_date = ""
 			*/
-			//$menu_item_advancedparams = $this->menu_item->getAdvancedParams();
+			//$menu_item_advancedparams = $this->menu_item->getAdvancedParams();			
 			if(isset($menuItem->params['orderby_pri']))
 			{
 				$orderByPri = $menuItem->params['orderby_pri'];
@@ -634,9 +634,27 @@ class ItemsList
 			}
 			else
 			{
-				$orderBySec = null;
+				$orderBySec = '';
 			}
-
+			
+			if($orderBySec==''){
+				//if not set, get the default for display in list
+				$database = JFactory::getDBO();
+				//get params for com_content
+				$database->setQuery("SELECT params "
+				."FROM #__extensions "
+				."WHERE element='com_content' "
+				."LIMIT 1 "
+				);
+				$params_string = $database->loadResult();
+				//make into array	
+				$registry = new JRegistry;
+				$registry->loadJSON($params_string);
+				$params_array = $registry->toArray();
+				
+				$orderBySec = $params_array['orderby_sec'];
+			}
+			
 			if(isset($menuItem->params['orderby']) && $menuItem->params['orderby'] != '')
 			{
 				$orderBy = $menuItem->params['orderby'];
