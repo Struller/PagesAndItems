@@ -938,6 +938,45 @@ class PagesAndItemsExtensionFieldtypeImage_multisize extends PagesAndItemsExtens
 		}elseif($extension=='png'){
 			$srcimg=imagecreatefrompng($prod_img);
 		}
+		
+		//restore gif's and png's transparency after resize
+		if($extension=='gif' || $extension=='png'){
+			$trnprt_indx = imagecolortransparent($srcimg);
+			
+			// If we have a specific transparent color
+			if ($trnprt_indx >= 0) {
+			
+				// Get the original image's transparent color's RGB values
+				$trnprt_color = imagecolorsforindex($srcimg, $trnprt_indx);
+				
+				// Allocate the same color in the new image resource
+				$trnprt_indx = imagecolorallocate($imgnew, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+				
+				// Completely fill the background of the new image with allocated color.
+				imagefill($imgnew, 0, 0, $trnprt_indx);
+				
+				// Set the background color for new image to transparent
+				imagecolortransparent($imgnew, $trnprt_indx);
+			
+			
+			
+			// Always make a transparent background color for PNGs that don't have one allocated already
+			}elseif($extension=='png'){
+			
+				// Turn off transparency blending (temporarily)
+				imagealphablending($imgnew, false);
+				
+				// Create a new transparent color for image
+				$color = imagecolorallocatealpha($imgnew, 0, 0, 0, 127);
+				
+				// Completely fill the background of the new image with allocated color.
+				imagefill($imgnew, 0, 0, $color);
+				
+				// Restore transparency blending
+				imagesavealpha($imgnew, true);
+			}
+		}
+		
 		if(function_exists('imagecopyresampled')){
 			imagecopyresampled($imgnew,$srcimg,0,0,0,0,$new_width,$new_height,ImageSX($srcimg),ImageSY($srcimg));
 		}else{

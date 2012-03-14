@@ -308,7 +308,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 		$delete_image = JRequest::getVar($value_name.'_delete_image', false);
 		$image_dir = JRequest::getVar($value_name.'_image_dir', false);
 		$auto_alt = JRequest::getVar($value_name.'_auto_alt', false);
-
+		
 		$image_upload = false;
 		$imagePathRoot = JPath::clean(JPATH_ROOT.DS.$image_dir);
 		//load the file Helper
@@ -403,7 +403,7 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 					//die('Problem uploading image. File is too big. Try making the image smaller with an image-editor (like Photoshop or Gimp) and try again.');
 					$error_message = PagesAndItemsHelperFile::file_upload_error_message($_FILES[$image]['error']);
 					return array('error'=>'Problem uploading image. '.$error_message);
-					// File is too big. Try making the image smaller with an image-editor (like Photoshop or Gimp) and try again.');
+					// File is too big. Try making the image smaller with an image-editor (like Photoshop or Gimp) and try again.
 				}
 
 				//get sizes and ratio
@@ -415,8 +415,15 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 				//resize uploaded image
 				if (($sizes[0] > $max_width || $sizes[1] > $max_height) && $resize){
 
-					$widthratio = $sizes[0]/$max_width;
-					$heightratio = $sizes[1]/$max_height;
+					
+					$widthratio = 0;
+					if($max_width){					
+						$widthratio = $sizes[0]/$max_width;
+					}
+					$heightratio = 0;
+					if($max_height){
+						$heightratio = $sizes[1]/$max_height;
+					}
 
 					$imgnewwidth = $max_width;
 					$imgnewheight = $max_height;
@@ -441,11 +448,50 @@ class PagesAndItemsExtensionFieldtypeImage extends PagesAndItemsExtensionFieldty
 					}elseif($extension=='png'){
 						$srcimg=imagecreatefrompng($prod_img);
 					}
+					
+					//restore gif's and png's transparency after resize
+					if($extension=='gif' || $extension=='png'){
+						$trnprt_indx = imagecolortransparent($srcimg);
+						
+						// If we have a specific transparent color
+						if ($trnprt_indx >= 0) {
+						
+							// Get the original image's transparent color's RGB values
+							$trnprt_color = imagecolorsforindex($srcimg, $trnprt_indx);
+							
+							// Allocate the same color in the new image resource
+							$trnprt_indx = imagecolorallocate($imgnew, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+							
+							// Completely fill the background of the new image with allocated color.
+							imagefill($imgnew, 0, 0, $trnprt_indx);
+							
+							// Set the background color for new image to transparent
+							imagecolortransparent($imgnew, $trnprt_indx);
+						
+						
+						
+						// Always make a transparent background color for PNGs that don't have one allocated already
+						}elseif($extension=='png'){
+						
+							// Turn off transparency blending (temporarily)
+							imagealphablending($imgnew, false);
+							
+							// Create a new transparent color for image
+							$color = imagecolorallocatealpha($imgnew, 0, 0, 0, 127);
+							
+							// Completely fill the background of the new image with allocated color.
+							imagefill($imgnew, 0, 0, $color);
+							
+							// Restore transparency blending
+							imagesavealpha($imgnew, true);
+						}
+					}					
+					
 					if(function_exists('imagecopyresampled')){
 						imagecopyresampled($imgnew,$srcimg,0,0,0,0,$newwidth,$newheight,ImageSX($srcimg),ImageSY($srcimg));
 					}else{
 						imagecopyresized($imgnew,$srcimg,0,0,0,0,$newwidth,$newheight,ImageSX($srcimg),ImageSY($srcimg));
-					}
+					}					
 					if($extension=='jpg'){
 						imagejpeg($imgnew,$prod_img,90);
 					}elseif($extension=='gif'){
