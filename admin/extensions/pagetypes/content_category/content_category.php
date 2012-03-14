@@ -81,11 +81,14 @@ class PagesAndItemsExtensionPagetypeContentCategory extends PagesAndItemsExtensi
 			
 			//ms: change
 			$app = JFactory::getApplication();
-			$parent_id = $jform['request']['id'];
+			//$parent_id = $jform['request']['id'];
 			$categoryData['id'] = 0;
 			$categoryData['title'] = $item->title;
 			$categoryData['alias'] = $item->alias;
-			$categoryData['parent_id'] = $parent_id;
+			//$categoryData['parent_id'] = $parent_id;
+			//ce: when creating a new category, set parent to 1
+			//do not try to give the new category the parent_id of the menu-item
+			$categoryData['parent_id'] = 1;
 			$categoryData['extension'] = 'com_content';
 			$categoryData['published'] = 1;
 			$categoryData['access'] = 1;
