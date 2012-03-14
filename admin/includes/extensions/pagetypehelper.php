@@ -22,7 +22,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionPagetypeHelper //extends ExtensionsHelper
+//abstract 
+class ExtensionPagetypeHelper //extends ExtensionsHelper
 {
 
 	/**

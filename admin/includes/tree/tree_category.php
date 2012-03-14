@@ -41,13 +41,34 @@ class PagesAndItemsTreeCategory
 			
 			$options[] = JHTML::_('select.option', '',JText::_('JOPTION_FROM_COMPONENT'));
 			
-			$lang = &JFactory::getLanguage();
+			$lang = JFactory::getLanguage();
 			$rows = $db->loadObjectList();
 			foreach($rows as $row)
 			{
+				/*
 				$extension = $row->text;
 				$lang->load(strtolower($extension.'.sys'), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension.'.sys'), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
 				$text = JText::_(strtoupper($row->text) ) <> strtoupper($row->text) ? JText::_(strtoupper($row->text) ) : $row->text;
+				*/
+				$parts = explode('.', $row->text);
+				//FB::dump($parts);
+				$component = $parts[0];
+				$section = (count($parts) > 1) ? $parts[1] : null;
+
+				$lang->load($component, JPATH_BASE, null, false, false)
+				||	$lang->load($component, JPATH_ADMINISTRATOR.'/components/'.$component, null, false, false)
+				||	$lang->load($component, JPATH_BASE, $lang->getDefault(), false, false)
+				||	$lang->load($component, JPATH_ADMINISTRATOR.'/components/'.$component, $lang->getDefault(), false, false);
+			
+				// if the component section string exits, let's use it
+				if ($lang->hasKey($component_section_key = $component.($section?"_$section":''))) {
+					$text = JText::_($component_section_key);
+				}
+				// Else use the component string
+				else {
+					$text = JText::_(strtoupper($component));
+				}
+				
 				$row->text = $text;
 			}
 			$options = array_merge( $options, $rows );
@@ -185,8 +206,9 @@ class PagesAndItemsTreeCategory
 					//$js .= '	.wrapper.removeEvent(\'mousedown\')'."\n";
 					
 					$js .= '	.addEvent(\'load\', function(){'."\n";
-					$js .= '		document.id(\'tree_container\').getElement(\'span[class*=root-first]\').getElement(\'span[class*=mif-tree-gadjet]\').destroy();'."\n";
-					$js .= '		document.id(\'tree_container\').getElement(\'span[class*=root-first]\').getParent().addClass(\'mif-tree-node-root-first\');'."\n";
+					
+					$js .= '		if(document.id(\'tree_container\').getElement(\'span[class*=root-first]\'))document.id(\'tree_container\').getElement(\'span[class*=root-first]\').getElement(\'span[class*=mif-tree-gadjet]\').destroy();'."\n";
+					$js .= '		if(document.id(\'tree_container\').getElement(\'span[class*=root-first]\'))document.id(\'tree_container\').getElement(\'span[class*=root-first]\').getParent().addClass(\'mif-tree-node-root-first\');'."\n";
 					
 					if(JRequest::getVar('categoryId',1))
 					{
@@ -322,6 +344,7 @@ class PagesAndItemsTreeCategory
 		
 		if(!$rows)
 		{
+			return '{}';
 			return false;
 			/*
 			$this->db->setQuery("SELECT * FROM #__categories  WHERE extension='com_content' " );

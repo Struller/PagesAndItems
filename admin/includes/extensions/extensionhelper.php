@@ -14,7 +14,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionHelper
+//abstract 
+class ExtensionHelper
 {
 
 	/**

@@ -35,8 +35,12 @@ $path = realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..');
 if($extensionType != '')
 {
 	require_once($path.DS.'includes'.DS.'extensions'.DS.$extensionType.'helper.php');
-	$typeName = 'Extension'.ucfirst($extensionType).'Helper';
-	$typeName::importExtension($extensionFolder, $extensionName,true,null,true);
+	//$typeName = 'Extension'.ucfirst($extensionType).'Helper';
+	//$typeName::importExtension($extensionFolder, $extensionName,true,null,true);
+	$extensionHelper = 'Extension'.ucfirst($extensionType).'Helper';
+	//$typeName::importExtension($extensionFolder, $extensionName,true,null,true);
+	$extensionHelper = new $extensionHelper();
+	$extensionHelper->importExtension($extensionFolder, $extensionName,true,null,true);
 }
 $dispatcher = &JDispatcher::getInstance();
 

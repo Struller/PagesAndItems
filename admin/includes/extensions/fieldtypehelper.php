@@ -22,7 +22,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionFieldtypeHelper //extends ExtensionsHelper
+//abstract 
+class ExtensionFieldtypeHelper //extends ExtensionsHelper
 {
 
 	/**

@@ -22,7 +22,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionPiPluginHelper //extends ExtensionsHelper
+//abstract 
+class ExtensionPiPluginHelper //extends ExtensionsHelper
 {
 
 	/**

@@ -23,7 +23,8 @@ defined('JPATH_BASE') or die;
  *
  */
 
-abstract class ExtensionItemtypeHelper //extends ExtensionHelper
+//abstract 
+class ExtensionItemtypeHelper //extends ExtensionHelper
 {
 
 	/*

@@ -139,8 +139,9 @@ class PagesAndItemsControllerExtensionManagerExtensionsPiextension extends Pages
 
 		$extensionHelper = 'Extension'.ucfirst($row->type).'Helper';
 		//$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
-		$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
-
+		//$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
+		$extensionHelper = new $extensionHelper();
+		$extensionHelper->importExtension($row->folder, $row->element,true,null,true);
 
 		//$extensionHelper::importExtension($row->folder, $row->element,true,null,true);
 		$dispatcher = &JDispatcher::getInstance();
