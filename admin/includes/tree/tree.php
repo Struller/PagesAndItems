@@ -103,6 +103,23 @@ class PagesAndItemsTree
 		
 		$this->pageMenuItem = isset($tree->pageMenuItem) ? $tree->pageMenuItem : null;
 		$this->currentMenuitems = isset($tree->currentMenuitems) ? $tree->currentMenuitems : array();
-		return $html;
+		/*
+		$select .= JHTML::_('select.genericlist', $options, 'categoryExtension', 'class="inputbox" size="1" onchange="Javascript:change_extension();"', 'value', 'text', $categoryExtension );
+		
+		*/
+		$sub_task = JRequest::getVar('sub_task', '');
+		$this->useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		
+		if($this->useCheckedOut && $sub_task != '')
+		{
+			$languageSelect = '';
+		}
+		else
+		{
+			$languageSelect = PagesAndItemsHelper::makeLanguageSelect();
+		}
+		
+		
+		return $languageSelect.$html;
 	}
 }

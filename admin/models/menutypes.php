@@ -317,40 +317,11 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 				$html[] = '			<li>';
 				$html[] = '				<a class="choose_type" href="#" ';
 								$request = $item->request;
-								//$request = $this->getLinkKey($request);
-
 								$request['option'] = str_replace('com_','',$request['option']);
 								$pageType = implode('_',$request);
 								$html[] = 'onclick="';
-								//the next 16 lines can remove
-								/*
-								foreach($item->request as $key => $value)
-								{
-									$html[] ='window.parent.document.getElementById(\'url'.$key.'\').value = \''.$value.'\'; ';
-								}
-								if(!isset($item->request['view']))
-								{
-									$html[] ='window.parent.document.getElementById(\'urlview\').parentNode.removeChild(window.parent.document.getElementById(\'urlview\')); ';
-								}
-								if(!isset($item->request['layout']))
-								{
-									$html[] ='window.parent.document.getElementById(\'urllayout\').parentNode.removeChild(window.parent.document.getElementById(\'urllayout\')); ';
-								}
-								*/
-								//$html[] ='window.parent.document.getElementById(\'reload_rext\').style.display  = \'block\';';
-								//$html[] ='window.parent.document.getElementById(\'reload_image\').style.display  = \'block\';';
-								//$html[] ='window.parent.document.getElementById(\'reload\').style.display  = \'block\';';
 								$html[] ='window.parent.document.getElementById(\'pageType\').value = \''.$pageType.'\'; ';
-								//$html[] ='window.parent.document.getElementById(\'pageId\').value = \'\'; ';
 								$html[] ='window.parent.document.getElementById(\'type\').value = \'component\'; ';
-
-								//$html[] ='window.parent.document.getElementById(\'pageId\').value = \''.$this->_pageId.'\'; ';
-								//$html[] ='window.parent.document.getElementById(\'menutype\').value = \''.$this->menutype.'\'; ';
-
-								//$html[] ='window.parent.document.getElementById(\'sub_task\').value = \'new\'; ';
-								//$html[] ='window.parent.document.getElementById(\'view\').value = \'page\'; ';
-
-
 								$html[] = 'window.parent.document.getElementById(\'pageTypeType\').value = \''.
 											base64_encode(json_encode(array('id' => $recordId, 'title' => $item->title, 'request' => $item->request, 'type'=>'component'))).'\';';
 								if($joomlaVersion >= '1.6')
@@ -361,8 +332,6 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 								{
 									$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
 								}
-								//$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
-
 								$html[] ='window.parent.document.getElementById(\'sbox-window\').close();" ';
 								$html[] = ' title="'.JText::_($item->description).'"' ;
 
@@ -377,36 +346,85 @@ class PagesAndItemsModelMenutypes extends PagesAndItemsModelPiMenutype
 			$html[] = '</dl>';
 			$html[] = '</li>';
 		}
-
-		/*
+		$extension = 'com_menus';
+		$lang = &JFactory::getLanguage();
+		$lang->load(strtolower($extension), JPATH_ADMINISTRATOR, null, false, false) || $lang->load(strtolower($extension), JPATH_ADMINISTRATOR, $lang->getDefault(), false, false);
+		
 		$html[] = '<li>';
 		$html[] = '<dl class="menu_type">';
 		$html[] = '	<dt>'.JText::_('COM_MENUS_TYPE_SYSTEM').'</dt>';
 		$html[] = '	<dd>';
 		$html[] = '		<ul>';
 		$html[] = '			<li>';
-		$html[] = '				<a class="choose_type" href="#" onclick="javascript:Joomla.submitbutton(\'item.setType\', \''.
-									base64_encode(json_encode(array('id' => $recordId, 'title'=>'url'))).'\')"' .
-									' title="'.JText::_('COM_MENUS_TYPE_EXTERNAL_URL_DESC').'">'.
-									JText::_('COM_MENUS_TYPE_EXTERNAL_URL').'</a>';
+		$html[] = '				<a class="choose_type" href="#" ';
+								$html[] = 'onclick="';
+								$html[] ='window.parent.document.getElementById(\'pageType\').value = \'url\'; ';
+								$html[] ='window.parent.document.getElementById(\'type\').value = \'url\'; ';
+								$html[] = 'window.parent.document.getElementById(\'pageTypeType\').value = \''.
+											base64_encode(json_encode(array('id' => $recordId, 'title' =>JText::_('COM_MENUS_TYPE_EXTERNAL_URL'), 'request' => array(), 'type'=>'url'))).'\';';
+								if($joomlaVersion >= '1.6')
+								{
+									$html[] ='window.parent.Joomla.submitbutton(\'newMenuItem\'); ';
+								}
+								else
+								{
+									$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
+								}
+								$html[] ='window.parent.document.getElementById(\'sbox-window\').close();" ';
+								$html[] = ' title="'.JText::_('COM_MENUS_TYPE_EXTERNAL_URL_DESC').'"' ;
+								$html[] = '>';
+								$html[] = JText::_('COM_MENUS_TYPE_EXTERNAL_URL');
+								$html[] = '</a>';
+		
+		
 		$html[] = '			</li>';
 		$html[] = '			<li>';
-		$html[] = '				<a class="choose_type" href="#" onclick="javascript:Joomla.submitbutton(\'item.setType\', \''.
-									base64_encode(json_encode(array('id' => $recordId, 'title'=>'alias'))).'\')"' .
-									' title="'.JText::_('COM_MENUS_TYPE_ALIAS_DESC').'">'.
-									JText::_('COM_MENUS_TYPE_ALIAS').'</a>';
+		$html[] = '				<a class="choose_type" href="#" ';
+								$html[] = 'onclick="';
+								$html[] ='window.parent.document.getElementById(\'pageType\').value = \'alias\'; ';
+								$html[] ='window.parent.document.getElementById(\'type\').value = \'alias\'; ';
+								$html[] = 'window.parent.document.getElementById(\'pageTypeType\').value = \''.
+											base64_encode(json_encode(array('id' => $recordId, 'title' =>JText::_('COM_MENUS_TYPE_ALIAS'), 'request' => array(), 'type'=>'alias'))).'\';';
+								if($joomlaVersion >= '1.6')
+								{
+									$html[] ='window.parent.Joomla.submitbutton(\'newMenuItem\'); ';
+								}
+								else
+								{
+									$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
+								}
+								$html[] ='window.parent.document.getElementById(\'sbox-window\').close();" ';
+								$html[] = ' title="'.JText::_('COM_MENUS_TYPE_ALIAS_DESC').'"' ;
+								$html[] = '>';
+								$html[] = JText::_('COM_MENUS_TYPE_ALIAS');
+								$html[] = '</a>';
 		$html[] = '			</li>';
 		$html[] = '			<li>';
-		$html[] = '				<a class="choose_type" href="#" onclick="javascript:Joomla.submitbutton(\'item.setType\', \''.
-									base64_encode(json_encode(array('id' => $recordId, 'title'=>'separator'))).'\')"' .
-									' title="'.JText::_('COM_MENUS_TYPE_SEPARATOR_DESC').'">'.
-									JText::_('COM_MENUS_TYPE_SEPARATOR').'</a>';
+		$html[] = '				<a class="choose_type" href="#" ';
+								$html[] = 'onclick="';
+								$html[] ='window.parent.document.getElementById(\'pageType\').value = \'separator\'; ';
+								$html[] ='window.parent.document.getElementById(\'type\').value = \'separator\'; ';
+								$html[] = 'window.parent.document.getElementById(\'pageTypeType\').value = \''.
+											base64_encode(json_encode(array('id' => $recordId, 'title' =>JText::_('COM_MENUS_TYPE_SEPARATOR'), 'request' => array(), 'type'=>'separator'))).'\';';
+								if($joomlaVersion >= '1.6')
+								{
+									$html[] ='window.parent.Joomla.submitbutton(\'newMenuItem\'); ';
+								}
+								else
+								{
+									$html[] ='window.parent.submitbutton(\'newMenuItem\'); ';
+								}
+								$html[] ='window.parent.document.getElementById(\'sbox-window\').close();" ';
+								$html[] = ' title="'.JText::_('COM_MENUS_TYPE_SEPARATOR_DESC').'"' ;
+								$html[] = '>';
+								$html[] = JText::_('COM_MENUS_TYPE_SEPARATOR');
+								$html[] = '</a>';
 		$html[] = '			</li>';
 		$html[] = '		</ul>';
 		$html[] = '	</dd>';
 		$html[] = '</dl>';
 		$html[] = '</li>';
-		*/
+		
 		$html[] = '</ul>';
 
 		return implode("\n", $html);

@@ -30,7 +30,7 @@ class PagesAndItemsControllerMenutype extends JControllerForm
 		parent::__construct($config);
 
 		//$this->registerTask( 'root', 'display' );
-		//$this->registerTask( 'root_menutype_apply', 'root_menutype_save' );
+		$this->registerTask( 'root_menutype_apply', 'root_menutype_save' );
 	}
 
 
@@ -78,12 +78,15 @@ class PagesAndItemsControllerMenutype extends JControllerForm
 
 		if (!$this->checkEditId($context, $recordId)) {
 			// Somehow the person just went to the form and saved it - we don't allow that.
+			/*
+			TODO we must get the right checkEditId
 			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $recordId));
 			$this->setMessage($this->getError(), 'error');
 			$this->setRedirect(JRoute::_($url.$menutype, false));
 			//$this->setRedirect(JRoute::_('index.php?option='.$this->option.'&view='.$this->view_list.$this->getRedirectToListAppend(), false));
 
 			return false;
+			*/
 		}
 
 		// Make sure we are not trying to modify an administrator menu.
@@ -229,7 +232,8 @@ class PagesAndItemsControllerMenutype extends JControllerForm
 		$this->reorder_save();
 		$menutype = JRequest::getVar('menutype', '') ? '&menutype='.JRequest::getVar('menutype', '') : '';
 		$url = 'index.php?option=com_pagesanditems&view=page&layout=root'.$menutype;
-		$app->redirect($url);
+		$this->setRedirect($url);
+		//$app->redirect($url);
 	}
 	
 	function reorder_save(){
@@ -251,9 +255,9 @@ class PagesAndItemsControllerMenutype extends JControllerForm
 			}
 
 			//rebuild menu tree
-			require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
-			$model = new MenusModelItem;
-			$model->rebuild();
+			//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
+			//$model = new MenusModelItem;
+			//$model->rebuild();
 			//$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_PAGEORDER_SAVED'));
 			$this->setMessage(JText::_('COM_PAGESANDITEMS_PAGEORDER_SAVED'));
 		}

@@ -641,8 +641,8 @@ $pageType = JRequest::getVar('pageType', '');
 
 			//echo $this->pagePropertys;
 			
-			//if($this->isPagePropertys)
-			if($this->menuItem)
+			if($this->isPagePropertys)
+			//if($this->menuItem)
 			{
 				echo $this->loadTemplate('properties');
 			}

@@ -1190,6 +1190,18 @@ class PagesAndItemsControllerPage extends PagesAndItemsController //JControllerF
 		$pages_total = JRequest::getVar('items_page_total',0);
 		//items_page_are_reordered
 		//items_page_total
+		/*
+		// Initialise variables.
+		$ids = JRequest::getVar('cid', null, 'post', 'array');
+		$inc = ($this->getTask() == 'orderup') ? -1 : +1;
+
+		$model = $this->getModel();
+		$return = $model->reorder($ids, $inc);
+		
+		
+		*/
+		
+		
 		if($pages_are_reordered==1){
 			for ($n = 1; $n <= $pages_total; $n++){
 				$temp_id = intval(JRequest::getVar('reorder_page_id_'.$n, '', 'post'));
@@ -1201,12 +1213,13 @@ class PagesAndItemsControllerPage extends PagesAndItemsController //JControllerF
 				}
 				$db->query();
 				//$message = JText::_('COM_PAGESANDITEMS_PAGEORDER_SAVED');
+				if($n == 1)
 				$app->enqueueMessage(JText::_('COM_PAGESANDITEMS_PAGEORDER_SAVED'));
 			}
 
-				require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
-				$model = new MenusModelItem;
-				$model->rebuild();
+				//require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_menus'.DS.'models'.DS.'item.php');
+				//$model = new MenusModelItem;
+				//$model->rebuild();
 		}
 		return $message;
 	}

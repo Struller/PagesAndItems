@@ -1743,7 +1743,7 @@ BEGIN
 
 	function getMenuitem($pageId = null,$state = "(published='0' OR published='1')")
 	{
-		$db =& JFactory::getDBO();
+		$db = & JFactory::getDBO();
 		$where = array();
 		$where[] = $state;
 		$where[] = "id='".($pageId ? $pageId :JRequest::getVar('pageId'))."'";
@@ -1762,6 +1762,7 @@ BEGIN
 		return $db->loadObject();
 	}
 
+	
 
 	function getMenutypeMenuitems($menutype,$state = "(published='0' OR published='1')",$return = 'object')
 	{
@@ -1769,6 +1770,19 @@ BEGIN
 		$where = array();
 		$where[] = $state;
 		$where[] = "(menutype='".$menutype."')";
+		
+		//$app = JFactory::getApplication();
+		//$input = $app->input;
+		//$language = $input->get('filter_language', -1);
+		$language = PagesAndItemsHelper::getLanguageFilter();
+		if($language != '-1')
+		{
+			$where[] = "language='".$language."'";
+		
+		}
+		
+		
+		
 		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 		$db = JFactory::getDBO();
 		if(PagesAndItemsHelper::getIsJoomlaVersion('<','1.6'))
@@ -3394,5 +3408,46 @@ new for tree
 		}
 		return $catid;
 	}
+	
+	function getLanguageFilter()
+	{
+		$app = JFactory::getApplication();
+		//$input = $app->input;
+		//$language = $input->get('filter_language', -1);
+		$language = $app->getUserStateFromRequest( 'com_pagesanditems.filters.language', 'filter_language',-1,'cmd' );
+		return $language;
+	}
+	
+	function makeLanguageSelect()
+	{
+		/*
+		language select and tree is incompatible
+		so we need to get what?
+		
+		so we return '' at this moment
+		*/
+		
+		return '';
+		
+		$sub_task = JRequest::getVar('sub_task', '');
+		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
+		
+		if($useCheckedOut && $sub_task != '')
+		{
+			return '';
+		}
+		else
+		{
+	
+			//$language = JRequest::getVar('filter_language', -1);
+			$language = PagesAndItemsHelper::getLanguageFilter();
+			$langList[] = array('value' => '-1', 'text' => JText::_('JOPTION_SELECT_LANGUAGE'));
+			$langList = array_merge($langList,JLanguageHelper::createLanguageList('nothing', constant('JPATH_ADMINISTRATOR'), true, true));
+			$langList[] = array('value' => '*', 'text' => '*'); //JText::_('JALL_LANGUAGE'));
+			$select = JHTML::_('select.genericlist', $langList, 'filter_language', 'class="inputbox" size="1" onchange="Javascript:document.adminForm.submit();"', 'value', 'text', $language );
+			return $select;
+		}
+	}
+	
 }
 ?>

@@ -235,7 +235,57 @@ class PagesAndItemsTreeCategory
 					$categoryExtension = JRequest::getVar('categoryExtension', 'com_content');
 					$component = (strpos($categoryExtension,'com_') !== false) ? strtolower($categoryExtension) : 'com_'.strtolower($categoryExtension);
 					$db = JFactory::getDBO();
-					$db->setQuery("SELECT * FROM #__categories  WHERE extension='$component' ORDER BY lft ASC" );
+					
+					//$app = JFactory::getApplication();
+					//$input = $app->input;
+					//FB::dump($input);
+					//$language = $input->get('filter_language', -1,null);
+					$language = PagesAndItemsHelper::getLanguageFilter();
+					//if(JRequest::getVar())
+					/*
+					$db->setQuery("SELECT * FROM #__categories WHERE extension='$component' ORDER BY lft ASC" );
+					*/
+					
+					$query = $db->getQuery(true);
+					$query->select('*');
+					$query->from('#__categories');
+					$query->where("extension=".$db->quote($component));
+					
+					if($language != '-1')
+					{
+						
+						$query->where('language='.$db->quote($language));
+					}
+					$query->order('lft ASC');
+					$db->setQuery($query);
+					//$dbrows = $db->loadAssocList('id');
+					//FB::dump($input->get('filter_language',-1,null));
+					//FB::dump($dbrows);
+					//FB::dump($query->__toString(),'querry');
+					
+					/*
+					//$db->setQuery($query);
+					
+					*/
+					
+					//FB::dump($language);
+					/*
+					if($language != '-1')
+					{
+						
+						//$query->where('language='.$db->qoute($language));
+						$db->setQuery("SELECT * FROM #__categories WHERE extension='$component' AND language='$language' ORDER BY lft ASC" );
+					}
+					else
+					{
+						$db->setQuery("SELECT * FROM #__categories WHERE extension='$component' ORDER BY lft ASC" );
+					}
+					*/
+					//$query->order('lft ASC');
+					//FB::dump($query);
+					//$db->setQuery($query);
+						
+					
 					$rows = $db->loadAssocList('id');
 					$js .= '	var json = '.$this->getJsonCategoryTree($rows).';'."\n";
 

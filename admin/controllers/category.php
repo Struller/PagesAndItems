@@ -16,14 +16,11 @@ jimport('joomla.client.helper');
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
 
 
-class PagesAndItemsControllerCategory extends JControllerAdmin //PagesAndItemsController //JControllerAdmin
+class PagesAndItemsControllerCategory extends JControllerAdmin
 {
 
 	function __construct( $default = array())
 	{
-		//get helper
-		//require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'pagesanditems.php');
-		
 		parent::__construct($default);
 		$this->registerTask( 'category_apply', 'category_save' );
 		$this->registerTask( 'category_reorder_apply', 'category_reorder_save' );
@@ -34,17 +31,13 @@ class PagesAndItemsControllerCategory extends JControllerAdmin //PagesAndItemsCo
 	{
 		JRequest::setVar('task', 'category_apply'); //, 'cmd');
 		JRequest::setVar('checkin', true);
-		//JRequest::setVar('useCheckin', 1);
 		$this->category_save();
 	}
 
 	function change_extension()
 	{
-		//$categoryId = JRequest::getVar('categoryId', 0 );
-		
 		$categoryId = '&categoryId=1';
-		//$sub_task = '&sub_task=edit';
-		
+	
 		$categoryExtension = JRequest::getVar('categoryExtension', 'com_content');
 		$categoryExtension = $categoryExtension ? '&categoryExtension='.$categoryExtension : '';
 		
@@ -81,13 +74,11 @@ class PagesAndItemsControllerCategory extends JControllerAdmin //PagesAndItemsCo
 
 	function root_save()
 	{
-		//$app = &JFactory::getApplication();
 		$this->category_reorder();
 		$categoryExtension = JRequest::getVar('categoryExtension', 'com_content');
 		$categoryExtension = $categoryExtension ? '&categoryExtension='.$categoryExtension : '';
 		$url = 'index.php?option=com_pagesanditems&view=category'.$categoryExtension;
 		$this->setRedirect(JRoute::_($url, false));
-		//$app->redirect($url); //, $message);
 	}
 	
 	
@@ -104,7 +95,6 @@ class PagesAndItemsControllerCategory extends JControllerAdmin //PagesAndItemsCo
 				$db->query();
 			}
 			$message = JText::_('COM_PAGESANDITEMS_ITEMS_ORDER_SAVED');
-			//$message = JText::_('JLIB_APPLICATION_SUCCESS_ORDERING_SAVED');
 		}
 		return $message;
 	}
@@ -117,9 +107,6 @@ class PagesAndItemsControllerCategory extends JControllerAdmin //PagesAndItemsCo
 
 	function category_reorder()
 	{
-		//$database = JFactory::getDBO();
-		//$app = &JFactory::getApplication();
-
 		//if categories where reordered update the ordering of these categories
 		$categories_are_reordered = JRequest::getVar('items_category_are_reordered',0);
 		$categories_total = JRequest::getVar('items_category_total',0);

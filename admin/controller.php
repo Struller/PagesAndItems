@@ -81,7 +81,7 @@ class PagesAndItemsController extends JController
 				}
 				else
 				{
-					$app = &JFactory::getApplication();
+					$app = JFactory::getApplication();
 					//no menutypes display an message?
 					$msg = JText::_('COM_PAGESANDITEMS_NO_MENUS_SELECTED');
 					$app->enqueueMessage($msg);
@@ -386,7 +386,7 @@ class PagesAndItemsController extends JController
 			in helpers/pagesanditems.php comment out line 814-822
 			*/
 			$config = PagesAndItemsHelper::getConfigAsRegistry();
-			if($config->get('enabled_view_categorie'))
+			if($config->get('enabled_view_category'))
 			{
 				require_once(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/pagesanditems.php');
 				PagesAndItemsHelper::addSubmenuFirst(JRequest::getWord('view', 'page'));

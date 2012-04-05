@@ -467,8 +467,11 @@ $html = '';
 			
 						
 						
-		
+
 						$html .= '<div class="dtree dtree_container">';
+							$html .= '<div class="dtree">';
+								$html .= $this->languageSelect;
+							$html .= '</div>';
 							$html .= '<div class="dtree">';
 								$html .= $this->inputCategoryExtension ? $this->inputCategoryExtension : '';
 							$html .= '</div>';
@@ -477,6 +480,7 @@ $html = '';
 								$html .= '</div>';
 							$html .= '</div>';
 						$html .= '</div>';
+					
 					$html .= '</div>';
 				
 				$html .= '</td>';

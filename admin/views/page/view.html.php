@@ -155,7 +155,7 @@ class PagesAndItemsViewPage extends PagesAndItemsViewDefault //JView //PagesView
 					$this->assignRef( 'pagePropertys',$pagePropertys);
 					
 					$this->isPagePropertys = $model->isGetPagePropertys();
-					$this->canDoMenu = PagesAndItemsHelper::canDoMenus($this->menuItem->parent_id);
+					$this->canDoMenu = PagesAndItemsHelper::canDoMenus(); //$this->menuItem->parent_id);
 				}
 				else
 				{
@@ -173,6 +173,16 @@ class PagesAndItemsViewPage extends PagesAndItemsViewDefault //JView //PagesView
 					$this->form = $model->getForm();
 					$this->modules = $model->getModules();
 					
+				}
+				else
+				{
+					$this->menuItemsType = $model->getMenuItemsType();
+				/*
+					$this->menuItemsType = $model->getMenuItemsType();
+					$this->lists = $model->getLists(); //$lists
+					$this->form = $model->getForm();
+					$this->modules = $model->getModules();
+				*/
 				}
 				
 				$pageItems = $model->getPageItems();
@@ -311,6 +321,10 @@ class PagesAndItemsViewPage extends PagesAndItemsViewDefault //JView //PagesView
 				{
 					$this->modules = $modelMenutype->getModules();
 				}
+			}
+			else
+			{
+				$this->menutypeItem = null;
 			}
 		}
 		else

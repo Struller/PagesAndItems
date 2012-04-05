@@ -128,6 +128,16 @@ class extendedJCategories extends JCategories
 		if ($app->isSite() && $app->getLanguageFilter()) {
 			$query->where('(' . ($id!='root' ? 'c.id=s.id OR ':'') .'c.language in (' . $db->Quote(JFactory::getLanguage()->getTag()) . ',' . $db->Quote('*') . '))');
 		}
+		
+		//$input = $app->input;
+		//$language = $input->get('filter_language', -1,null);
+		$language = PagesAndItemsHelper::getLanguageFilter();
+		
+		if($language != '-1')
+		{
+			$query->where('c.language='.$db->quote($language));
+		}
+		
 		// Get the results
 		$db->setQuery($query);
 		$results = $db->loadObjectList('id');

@@ -59,27 +59,39 @@ class PagesAndItemsViewCategory extends PagesAndItemsViewDefault
 		$categoryExtension = JRequest::getVar('categoryExtension', 'com_content'); // 'com_banners'); //'content');
 		$this->assignRef( 'categoryExtension',$categoryExtension);
 		$categoryId = JRequest::getVar('categoryId', 1);
-		$tree = PagesAndItemsHelper::getTree();
+		
 		$this->inputCategoryExtension = '';
 		//$this->inputCategoryExtension = $tree->getSelect();
 		//$treeClass = $tree->getTreeClass();
-		$tree = $tree->getTreeClass();
+
 		
 		$sub_task = JRequest::getVar('sub_task', '');
 		$this->useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		
+		$tree = PagesAndItemsHelper::getTree();
+		$treeClass = $tree->getTreeClass();
+		//$this->tree = $tree->getTree($categoryId);
+		
+		
+		$languageSelect = PagesAndItemsHelper::makeLanguageSelect();
+		
+		$this->tree = $tree->getTree();
+		
 		if($this->useCheckedOut && $sub_task != '')
 		{
-			$this->inputCategoryExtension = $tree->getHiddenCategoryExtension();
+			$this->languageSelect = '';
+			$this->inputCategoryExtension = $treeClass->getHiddenCategoryExtension();
 		}
 		else
 		{
-			$this->inputCategoryExtension = $tree->getSelectCategoryExtension();
+			$this->languageSelect = $languageSelect;
+			$this->inputCategoryExtension = $treeClass->getSelectCategoryExtension();
 		}
 		
-		$this->tree = $tree->getTree($categoryId);
 		
-		$this->icons = $tree->icons;
+		
+		
+		$this->icons = $treeClass->icons;
 		
 		//if ($modelCategory = $this->getModel('Category'))
 		if ($modelCategory = $this->getModel('CategoriesCategory'))
