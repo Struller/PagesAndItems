@@ -75,7 +75,9 @@ class PagesAndItemsControllerConfig extends PagesAndItemsController
 		//get plugin_syntax_cheatcheat
 		$plugin_syntax_cheatcheat = JRequest::getVar('plugin_syntax_cheatcheat','','post','string', JREQUEST_ALLOWRAW);
 		//clean lines
-		$plugin_syntax_cheatcheat = str_replace('\n','[newline]',$plugin_syntax_cheatcheat);
+		
+		
+		$plugin_syntax_cheatcheat = str_replace("\n",'[newline]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = str_replace('=','[equal]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = addslashes($plugin_syntax_cheatcheat);
 

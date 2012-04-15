@@ -1668,7 +1668,7 @@ if($frontend)
 								}
 								
 								//echo '<div'.$hidden_articletext.'>';
-								
+								echo $config['plugin_syntax_cheatcheat'];
 								echo $this->form->getInput('articletext');
 								
 								//echo '</div>';
@@ -1680,6 +1680,7 @@ if($frontend)
 									echo '</fieldset>';
 								}
 								// END if($this->useCheckedOut && ($this->canEdit && $sub_task =='edit') || !$this->useCheckedOut)
+								
 							}
 							else
 							{
