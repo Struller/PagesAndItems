@@ -28,7 +28,8 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		parent::__construct($default);
 		$this->registerTask( 'item_apply', 'item_save' );
 		$this->registerTask( 'item_checkin', 'item_save' );
-		
+		//$this->registerTask( 'item_save2new', 'item_save' );
+		$this->registerTask( 'save2copy', 'item_save' );
 	}
 
 	function item_edit()
@@ -160,14 +161,36 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		$show_title_item = intval(JRequest::getVar('show_title_item'));
 		$message = '';
 
+		//get data
+		$data = JRequest::getVar('jform', array(), 'post', 'array');
+
+		$recordId	= JRequest::getInt('id');
+		// Populate the row id from the session.
+		$data['id'] = $recordId;
+
+		
+		$task = $this->getTask();
+		
+		$apply = JRequest::getVar('item_apply', '', 'post');
+		if($task == 'save2copy' ) //|| $task == 'save2new')
+		{
+			//$oldarticle = $ContentModelArticle->getItem();
+			$old_item_id = $item_id;
+			// Reset the ID and then treat the request as for Apply.
+			$data['id'] = 0;
+			$data['associations'] = array();
+			$item_id = 0;
+			$apply = 1;
+		}
+
 		//get new or edit
 		$new_or_edit = 'edit';
 		if(!$item_id){
 			$new_or_edit = 'new';
 		}
 
-		//get data
-		$data = JRequest::getVar('jform', array(), 'post', 'array');
+
+		
 
 		//get category_id
 		$cat_id = 0;
@@ -270,9 +293,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		// Sometimes the form needs some posted data, such as for plugins and modules.
 		
 		
-		$recordId	= JRequest::getInt('id');
-		// Populate the row id from the session.
-		$data['id'] = $recordId;
+
 		
 		$form = $ContentModelArticle->getForm($data, false);
 
@@ -310,8 +331,9 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 
 			//return false;
 		}
-
+		//dump($data);
 		$data = $validData;
+		//dump($data);
 		$useCheckedOut = PagesAndItemsHelper::getUseCheckedOut();
 		if($useCheckedOut)
 		{
@@ -334,6 +356,18 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			}
 			
 			*/
+			if ($task == 'save2copy') {
+				// Check-in the original row.
+				if ($ContentModelArticle->checkin($old_item_id) === false)
+				{
+					// Check-in failed, go back to the item and display a notice.
+					//$app->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $ContentModelArticle->getError()), 'warning');
+					//return false;
+				}
+			}
+			
+
+			
 			
 			if (!$ContentModelArticle->save($data))
 			{
@@ -342,6 +376,9 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 				$app->redirect(JRoute::_($url, false));
 				*/
 			}
+			
+			
+			
 			/*
 			if ($ContentModelArticle->checkin($data['id']) === false)
 			{
@@ -356,8 +393,6 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		{
 			$ContentModelArticle->save($data);
 		}
-
-
 
 		if($new_or_edit=='new'){
 
@@ -490,13 +525,16 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			//ms: here we trigger the extensins type manager like template who can have own fields to save
 			$dispatcher->trigger('onManagerItemtypeItemSave', array ($item_type,$item_id, $new_or_edit)); //$delete_item
 
+		
+		
+
+			 
 		}
 
-		 
+		
 
 		//sanitize item-index-table
 		$model->keep_item_index_clean();
-
 		//clean cache
 		$model->clean_cache_content();
 
@@ -545,7 +583,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 			$categoryId = JRequest::getVar('categoryId', '' );
 			
 			
-			
+			//TODO item_save2new item_save2copy
 			if($useCheckedOut)
 			{
 				//item_checkin same as apply
@@ -558,7 +596,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 				
 				//$sub_task = JRequest::getVar('sub_task', '', 'post');
 				//$stringsub_task = $sub_task ? '&sub_task='.$sub_task;
-				if($task == 'item_apply')
+				if($task == 'item_apply' || $task == 'save2copy')
 				{
 					$url = 'index.php?option=com_pagesanditems&view=item&sub_task=edit'.($pageId ? '&pageId='.$pageId : '').'&itemId='.$item_id.($categoryId ? '&categoryId='.$categoryId : ''); //.'&manager='.$manager;
 				}
@@ -623,7 +661,7 @@ class PagesAndItemsControllerItem extends PagesAndItemsController{
 		}
 
 		$message = JText::_('COM_PAGESANDITEMS_ITEM_SAVED');
-		$apply = JRequest::getVar('item_apply', '', 'post');
+		
 		if($apply && !$useCheckedOut)
 		{
 			$categoryId = JRequest::getVar('categoryId', '' );

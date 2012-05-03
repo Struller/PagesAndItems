@@ -258,6 +258,10 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 	protected function addToolbar()
 	{
 		$sub_task = JRequest::getVar('sub_task', '');
+		$isNew = ($this->item->id == 0);
+		FB::dump($isNew);
+		FB::dump($this->canDo->get('core.create'));
+		FB::dump($this->useCheckedOut);
 		if($sub_task=='new')
 		{
 			JToolBarHelper::apply( 'item.item_apply'); //, JText::_('COM_PAGESANDITEMS_APPLY') );
@@ -278,6 +282,20 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 				JToolBarHelper::apply( 'item.item_apply'); //, JText::_('COM_PAGESANDITEMS_APPLY') );
 				//JToolBarHelper::save( 'item.item_save'); //, JText::_('COM_PAGESANDITEMS_SAVE_ITEM') );
 				JToolBarHelper::save( 'item.item_checkin'); //,'checkin');
+				
+				
+				//add 25.04
+				// If the user can create new items, allow them to see Save & New
+				if ($this->canDo->get('core.create')) {
+					//JToolBarHelper::save2new('item.item_save2new');
+				}
+				//add 25.04
+				// If an existing item, can save to a copy only if we have create rights.
+				if (!$isNew && $this->canDo->get('core.create')) {
+					JToolBarHelper::save2copy('item.save2copy');
+				}
+				
+				
 				JToolBarHelper::divider();
 				JToolBarHelper::cancel( 'item.cancel'); //, JText::_('COM_PAGESANDITEMS_CANCEL') );
 			}
@@ -301,6 +319,19 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 		{
 			JToolBarHelper::apply( 'item.item_apply'); //, JText::_('COM_PAGESANDITEMS_APPLY') );
 			JToolBarHelper::save( 'item.item_save'); //, JText::_('COM_PAGESANDITEMS_SAVE_ITEM') );
+			
+			
+			//add 25.04
+			// If the user can create new items, allow them to see Save & New
+			if ($this->canDo->get('core.create')) {
+				//JToolBarHelper::save2new('item.item_save2new');
+			}
+			//add 25.04
+			// If an existing item, can save to a copy only if we have create rights.
+			if (!$isNew && $this->canDo->get('core.create')) {
+				JToolBarHelper::save2copy('item.save2copy');
+			}
+			
 			//JToolBarHelper::divider();
 
 			if($this->canDo->get('core.delete'))

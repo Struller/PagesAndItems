@@ -334,7 +334,7 @@ else
 		{
 			document.getElementById('item_apply').value = 1;
 		}
-		if (pressbutton == 'item.item_apply' || pressbutton == 'item.item_save' || pressbutton == 'item.item_checkin')
+		if (pressbutton == 'item.item_apply' || pressbutton == 'item.item_save' || pressbutton == 'item.item_checkin' || pressbutton == 'item.save2new' || pressbutton == 'item.save2copy')
 		{
 			//alert('save apply');
 			item_title = document.getElementById('jform_title').value;
@@ -745,7 +745,7 @@ readmore=
 					do_item_save =true;
 				}
 			}
-			if (pressbutton == 'item.item_save') {
+			if (pressbutton == 'item.item_save' || pressbutton == 'item.save2new' || pressbutton == 'item.save2copy') {
 				if (document.getElementById('jform_title').value == '') {
 					alert('<?php echo JText::_('COM_PAGESANDITEMS_NO_TITLE'); ?>');
 					return;
