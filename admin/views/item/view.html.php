@@ -259,9 +259,6 @@ class PagesAndItemsViewItem extends PagesAndItemsViewDefault{
 	{
 		$sub_task = JRequest::getVar('sub_task', '');
 		$isNew = ($this->item->id == 0);
-		FB::dump($isNew);
-		FB::dump($this->canDo->get('core.create'));
-		FB::dump($this->useCheckedOut);
 		if($sub_task=='new')
 		{
 			JToolBarHelper::apply( 'item.item_apply'); //, JText::_('COM_PAGESANDITEMS_APPLY') );
