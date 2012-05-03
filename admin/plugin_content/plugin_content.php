@@ -395,6 +395,31 @@ class plgContentPagesanditems extends JPlugin
 		}
 
 	}
+	
+	function onContentAfterSave($context, &$article, $isNew )
+	{
+		if ( $isNew ) {
+			// If the article is new, this step is not needed
+			return true;
+		}
+		
+		$app = JFactory::getApplication();
+		if($app->input->get('option') != 'com_content')
+		{
+			return true;
+		}
+		//only if option com_content
+		$path = realpath(dirname(__FILE__).DS.'..');
+		//$option = JRequest::getVar('option');
+		require_once($path.DS.'helpers'.DS.'pagesanditems.php');
+		require_once($path.DS.'includes'.DS.'extensions'.DS.'itemtypehelper.php');
+		$dispatcher = &JDispatcher::getInstance();
+		
+		
+		//check for dependant items of type 'other item' and update those if needed
+		ExtensionItemtypeHelper::importExtension(null, 'other_item',true,null,true);
+		$dispatcher->trigger('update_other_items_if_needed', array($article->id));
+	}
 
 
 }
