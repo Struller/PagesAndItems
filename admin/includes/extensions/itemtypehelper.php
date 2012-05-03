@@ -145,6 +145,14 @@ class ExtensionItemtypeHelper //extends ExtensionHelper
 			{
 				$isLoaded = false;
 			}
+			if (!is_array($extensionnames) && !is_object($extensionnames) && $extensionnames != null )
+			{
+				if (!isset($loaded[$extensionnames]))
+				{
+					$isLoaded = false;
+				}
+			}
+			
 		}
 		else
 		{
@@ -189,14 +197,14 @@ class ExtensionItemtypeHelper //extends ExtensionHelper
 
 								if($extensions[$i]->name == $names[$in] )
 								{
-									$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
+									$loaded[$names[$in]] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 									$results = true;
 								}
 							}
 						}
 						elseif ($extensions[$i]->name == $extensionnames) // || $extensionnames === null )
 						{
-							$loaded[] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
+							$loaded[$extensionnames] = self::_import($extensions[$i], $autocreate, $dispatcher, $loadLanguage);
 							$results = true;
 						}
 						elseif ($extensionnames == null )
@@ -242,7 +250,7 @@ class ExtensionItemtypeHelper //extends ExtensionHelper
 					{
 						if($results && $extensionnames && $loaded && (!is_array($extensionnames) && !is_object($extensionnames)) )
 						{
-							return $loaded[0];
+							return $loaded;//[0];
 						}
 						else if($results && $loaded)
 						{
