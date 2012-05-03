@@ -27,7 +27,7 @@
 		<files folder="admin">
 			<folder>controllers</folder>
 			<folder>css</folder>
-			<folder>elements</folder>
+			<!--<folder>elements</folder>-->
 
 			<!-- ms: i have rewrite the install routine for the pi extensions so we need not the complete folder extensions -->
 			<!-- <folder>extensions</folder> -->
@@ -39,7 +39,7 @@
 			-->
 			
 			<folder>helpers</folder>
-			<folder>images</folder>			
+			<folder>images</folder>
 			<folder>includes</folder>
 			<folder>install</folder>
 			<folder>javascript</folder>
