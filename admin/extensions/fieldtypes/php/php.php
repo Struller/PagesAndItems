@@ -224,27 +224,17 @@ class PagesAndItemsExtensionFieldtypePhp extends PagesAndItemsExtensionFieldtype
 		return $value;
 
 	}
-
-	//TODO MS REMOVE??
-	/*
-	function get_database()
-	{
-		$database = JFactory::getDBO();
-
-		return $database;
-	}
-
+	
 	function phpWrapper($content)
 	{
-		$database = $this->get_database();
-		//$dingboops = new class_pi();
+		$database = JFactory::getDBO();
 		ob_start();
 		eval("?>" . $content);
 		$content = ob_get_contents();
 		ob_end_clean();
 		return $content;
 	}
-	*/
+	
 
 	function onDisplay_dynamic_field(&$output, $row, $plugin, $params, $dynamic_field_params)
 	{
@@ -255,7 +245,7 @@ class PagesAndItemsExtensionFieldtypePhp extends PagesAndItemsExtensionFieldtype
 		}
 		$value_id = $dynamic_field_params;
 		//get database
-		$database = $this->db();
+		$database = JFactory::getDBO();
 		//get the value
 		$database->setQuery("SELECT field_id, item_id, value FROM #__pi_custom_fields_values WHERE id='$value_id' LIMIT 1");
 		$values = $database->loadObjectList();
