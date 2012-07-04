@@ -612,7 +612,7 @@ class PagesAndItemsInstaller extends JInstaller
 	 * @param int $eid Extension ID
 	 * @return mixed void on success | false on error @todo missing return value ?
 	 */
-	function refreshManifestCache($eid)
+	public function refreshManifestCache($eid)
 	{
 		if ($eid)
 		{
@@ -669,7 +669,7 @@ class PagesAndItemsInstaller extends JInstaller
 	}
 
 
-	function parseXMLInstallFile($path)
+	public static function parseXMLInstallFile($path)
 	{
 		// Read the file to see if it's a valid component XML file
 		$xml = simplexml_load_file($path);
