@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -32,7 +32,7 @@ if(PagesAndItemsHelper::getIsAdmin()){ //$this->helper->app->isAdmin()){
 	echo '&copy;';
 	echo '</td>';
 	echo '<td>';
-	echo '2008 - 2011 Carsten Engel';
+	echo '2008 - 2012 Carsten Engel';
 	echo '</td>';
 	echo '</tr>';
 	echo '<tr>';

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -336,7 +336,7 @@ function check_name_field()
 		$html = '';
 		$results = $dispatcher->trigger('onDisplay_config_form', array (&$html,$plugin, $type_id, $name, $field_params, $field_id));
 		?>
-		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?></a> > <a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id=<?php echo $type_id; ?>"><?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?></a> > <?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_FIELD_CONFIG'); ?>
+		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?></a> > <a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id=<?php echo $type_id; ?>"><?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?></a> > <?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_FIELD_CONFIG'); ?>
 		<h2><?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_FIELD_CONFIG'); ?></h2>
 		<div class="pi_form_wrapper">
 			<div class="pi_width20">

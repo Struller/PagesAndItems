@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -914,7 +914,7 @@ $rows = 0;
 			<li><a href="http://www.pages-and-items.com/extensions/pages-and-items" target="_blank">updates</a></li>
 			<li><a href="http://www.pages-and-items.com/extensions/pages-and-items/faqs" target="_blank">FAQs</a></li>
 			<li><a href="http://www.pages-and-items.com/forum/8-pages-and-items" target="_blank">forum</a></li>			
-			<li><a href="http://www.pages-and-items.com/component/comprofiler/registers" target="_blank">email notification service for updates and new extensions</a></li>
+			<li><a href="http://www.pages-and-items.com/my-account/email-update-notifications" target="_blank">email notification service for updates</a></li>
 			<li><a href="http://www.pages-and-items.com" target="_blank">RSS feed notification of updates</a></li>
 		</ul>
 	</p>

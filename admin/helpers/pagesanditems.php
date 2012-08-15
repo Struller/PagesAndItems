@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -1119,8 +1119,8 @@ submenu
 		$path = PagesAndItemsHelper::getDirIcons();
 		PagesAndItemsHelper::addSubmenuFirst($vName);
 		JSubMenuHelper::addEntry(
-			//'<img src="'.$path.'/media/images/icons/base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIG'),
-			'<img src="'.$path.'base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIG'),
+			//'<img src="'.$path.'/media/images/icons/base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIGURATION'),
+			'<img src="'.$path.'base/icon-16-config.png" alt="" style="vertical-align: middle;top: -2px;position: relative;" />&nbsp;'.JText::_('COM_PAGESANDITEMS_CONFIGURATION'),
 			'index.php?option=com_pagesanditems&view=config',
 			//'',
 			$vName == 'config' || $vName == 'config_custom_itemtype' || $vName == 'config_custom_itemtype_field' || $vName == 'config_itemtype'

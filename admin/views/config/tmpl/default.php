@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -412,7 +412,7 @@ itemtypes
 					<span class="sidestep">
 					<?php echo JText::_('COM_PAGESANDITEMS_TYPE'); ?>
 					</span>
-					<?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?>
+					<?php echo JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?>
 				</td>
 			</tr>
 					<?php
@@ -493,16 +493,16 @@ itemtypes
 							$config = '-';
 							if($itemtype[2])
 							{
-								$config = '<a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id='.$itemtype[2].'">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+								$config = '<a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id='.$itemtype[2].'">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 								//}else if(file_exists(dirname(__FILE__).'/../../com_pi_itemtype_'.$itemtype[0].'/admin/config.php')){
 							}
 							else if(file_exists($this->controller->pathPluginsItemtypes.'/'.$itemtype[0].'/admin/config.php'))
 							{
-								$config = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$itemtype[0].'">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+								$config = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$itemtype[0].'">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 							}
 							elseif($itemtype[1])
 							{
-								$config = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$itemtype[0].'">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+								$config = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$itemtype[0].'">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 							}
 							*/
 							echo '<td><span class="sidestep">';
@@ -567,7 +567,7 @@ itemtypes
 								}
 								//echo <a onclick="" $itemtype[0]
 								if($itemtypeHtmlIsConfig->text != '-')
-								$itemtypeHtmlIsConfig->text = '<a href="#" onclick="javascript: config_itemtype(\''.$itemtype[0].'\');">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+								$itemtypeHtmlIsConfig->text = '<a href="#" onclick="javascript: config_itemtype(\''.$itemtype[0].'\');">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 								//http://127.0.0.1:4001/administrator/index.php?option=com_pagesanditems&task=extension.doExecute&extensionName=extensions&extensionType=manager&layout=edit&extensionTask=display&view=piextension&client=both&sub_task=edit&cid[]=1&extension_id=1
 							}
 							echo $itemtypeHtmlIsConfig->text;

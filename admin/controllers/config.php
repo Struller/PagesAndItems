@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -80,7 +80,6 @@ class PagesAndItemsControllerConfig extends PagesAndItemsController
 		$plugin_syntax_cheatcheat = str_replace("\n",'[newline]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = str_replace('=','[equal]',$plugin_syntax_cheatcheat);
 		$plugin_syntax_cheatcheat = addslashes($plugin_syntax_cheatcheat);
-
 
 		//get custom redirect url
 		$item_save_redirect_url = JRequest::getVar('item_save_redirect_url','','post','string', JREQUEST_ALLOWRAW);

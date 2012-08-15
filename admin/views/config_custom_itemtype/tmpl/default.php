@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -449,7 +449,7 @@ function insert_in_textarea(aTag, eTag, template_element)
 		<a href="index.php?option=com_pagesanditems">pages and items</a> >
 		*/
 		?>
-		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?></a>
+		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?></a>
 		 &#8250; 
 		<?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?>
 		<h2><?php echo JText::_('COM_PAGESANDITEMS_CUSTOM_ITEMTYPE_CONFIG'); ?></h2>

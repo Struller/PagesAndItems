@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -37,11 +37,11 @@ abstract class PagesAndItemsExtensionItemtype extends PagesAndItemsExtension
 			{
 				if($item_type == 'custom')
 				{
-					$itemtypeHtmlIsConfig->text = '<a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id='.$type_id.'">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+					$itemtypeHtmlIsConfig->text = '<a href="index.php?option=com_pagesanditems&view=config_custom_itemtype&type_id='.$type_id.'">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 				}
 				else
 				{
-					$itemtypeHtmlIsConfig->text = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$item_type.'">'.JText::_('COM_PAGESANDITEMS_CONFIG').'</a>';
+					$itemtypeHtmlIsConfig->text = '<a href="index.php?option=com_pagesanditems&view=config_itemtype&item_type='.$item_type.'">'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</a>';
 				}
 			}
 			//$html = $this->display_config_form($plugin, $type_id, $name, $field_params, $field_id);

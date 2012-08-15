@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -23,7 +23,7 @@ class PagesAndItemsViewConfig extends PagesAndItemsViewDefault
 
 	function display( $tpl = null )
 	{
-		PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CONFIG').'</small>');
+		PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').'</small>');
 		$app = JFactory::getApplication();
 		$option = JRequest::getVar('option');
 		$itemtype = JRequest::getVar( 'sub_task', '');
@@ -77,7 +77,10 @@ class PagesAndItemsViewConfig extends PagesAndItemsViewDefault
 	
 	protected function addToolbar()
 	{
-
+		//toolbar	
+		if (JFactory::getUser()->authorise('core.admin', 'com_pagesanditems')) {
+			JToolBarHelper::preferences('com_pagesanditems');
+		}
 		JToolBarHelper::apply( 'config.config_apply');//, JText::_('COM_PAGESANDITEMS_APPLY') );
 		JToolBarHelper::save( 'config.config_save');//, JText::_('COM_PAGESANDITEMS_SAVE') );
 		JToolBarHelper::divider();

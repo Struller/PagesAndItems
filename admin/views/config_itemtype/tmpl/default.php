@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -82,9 +82,9 @@ $item_type = JRequest::getVar('item_type');
 		<a href="index.php?option=com_pagesanditems">pages and items</a> >
 		*/
 		?>
-		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIG'); ?></a>
-		<?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?>
-		<h2><?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIG'); ?></h2>
+		<a href="index.php?option=com_pagesanditems&view=config&tab=itemtypes"><?php echo JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?></a>
+		<?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?>
+		<h2><?php echo PagesAndItemsHelper::translate_item_type($item_type).' '.JText::_('COM_PAGESANDITEMS_CONFIGURATION'); ?></h2>
 		<?php
 		/*
 

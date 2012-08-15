@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="1.6" method="upgrade">
 	<name>COM_PAGESANDITEMS</name>
-	<creationDate>januari 2012</creationDate>
+	<creationDate>july 2012</creationDate>
 	<author>Carsten Engel</author>
 	<copyright>Copyright (C) 2008-2012 Engelweb. All rights reserved.</copyright>
 	<authorEmail>-</authorEmail>
 	<authorUrl>www.pages-and-items.com</authorUrl>
-	<version>2.1.5</version>
+	<version>2.1.6</version>
 	<description>Pages-and-Items = menu-manager + content-manager</description>
 	
 	<installfile>install.php</installfile>
@@ -26,8 +26,7 @@
 		<menu img="components/com_pagesanditems/media/images/icons/icon-16-pi.png">COM_PAGESANDITEMS</menu>
 		<files folder="admin">
 			<folder>controllers</folder>
-			<folder>css</folder>
-			<!--<folder>elements</folder>-->
+			<folder>css</folder>			
 
 			<!-- ms: i have rewrite the install routine for the pi extensions so we need not the complete folder extensions -->
 			<!-- <folder>extensions</folder> -->
@@ -59,6 +58,7 @@
 			<folder>tables</folder>
 			<folder>views</folder>
 			
+			<filename>config.xml</filename>	
 			<filename>pagesanditems.php</filename>
 			<filename>controller.php</filename>
 			<filename>index.html</filename>

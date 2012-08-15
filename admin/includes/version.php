@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -9,7 +9,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class PagesAndItemsVersion{
-	var $_version	= '2.1.5';
+	var $_version	= '2.1.6';
 	/*
 	var $_versionid	= 'Twinkle';
 	var $_date		= '2009-11-15';

@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -8,6 +8,12 @@
 */
 
 defined('_JEXEC') or die;
+
+//ACL
+if (!JFactory::getUser()->authorise('core.manage', 'com_pagesanditems')) {	
+	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+}
+
 
 //get helper
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'pagesanditems.php');

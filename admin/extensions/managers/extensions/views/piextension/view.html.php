@@ -1,6 +1,6 @@
 <?php
 /**
-* @version		2.1.5
+* @version		2.1.6
 * @package		PagesAndItems com_pagesanditems
 * @copyright	Copyright (C) 2006-2012 Carsten Engel. All rights reserved.
 * @license		http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -42,7 +42,7 @@ class PagesAndItemsViewPiextension extends PagesAndItemsViewDefault
 		$refer = $app->getUserState( $option.'.refer');
 		if($refer != '' && $refer)
 		{
-			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CONFIG').' '.JText::_('COM_PAGESANDITEMS_ITEMTYPE').': ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
+			PagesAndItemsHelper::addTitle(' :: <small>'.JText::_('COM_PAGESANDITEMS_CONFIGURATION').' '.JText::_('COM_PAGESANDITEMS_ITEMTYPE').': ['.JText::_('COM_PAGESANDITEMS_EDIT').']</small>');
 		}
 		else
 		{
