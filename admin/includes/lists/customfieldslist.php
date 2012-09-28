@@ -82,7 +82,7 @@ class CustomFieldsList
 					//look in field params
 					$image = $imageDir.'ui-blank.png';
 					
-					if($uiImage = $params->get('uiImage'))
+					if($params && $uiImage = $params->get('uiImage'))
 					{
 						$folder = '';
 						$dispatcher->trigger('onGetFolder',array(&$folder,$field->plugin));

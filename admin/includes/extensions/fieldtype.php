@@ -294,7 +294,7 @@ abstract class PagesAndItemsExtensionFieldtype extends PagesAndItemsExtension
 						//look in field params
 						$image = $imageDir.'ui-blank.png';
 						
-						if($uiImage = $this->params->get('uiImage'))
+						if($this->params && $uiImage = $this->params->get('uiImage'))
 						{
 							$folder = '';
 							$this->onGetFolder($folder,$field->plugin);
@@ -534,7 +534,7 @@ OLD BEGIN
 						//look in field params
 						$image = $imageDir.'ui-blank.png';
 						
-						if($uiImage = $this->params->get('uiImage'))
+						if($this->params && $uiImage = $this->params->get('uiImage'))
 						{
 							$folder = '';
 							$this->onGetFolder($folder,$field->plugin);

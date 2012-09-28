@@ -164,8 +164,7 @@ class ItemsList
 						//$image = $imageDir.'ui-blank.png';
 						$params = null;
 						$dispatcher->trigger('onGetParams',array(&$params, $itemType));
-						if($params)
-						if($uiImage = $params->get('uiImage'))
+						if($params && $uiImage = $params->get('uiImage'))
 						{
 							$folder = '';
 							
